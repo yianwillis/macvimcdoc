@@ -598,6 +598,7 @@ N 用来 (可选) 置于命令之前表示该命令执行的计数。
 'cmdwinheight'	  'cwh'     命令行窗口的高度
 'colorcolumn'	  'cc'	    高亮指定列
 'columns'	  'co'	    显示屏幕的列数
+'columnspace'	  'csp'     用于字符之间的像素列数
 'comments'	  'com'     可以开始注释行的模式
 'commentstring'   'cms'     注释的样板；用于折叠的标志
 'compatible'	  'cp'	    尽可能做到与 Vi 兼容

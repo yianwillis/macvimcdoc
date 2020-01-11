@@ -1277,6 +1277,8 @@ SECTION	 可能以 '}' 而不是 '{' 开始的小节
 |:lwindow|	:lw[indow]	打开或关闭位置窗口
 |:move|		:m[ove]		移动行
 |:mark|		:ma[rk]		设置位置标记
+|:macaction|	:maca[ction]	发送动作信息
+|:macmenu|	:macm[enu]	设置菜单项目的 Mac 特定属性
 |:make|		:mak[e]		执行外部命令 'makeprg' 并分析其错误信息
 |:map|		:map		显示或者输入映射
 |:mapclear|	:mapc[lear]	清除所有普通和可视模式的映射

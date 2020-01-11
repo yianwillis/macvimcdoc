@@ -1812,6 +1812,17 @@ v:operator	普通模式给出的最近的操作符。除了 <g> 或 <z> 开始�
 		|:delete|、|:yank| 或其它 Ex 命令不改变 v:operator。
 		只读。
 
+                                        *v:os_appearance* *os-appearance-variable*
+v:os_appearance 当前 OS 外观模式。可用于根据 GUI 前端的外观来改变选项
+		|background| 或 |colorscheme|。另见 |OSAppearanceChanged|。
+			值      描述 ~
+			0       浅色模式 (在不支持的平台上总为 0)
+			1       深色模式
+			2       高对比度浅色模式
+			3       高对比度深色模式
+
+		{仅适用于 MacVim GUI}
+
 					*v:prevcount* *prevcount-variable*
 v:prevcount	倒数第二次的普通模式命令使用的计数，也就是再上一个命令用的
 		v:count 的值。可以用来先中止可视模式或操作符等待模式，然后使用
@@ -9368,6 +9379,7 @@ fname_case		文件名大小写敏感 (在 Amiga 和 Windows 本特性不存在)�
 folding			编译时加入了 |folding| 的支持。
 footer			编译时加入了 GUI 信息页脚的支持。|gui-footer|
 fork			编译时决定使用 fork()/exec() 而不是 system()。
+fullscreen              编译时加入了 'fullscreen' 支持。
 gettext			编译时加入了信息翻译 |multi-lang|。
 gui			编译时加入了 GUI 的支持。
 gui_athena		编译时加入了 Athena GUI。
@@ -9424,6 +9436,7 @@ mzscheme		编译时加入了 MzScheme 接口支持 |mzscheme|。
 netbeans_enabled	编译时加入了 |netbeans| 的支持并且已连接上。
 netbeans_intg		编译时加入了 |netbeans| 的支持。
 num64			编译时加入了64 位 |Number| 的支持。
+odbeditor               编译时加入了 |odbeditor| 的支持。
 ole			编译时加入了 Win32 OLE automation 的支持。
 osx			为 macOS 编译，参照 mac
 osxdarwin		为 macOS 编译，带有 |mac-darwin-feature|
@@ -9474,6 +9487,8 @@ tgetent			编译时加入了 tgetent 的支持，可以使用外部 termcap 或
 timers			编译时加入了 |timer_start()| 支持。
 title			编译时加入了窗口标题的支持。|'title'|。
 toolbar			编译时加入了 |gui-toolbar| 的支持。
+touchbar		编译时加入了 MacVim 中触控栏的支持。
+transparency            编译时加入了 'transparency' 的支持。
 ttyin			输入是终端 (tty)
 ttyout			输出是终端 (tty)
 unix			Vim 的 Unix 版本。 *+unix*

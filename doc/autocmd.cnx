@@ -263,6 +263,7 @@ Vim 识别以下事件，事件名的大小写被忽略 (例如，你可以使�
 |EncodingChanged|	'encoding' 选项改变后
 |TermChanged|		'term' 的值改变后
 |OptionSet|		设置任何选项后
+|OSAppearanceChanged|	|v:os_appearance| 变量改变后 {仅适用于 MacVim GUI}
 
 	启动和退出
 |VimEnter|		完成所有的初始化步骤后
@@ -758,6 +759,10 @@ OptionSet			设置选项时。模式匹配的是长选项名。
 				插件破坏。用 |:noa| 可避免执行此自动命令。
 
 				自动命令中使用 |:set| 时，此事件不再触发。
+                                                        *OSAppearanceChanged*
+OSAppearanceChanged             |v:os_appearance| 变量改变后。这只会在 OS 改变
+				了外观且 Vim 在运行 GUI 时才才会发生。
+
 							*QuickFixCmdPre*
 QuickFixCmdPre			开始执行 quickfix 命令前 (|:make|、 |:lmake|、
 				|:grep|、|:lgrep|、|:grepadd|、|:lgrepadd|、

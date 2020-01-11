@@ -5177,7 +5177,7 @@ se[t]			字符串 "set " 或 "se " (注意 空格)；使用 "Vim" 时必须
 <
 				*'runtimepath'* *'rtp'* *vimfiles*
 'runtimepath' 'rtp'	字符串	(缺省:
-					Unix: "$HOME/.vim,
+					Unix、Mac OS X: "$HOME/.vim,
 						$VIM/vimfiles,
 						$VIMRUNTIME,
 						$VIM/vimfiles/after,
@@ -5192,7 +5192,7 @@ se[t]			字符串 "set " 或 "se " (注意 空格)；使用 "Vim" 时必须
 						$VIMRUNTIME,
 						$VIM/vimfiles/after,
 						$HOME/vimfiles/after"
-					Macintosh: "$VIM:vimfiles,
+					Macintosh (OS X 之前): "$VIM:vimfiles,
 						$VIMRUNTIME,
 						$VIM:vimfiles:after"
 					VMS: "sys$login:vimfiles,
@@ -6399,11 +6399,13 @@ se[t]			字符串 "set " 或 "se " (注意 空格)；使用 "Vim" 时必须
 	终端使用的编码。它指定键盘产生的和显示能识别的字符编码。对 GUI 而言，
 	这只适用于键盘 ('encoding' 用于显示)。Mac 上如果 'macatsui' 关闭时例
 	外，此时 'termencoding' 应是 "macroman" (对 Carbon UI 而言)。
+	如果控制台代码页和 ANSI 代码页不同，Win32 控制台版本缺省值是控制台代码
+	页。
 								*E617* *E950*
 	注意: 不适用于 GTK+ 和 MacVim GUI。那里，GUI 成功初始化后，
 	'termencoding' 被强制设为 "utf-8"。任何试图设置不同值的努力都被拒绝，
 	而且会给出错误消息。
-	Win32 GUI 和控制台版本不使用 'termencoding'，因为 Win32 系统总是传入
+	Win32 GUI 键入的字符不使用 'termencoding'，因为 Win32 系统总是传入
 	Unicode 字符。
 	如果为空，使用和 'encoding' 选项相同的编码。这是正常情况。
 	不是所有的 'termencoding' 和 'encoding' 的组合都是可以的。见
@@ -6667,8 +6669,8 @@ se[t]			字符串 "set " 或 "se " (注意 空格)；使用 "Vim" 时必须
 				*'toolbar'* *'tb'*
 'toolbar' 'tb'		字符串	(缺省为 "icons,tooltips")
 			全局
-			{仅适用于 |+GUI_GTK|、|+GUI_Athena|、|+GUI_Motif| 和
-			|+GUI_Photon|}
+			{仅适用于 |+GUI_GTK|、|+GUI_Athena|、|+GUI_Motif|、
+			|+GUI_Photon| 和 |gui_macvim|}
 	本选项的内容控制若干工具栏的设置。可能的值是:
 		icons		工具栏按钮使用图标显示。
 		text		工具栏按钮使用文字显示。
