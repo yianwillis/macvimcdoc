@@ -10,7 +10,7 @@ MacVim 中文文档
 
 # 安装
 
-## Vim 8.0 自带软件包支持
+## Vim 8+ 自带软件包支持
 
 ```shell
 $ mkdir -p ~/.vim/pack/foo/start
@@ -22,36 +22,7 @@ $ git clone git://github.com/yianwillis/macvimcdoc.git
 
 其中 foo 可以是任何你自选的名字。
 
-## Vundle
-
-.vimrc 中加入：
-
-```
-Plugin "yianwillis/macvimcdoc"
-```
-
-重启 Vim 后执行 `:PluginInstall`。
-
-## NeoBundle
-
-.vimrc 中加入：
-
-```
-NeoBundle 'yianwillis/macvimcdoc"
-```
-
-重启 Vim 后执行命令 `:NeoBundleInstall`。
-
-## Pathogen
-
-```shell
-$ cd ~/.vim/bundle
-$ git clone git://github.com/yianwillis/macvimcdoc.git
-```
-
-重启 Vim。
-
-## vim-plug
+## [vim-plug](https://github.com/junegunn/vim-plug)
 
 .vimrc 中加入:
 
@@ -60,6 +31,35 @@ Plug 'yianwillis/macvimcdoc'
 ```
 
 重启 Vim 后执行命令 `:PlugInstall`。
+
+## [Vundle](https://github.com/VundleVim/Vundle.vim)
+
+.vimrc 中加入:
+
+```
+Plugin 'yianwillis/macvimcdoc'
+```
+
+重启 Vim 后执行 `:PluginInstall`。
+
+## [NeoBundle](https://github.com/Shougo/neobundle.vim)
+
+.vimrc 中加入：
+
+```
+NeoBundle 'yianwillis/macvimcdoc'
+```
+
+重启 Vim 后执行命令 `:NeoBundleInstall`。
+
+## [Pathogen](https://github.com/tpope/vim-pathogen)
+
+```shell
+$ cd ~/.vim/bundle
+$ git clone git://github.com/yianwillis/macvimcdoc.git
+```
+
+重启 Vim。
 
 # 信 息
 

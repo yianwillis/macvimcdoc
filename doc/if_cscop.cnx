@@ -1,4 +1,4 @@
-*if_cscop.txt*  For Vim version 8.1.  最近更新: 2019年12月
+*if_cscop.txt*  For Vim version 8.2.  最近更新: 2019年12月
 
 
 		  VIM 参考手册    by Andy Kahn
@@ -21,7 +21,6 @@ ctags 强大很多。 在 Vim 里，通过 cscope 查询结果来跳转就像跳
 7. 如何获取 cscope 等信息	|cscope-info|
 
 目前为止 cscope 接口仅在 Unix 及 Win32 平台上有效。
-{Vi 无此功能}
 
 ==============================================================================
 1. Cscope 简介						*cscope-intro*
@@ -102,7 +101,7 @@ Vim 的 cscope 接口的工作原理是: 先调用 cscope 的命令行接口，�
 <
 				      *cscope-find* *cs-find* *E567*
     find  : 查询 cscope。除了第 5 个之外的所有 cscope 查询功能都可以使用。
-    	    第 5 个是 "Change this grep pattern"。
+	    第 5 个是 "Change this grep pattern"。
 
 	用法	:cs find {querytype} {name}
 
@@ -430,4 +429,4 @@ Vim cscope 接口/支持的原作者是 Andy Kahn <ackahn@netapp.com>。原始�
 Win32 支持是 Sergey Khorev <sergey.khorev@gmail.com> 加入的。如果你有 Win32 相
 关的问题，请联系他。
 
- vim:tw=78:ts=8:ft=help:norl:
+ vim:tw=78:ts=8:noet:ft=help:norl:

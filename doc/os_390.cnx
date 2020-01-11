@@ -1,4 +1,4 @@
-*os_390.txt*    For Vim version 8.1.  最近更新: 2017年8月
+*os_390.txt*    For Vim version 8.2.  最近更新: 2017年8月
 
 
 		  VIM 参考手册	  by Ralf Schandl
@@ -70,7 +70,7 @@ ASCII 了。即使在我手动修改菜单以后，快捷键也只能打开菜�
   起的。 注意 终端和 GUI 版本都存在这个问题。
 
 ==============================================================================
-5. 限制		   			*OS390-limitations* *zOS-limitations*
+5. 限制					*OS390-limitations* *zOS-limitations*
 
 - tag 文件不能进行二进制查找。
   /bin/sort 程序缺省按照 ASCII 值排序。通常，ctags 调用这个程序来为标签 (tag)
@@ -88,13 +88,13 @@ ASCII 了。即使在我手动修改菜单以后，快捷键也只能打开菜�
 编译时关闭的功能:
     - 多字节支持	        (|multibyte|)
     - 从右到左模式	        (|rileft|)
-    - 波斯键盘映射	        (|Farsi|)
+    - 波斯语键盘映射	        (|Farsi|)
     - 阿拉伯语言支持		(|Arabic|)
     - 拼写检查		        (|spell|)
 
 还未测试:
     - Perl 接口			(|perl|)
-    - 韩语 (Hangul) 输入	(|hangul|)
+    - 韩语输入			(|hangul|)
     - 加密支持			(|encryption|)
     - 语言映射			(|'langmap'|)
     - Python 支持		(|Python|)
@@ -123,4 +123,4 @@ ASCII 了。即使在我手动修改菜单以后，快捷键也只能打开菜�
 
 
 ------------------------------------------------------------------------------
- vim:tw=78:fo=tcq2:ts=8:ft=help:norl:
+ vim:tw=78:ts=8:noet:ft=help:norl:

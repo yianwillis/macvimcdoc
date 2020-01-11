@@ -1,4 +1,4 @@
-*develop.txt*	For Vim version 8.1.  最近更新: 2019年12月
+*develop.txt*	For Vim version 8.2.  最近更新: 2019年12月
 
 
 		  VIM 参考手册    by Bram Moolenaar
@@ -112,7 +112,7 @@ Vim 应该让使用它的人很容易在他们喜欢的风格下工作，而不�
 以用命令和选项来调整 Vim 来满足他们和环境的需要。
 
 
-VIM 不 是 ... 						*design-not*
+VIM 不 是 ...						*design-not*
 
 - Vim 不是一个外壳或操作系统。它确实提供自己的终端窗口，可在其中运行外壳或调试
   噐，以便于在 ssh 会话中应用。但如果不需要文本编辑，这些功能就超出了它的应用
@@ -140,10 +140,10 @@ VIM 不 是 ... 						*design-not*
 2. 首先调整文档，这样做将使你对你的更改如何影响使用者有一个印象。
 3. 改变源代码。
 4. 检查 ../doc/todo.txt，看看所作的修改是否影响其中的项目。
-5. 用 "git diff" 做一个补丁。也可以在 github 上创建 pull 请求，但主要是 diff
-   的部分。
+5. 用 "git diff" 做一个补丁。也可以在 github 上创建拉取请求，但主要是 diff 的
+   部分。
 6. 写一个修改了哪些地方的记录，最好提到相关问题和解决方案。给 vim-dev 邮件组发
-   信包含这个解释和 diff 本身。也可以在 github 上创建 pull 请求。
+   信包含这个解释和 diff 本身。也可以在 github 上创建拉取请求。
 
 
 C COMPILER				*style-compiler* *ANSI-C* *C89* *C99*
@@ -157,8 +157,13 @@ C COMPILER				*style-compiler* *ANSI-C* *C89* *C99*
 
 注释 ~
 
-Vim 传统上使用 /* 注释 */。我们打算继续如此，尤其是在文件或函数头部。新代码或
-需要改动的代码上可使用 // 注释，特别是在代码之后的注释:
+Vim 传统上使用 /* 注释 */。我们打算继续在文件和函数头部，还有大块代码处使用这
+种风格，如:
+	/*
+	 * The "foo" argument does something useful.
+	 * Return OK or FAIL.
+	 */
+新代码或需要改动的代码上建议使用 // 注释，特别是在代码之后的注释:
 	int some_var;  // 这里可用单行注释
 
 枚举 ~
@@ -234,7 +239,6 @@ wait		不要使用它作为函数的参数，和 types.h 冲突
 index		屏蔽全局声明
 time		屏蔽全局声明
 new		C++ 保留关键字
-try		Borland C++ 不希望它作为变量名被使用。
 
 clear		Mac curses.h
 echo		Mac curses.h
@@ -276,19 +280,19 @@ get_env_value()	Linux 系统函数
 
 一般原则: 每行一条语句。
 
-错误: 	    if (cond) a = 1;
+错误:	    if (cond) a = 1;
 
-正确: 	    if (cond)
+正确:	    if (cond)
 		a = 1;
 
-错误: 	    while (cond);
+错误:	    while (cond);
 
-正确: 	    while (cond)
+正确:	    while (cond)
 		;
 
-错误: 	    do a = 1; while (cond);
+错误:	    do a = 1; while (cond);
 
-正确: 	    do
+正确:	    do
 		a = 1;
 	    while (cond);
 
@@ -311,21 +315,37 @@ get_env_value()	Linux 系统函数
                cmd;
 	    }
 
+单行的块可以省略花括号。if/else 一个单行的块有括号时，另一个块最好也有括号:
+正确:	    if (cond)
+	       cmd;
+	    else
+               cmd;
+
+正确:	    if (cond)
+	    {
+	       cmd;
+	    }
+	    else
+	    {
+               cmd;
+               cmd;
+	    }
+
 使用 ANSI (新风格) 函数声明，返回类型在单独缩进的一行上。
 
-错误: 	int function_name(int arg1, int arg2)
+错误:	int function_name(int arg1, int arg2)
 
-正确: 	/*
+正确:	/*
 	 * 解释函数的功能。
 	 *
 	 * 解释返回值。
 	 */
 	    int
 	function_name(
-	    int		arg1,		/* arg1 的简短注释 */
-	    int		arg2)		/* arg2 的简短注释 */
+	    int		arg1,		// arg1 的简短注释
+	    int		arg2)		// arg2 的简短注释
 	{
-	    int		local;		/* local 的注释 */
+	    int		local;		// local 的注释
 
 	    local = arg1 * arg2;
 
@@ -336,27 +356,27 @@ get_env_value()	Linux 系统函数
 不要在函数名和括号间留空格:
 
 错误:   func (arg);
-正确: 	func(arg);
+正确:	func(arg);
 
 但请在 if，while，switch 等之后留一个空格:
 
-错误: 	if(arg)		for(;;)
-正确: 	if (arg)	for (;;)
+错误:	if(arg)		for(;;)
+正确:	if (arg)	for (;;)
 
 在逗号和分号后留一个空格:
 
 错误:   func(arg1,arg2);	for (i = 0;i < 2;++i)
-正确: 	func(arg1, arg2);	for (i = 0; i < 2; ++i)
+正确:	func(arg1, arg2);	for (i = 0; i < 2; ++i)
 
 在 '='，'+'，'/' 等的前后各留一个空格:
 
-错误: 	var=a*5;
-正确: 	var = a * 5;
+错误:	var=a*5;
+正确:	var = a * 5;
 
 一般地: 使用空行来把代码分组。在每组代码的上面写上注释，这样就可以快速的知道这
 些代码是用来干什么的。
 
-正确: 	/* Prepare for building the table. */
+正确:	/* Prepare for building the table. */
 	get_first_item();
 	table_idx = 0;
 
@@ -489,4 +509,4 @@ long	    32 或 64 位有符号数，可具有指针
 注意: 某些编译器不能处理过长的源码行或者字符串。C89 标准规定限制在 509 个字符
 以内。
 
- vim:tw=78:ts=8:ft=help:norl:
+ vim:tw=78:ts=8:noet:ft=help:norl:

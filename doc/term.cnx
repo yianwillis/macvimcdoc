@@ -1,4 +1,4 @@
-*term.txt*      For Vim version 8.1.  最近更新: 2019年12月
+*term.txt*      For Vim version 8.2.  最近更新: 2020年1月
 
 
 		  VIM 参考手册    by Bram Moolenaar
@@ -23,9 +23,9 @@ Vim 使用你使用的终端的信息来填充屏幕和识别你输入的键。�
 ==============================================================================
 1. 启动							*startup-terminal*
 
-Vim 启动时，假定一个缺省终端类型。Amiga 上，这是一个标准的 CLI 窗口，MS-DOS 是
-pc 终端，而 Unix 则是 ansi 终端。还有一些终端类型，它们都总是可用的，见下
-|builtin-terms|。
+Vim 启动时，假定一个缺省终端类型。Amiga 上，这是一个标准的 CLI 窗口，
+MS-Windows 是 pc 终端，而 Unix 则是 ansi 终端。还有一些终端类型，它们都总是可
+用的，见下 |builtin-terms|。
 
 使用 '-T' Vim 参数，你可以给出终端名。如果没有给出，Vim 会试图从 TERM 环境变量
 里读取名字。
@@ -72,11 +72,15 @@ ALL_BUILTIN_TCAPS	++builtin_terms		全部
    endif
 <
 						*raw-terminal-mode*
-普通的编辑会把终端设为原始 ("raw") 模式。't_ti' 和 't_ks' 定义的字符串会送到终
-端上。正常情况下，这把终端设为一个状态，该状态下能合法给出 termcap 代码，并激
-活光标和功能键。Vim 退出终端时，它会回到 Vim 启动前的模式。't_te' 和 't_ke' 定
-义的字符串会发送给终端。在 Amiga 上，执行外部命令的命令 (例如 "!!") 会把终端暂
-时置回普通模式。这意味着你可以按打印键停止到屏幕的输出。输出在按 <BS> 时继续。
+普通的编辑会把终端设为原始 ("raw") 模式。't_ti'、't_TI' 和 't_ks' 定义的字符串
+会送到终端上。正常情况下，这把终端设为一个状态，该状态下能合法给出 termcap 代
+码，并激活光标和功能键。
+Vim 退出终端时，它会回到 Vim 启动前的模式。't_te'、't_TE' 和 't_ke' 定义的字符
+串会发送给终端。在 Amiga 上，执行外部命令的命令 (例如 "!!") 会把终端暂时置回普
+通模式。这意味着你可以按打印键停止到屏幕的输出。输出在按 <BS> 时继续。
+
+注意: 如果 't_ti' 非空，Vim 假定它会切换到轮换屏幕上。执行外壳命令或退出 Vim
+时产生的结果可能会因此稍有不同。如果不想如此，用 't_TI' 和 't_TE'。
 
 						*xterm-bracketed-paste*
 如果设置了 't_BE' 选项，进入 "raw" 模式时会发送 't_BE' 到终端，退出 "raw" 模式
@@ -202,8 +206,6 @@ termcap 项目、鼠标和一些其它的项目中使用 8 位字符，通常，
 通过设置合适的选项，你总是可以调整个别字符串的值。例如: >
 	:set t_ce=^V^[[K	(CTRL-V，<Esc>，[，K)
 
-{Vi: 没有终端选项。你必须退出 Vi，修改 termcap 项，并重新打开}
-
 这些选项列在下面。相关的 termcap 代码总是等价于选项名字的最后两个字符。只有一
 个 termcap 代码是必须的: 光标移动，'t_cm'。
 
@@ -211,7 +213,7 @@ termcap 项目、鼠标和一些其它的项目中使用 8 位字符，通常，
 标志位存在时，选项总是设为 "y"。但是任何非空的字符串意味着标志位已经置位。而空
 字符串代表该标志位没有置位。't_CS' 也是这样的，虽然它不是 termcap 的标志位。
 
-输 出 代 码 						*terminal-output-codes*
+输 出 代 码						*terminal-output-codes*
 	选项	含义	~
 
 	t_AB	设置背景色 (ANSI)				*t_AB* *'t_AB'*
@@ -279,11 +281,15 @@ Vim 增加的 (它们没有标准代码):
 	t_EI    结束插入或替换模式 (块形光标)			*t_EI* *'t_EI'*
 		|termcap-cursor-shape|
 	t_RV	请求终端版本字符串 (适用于 xterm)		*t_RV* *'t_RV'*
-		|xterm-8bit| |v:termresponse| |'ttymouse'| |xterm-codes|
+		其响应存于 |v:termresponse|
+		|xterm-8bit| |'ttymouse'| |xterm-codes|
 	t_u7	请求光标位置 (适用于 xterm)			*t_u7* *'t_u7'*
 		见 |'ambiwidth'|
+		其响应存于 |v:term7resp|
 	t_RF	请求终端前景色					*t_RF* *'t_RF'*
-	t_RB	请求终端背景色 					*t_RB* *'t_RB'*
+		其响应存于 |v:termfgresp|
+	t_RB	请求终端背景色					*t_RB* *'t_RB'*
+		其响应存于 |v:termbgresp|
 	t_8f	设置终端前景色 (R, G, B)			*t_8f* *'t_8f'*
 		|xterm-true-color|
 	t_8b	设置终端背景色 (R, G, B)			*t_8b* *'t_8b'*
@@ -296,7 +302,15 @@ Vim 增加的 (它们没有标准代码):
 	t_EC	结束设置光标颜色				*t_EC* *'t_EC'*
 	t_SH	设置光标形状					*t_SH* *'t_SH'*
 	t_RC	请求终端光标闪烁				*t_RC* *'t_RC'*
+		其响应存于 |v:termblinkresp|
 	t_RS	请求终端光标风格				*t_RS* *'t_RS'*
+		其响应存于 |v:termstyleresp|
+	t_ST	在栈中保存窗口标题				*t_ST* *'t_ST'*
+	t_RT	从栈中恢复窗口标题				*t_RT* *'t_RT'*
+	t_Si	在栈中保存图标文本				*t_Si* *'t_Si'*
+	t_Ri	从栈中恢复图标文本				*t_Ri* *'t_Ri'*
+	t_TE	结束 "raw" 模式					*t_TE* *'t_TE'*
+	t_TI	让终端进入 "raw" 模式				*t_TI* *'t_TI'*
 
 有些代码有开始、中间和结束部分。开始和结束由 termcap 选项定义，中间部分是文
 本。
@@ -305,8 +319,8 @@ Vim 增加的 (它们没有标准代码):
 	设置光标颜色:     t_SC  {color name}  t_EC
 
 t_SH 必须提供一个参数:
-	0、1 或无  	闪烁块状光标
-	2	      	块状光标
+	0、1 或无	闪烁块状光标
+	2		块状光标
 	3		闪烁下划光标
 	4		下划光标
 	5		产供垂直条光标
@@ -449,7 +463,7 @@ xterm 改变窗口大小的功能只用在 allowWindowOps 资源打开时才可�
 
 要覆盖缺省值，在 ~/.Xdefaults 或 ~/.Xresources 中放入:
 >
-	XTerm*allowWindowOps: 		true
+	XTerm*allowWindowOps:		true
 
 然后运行 "xrdb -merge .Xresources" 以激活之。用上下文菜单可以检查该值 (按住
 CTRL 键的同时按鼠标右键)，在 allow-window-ops 边上应该打了勾。
@@ -457,7 +471,7 @@ CTRL 键的同时按鼠标右键)，在 allow-window-ops 边上应该打了勾�
 							*termcap-colors*
 关于颜色的 注意 事项: 't_Co' 选项告诉 Vim 可用的颜色数。如果非零，'t_AB' 和
 't_AF' 选项可以用来设置颜色。如果这些都不可用，就使用 't_Sb' 和 't_Sf'。't_me'
-用来复位到缺省的颜色设置。
+用来复位到缺省的颜色设置。另见 'termguicolors'。
 
 				*termcap-cursor-shape* *termcap-cursor-color*
 Vim 进入插入模式时，发送 't_SI' 转义序列。Vim 进入替换模式而 't_SR' 已设置时，
@@ -499,8 +513,8 @@ Sun 上的 xterm。你可以使用内建的 builtin_xterm 或者自己定义 t_c
 
 不幸的是无法从 termcap 里推断光标定位应不应该使用滚动区域: 是相对于屏幕的开始
 处，还是相对于滚动区域的开始处。大多数终端使用第一种方法。已知的一个例外是
-MS-DOS 的终端 (pcterm)。在光标定位相对于滚动区域的情况下，'t_CS' 选项应该设置
-为任何非空字符串。反之，则设为空字符串。在 'term' 为 "pcterm" 时，它缺省为
+MS-Windows 的终端 (pcterm)。在光标定位相对于滚动区域的情况下，'t_CS' 选项应该
+设置为任何非空字符串。反之，则设为空字符串。在 'term' 为 "pcterm" 时，它缺省为
 "yes"。
 
 xterm 用户 注意: shift + 光标键一般不工作。要使用 xmodmap 命令和 Vim 里的一些
@@ -549,8 +563,8 @@ xterm 用户 注意: shift + 光标键一般不工作。要使用 xmodmap 命令
 						*:mod* *:mode* *E359*
 :mod[e] [mode]
 
-如果不带参数，该命令检测屏幕大小并重画屏幕。在 MS-DOS 上，可以切换屏幕模式。
-[mode] 可以是取以下的值:
+如果不带参数，该命令检测屏幕大小并重画屏幕。在 MS-Windows 上，可以切换屏幕模
+式。 [mode] 可以是取以下的值:
 	"bw40"		40 列黑白
 	"c40"		40 列彩色
 	"bw80"		80 列黑白
@@ -589,8 +603,8 @@ Vim 在超过 3 行需要滚动时，重画屏幕而不是滚动。
 screen 优化终端 I/O 挺不错的。
 
 如果你在测试 termcap 选项，但是你看不到发生了什么，你也许希望设置 'writedelay'
-选项。如果非零，每次给终端只发一个字符 (MS-DOS 上不行)。这使得屏幕刷新变慢很
-多，从而能看清楚发生了什么。
+选项。如果非零，每次给终端只发一个字符。这使得屏幕刷新变慢很多，从而能看清楚发
+生了什么。
 
 ==============================================================================
 5. 使用鼠标						*mouse-using*
@@ -603,8 +617,8 @@ screen 优化终端 I/O 挺不错的。
 否则 Vim 不会在所有模式下识别鼠标 (见 'mouse')。
 
 目前，鼠标只有在 Unix 的 xterm 窗口、带 |sysmouse| 的 *BSD 控制台、Linux 终端
-(带 GPM |gpm-mouse|)、MS-DOS 和 Windows 终端上才支持。鼠标键击可以用来定位光
-标，设置区域并粘贴。
+(带 GPM |gpm-mouse|)、Windows 终端上才支持。鼠标键击可以用来定位光标，设置区域
+并粘贴。
 
 'mouse' 选项的字符决定 Vim 在什么场合下会使用鼠标:
 		n	普通模式
@@ -627,10 +641,19 @@ screen 优化终端 I/O 挺不错的。
 鼠标能否在可视模式或者选择模式下开始选择，决定于 "selectmode" 选项包不包括
 "mouse"。
 
+							*terminal-mouse*
 在 xterm 终端里，在 'mouse' 选项包含当前激活的模式的前提下，普通的鼠标键击归
 Vim 使用，而带 shift 或者 ctrl 键的鼠标键击由 xterm 控制。如果 'mouse' 不包括
 当前激活的模式，则所有的鼠标键击由 xterm 控制。
 
+对于自身不能通过修饰符来使用鼠标事件的终端，一个权宜之计是在 Vim 的命令模式中
+不使用鼠标事件: >
+	:set mouse=nvi
+然后在终端中选择文本，用 ":" 进入命令行模式，选择并复制文本到系统中，然后按
+Esc。
+
+另一个办法是临时地用 ":sh" 来运行外壳，复制文本，然后退出外壳。此时 'mouse' 仍
+应设为 "a"。
 							*xterm-clipboard*
 Athena 和 Motif GUI 版本上，如果在终端运行但是可以访问 X-server (设置了
 DISPLAY)，那么复制和粘贴和 GUI 上的行为相似。如果不是，那么鼠标中键会插入无名
@@ -734,9 +757,9 @@ Vim 之前在外壳上执行 "stty cs8 -istrip -parenb"。
 被滚动。
 
 在第一个字符上按鼠标左键，移动鼠标到最后一个字符，然后释放，可以进行选择。直到
-你释放鼠标键，你不一定总能看到选择的区域。只有一些版本能够 (GUI、MS-DOS、
-WIN32) 使得拖动立即显示。注意 如果 'scrolloff' 非零，你可以在窗口的首/ 末行移
-动鼠标至少一个字符位置使文本滚动。
+你释放鼠标键，你不一定总能看到选择的区域。只有一些版本能够 (GUI、WIN32) 使得拖
+动立即显示。注意 如果 'scrolloff' 非零，你可以在窗口的首/末行移动鼠标至少一个
+字符位置使文本滚动。
 
 在普通、可视和选择模式下，单击鼠标右键使得可视区域被扩展。如果 'mousemodel' 为
 'popup'，必须使用按住 shift 键的鼠标左键。如果在编辑另外一个缓冲区时点击一个窗
@@ -748,8 +771,8 @@ WIN32) 使得拖动立即显示。注意 如果 'scrolloff' 非零，你可以�
 窗口)。
 
 							*double-click*
-双击、三击和四击在 GUI 激活时、MS-DOS 和 Win32，以及 xterm (如果有
-gettimeofday() 函数) 上得到支持。对于文本选择，附加的点击会扩展选择区:
+双击、三击和四击在 GUI 激活时、Win32 以及 xterm (如果有 gettimeofday() 函数)
+上得到支持。对于文本选择，附加的点击会扩展选择区:
 	点击		选择 ~
 	两次		单词或者 % 匹配		*<2-LeftMouse>*
 	三次		行			*<3-LeftMouse>*
@@ -758,8 +781,8 @@ gettimeofday() 函数) 上得到支持。对于文本选择，附加的点击会
 双击单词选择该单词。'iskeyword' 用来指定单词可以包括哪些字符。双击一个有匹配的
 字符选择直到该匹配的区域 (类似于 "v%")。如果匹配是 #if/#else/#endif 块，选择变
 为面向行。
-MS-DOS 和 xterm 上，双击相隔的时间可以通过 'mousetime' 选项设置。其他系统上，
-该值只能在 Vim 之外定义。
+xterm 上，双击相隔的时间可以通过 'mousetime' 选项设置。其他系统上，该值只能在
+Vim 之外定义。
 一个使用双击跳转到光标所在的标签的例子: >
 	:map <2-LeftMouse> :exe "tag ". expand("<cword>")<CR>
 
@@ -835,4 +858,4 @@ X1 和 X2 按钮指一些鼠标上的附加按钮。'Microsoft Explorer' 鼠标�
 	:noremap!	<RightDrag>	<LeftDrag>
 	:noremap!	<RightRelease>	<LeftRelease>
 <
- vim:tw=78:ts=8:ft=help:norl:
+ vim:tw=78:ts=8:noet:ft=help:norl:
