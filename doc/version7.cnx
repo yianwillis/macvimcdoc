@@ -1,9 +1,8 @@
-*version7.txt*  For Vim version 8.2.  最近更新: 2017年8月
+*version7.txt*  适用于 Vim 8.2 版本。	最近更新: 2017年8月
 
 
 		  VIM 参考手册	  by Bram Moolenaar
 				译者: Willis
-				http://vimcdoc.sf.net
 
 					*vim7* *version-7.0* *version7.0*
 欢迎来到 Vim 版本 7！新版本增加了很多新特性。本文档列出所有加入的新项目、已
@@ -7053,8 +7052,8 @@ MS-Windows big gvim 现在使用 Python 2.7 和 3.1.2、Perl 5.12 和 Ruby 1.9.1
 所有系统需要的源代码都包含在同一个发布里。
 
 用 ":recover" 或其它方式来恢复文件后，":x" 和 "ZZ" 过去不保存你看到的内容。这
-会使得工作丢失。现在恢复后的文本会和原来文本比较。如果不同，标注缓冲区为已修改
-。
+会使得工作丢失。现在恢复后的文本会和原来文本比较。如果不同，标注缓冲区为已修
+改。
 
 如果 Vim 因为收到致命信号而退出且 v:dying 为 2 或以上，不执行 VimLeavePre、
 VimLeave、BufWinLeave 和 BufUnload 自动命令。

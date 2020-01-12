@@ -1,9 +1,8 @@
-*syntax.txt*	For Vim version 8.2.  最近更新: 2019年12月
+*syntax.txt*	适用于 Vim 8.2 版本。	最近更新: 2019年12月
 
 
 		  VIM 参考手册	  by Bram Moolenaar
 				译者: Willis
-				http://vimcdoc.sf.net
 
 
 语法高亮			*syntax* *syntax-highlighting* *coloring*
@@ -4177,7 +4176,7 @@ term={attr-list}			*attr-list* *highlight-term* *E418*
 		undercurl	不一定总是可用
 		strikethrough	不一定总是可用
 		reverse
-		inverse		等同于 reverse
+		inverse		同 reverse
 		italic
 		standout
 		nocombine	覆盖属性而不是混合属性
