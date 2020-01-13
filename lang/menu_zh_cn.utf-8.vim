@@ -38,10 +38,13 @@ if has("gui_macvim")
   menutrans Emoji\ &&\ Symbols		表情及符号
   menutrans Start\ Dictation\.\.\.	开始听写
   menutrans Minimize			最小化
+  menutrans Minimize\ All		全部最小化
   menutrans Maximize			最大化
   menutrans Zoom			缩放
   menutrans Zoom\ All			全部缩放
   menutrans Toggle\ Full\ Screen\ Mode	切换全屏模式
+  menutrans Tile\ Window\ to\ Left\ of\ Screen	将窗口拼贴到屏幕左侧
+  menutrans Tile\ Window\ to\ Right\ of\ Screen	将窗口拼贴到屏幕右侧
   menutrans Select\ Next\ Tab		选择下一标签页
   menutrans Select\ Previous\ Tab	选择上一标签页
   menutrans Bring\ All\ To\ Front	全部带到前台
@@ -50,6 +53,8 @@ if has("gui_macvim")
   menutrans Stay\ Level\ Normal		保持正常级别
   menutrans MacVim\ help		MacVim\ 帮助
   menutrans MacVim\ Website		MacVim\ 网站
+  menutrans Show\ C&olor\ Schemes\ in\ Menu	菜单中显示色彩方案
+  menutrans Show\ &Keymaps\ in\ Menu	菜单中显示键盘映射
 else
   menutrans Save\ &As\.\.\.<Tab>:sav	另存为(&A)\.\.\.<Tab>:sav
 endif
@@ -144,7 +149,7 @@ menutrans &Shiftwidth			缩进宽度(&S)
 menutrans Soft\ &Tabstop		Soft\ Tab\ 宽度(&T)
 menutrans Te&xt\ Width\.\.\.		文本宽度(&x)\.\.\.
 menutrans &File\ Format\.\.\.		文件格式(&F)\.\.\.
-menutrans C&olor\ Scheme		配色方案(&o)
+menutrans C&olor\ Scheme		色彩方案(&o)
 menutrans Select\ Fo&nt\.\.\.		选择字体(&n)\.\.\.
 menutrans &Keymap			键盘映射(&K)
 
