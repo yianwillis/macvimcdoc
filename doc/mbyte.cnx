@@ -373,7 +373,7 @@ iconv() 的功能影响。因为这取决于你所用的系统，这里无法给
   gettext)
 - Vim 脚本 |:scriptencoding| 和 'encoding' 不同
 - 读写一个 |viminfo| 文件
-以上很多都需要 |+iconv| 特性，读写文件的转换也可以通过指定 'chaconvert' 来完
+以上很多都需要 |+iconv| 特性，读写文件的转换也可以通过指定 'charconvert' 来完
 成。
 
 转换字符集一些有用的工具:
@@ -676,7 +676,7 @@ XIM 是 X 的多语种输入模块。有两种构架，Xlib unit 类型和 |IM-s
 							*IM-server*
   在 |IM-server| 类型的输入结构中，输入事件的处理有两种方式: FrontEnd 系统和
   BackEnd 系统。在 FrontEnd 系统中，输入事件先被 |IM-server| 捕获，待处理之
-  后， |IM-server| 为应用程序提供输入结果。BackEnd 系统处理的顺序则完全相反。
+  后，|IM-server| 为应用程序提供输入结果。BackEnd 系统处理的顺序则完全相反。
   MS Windows 选择了 BackEnd 系统。在 X 中，大多数的 |IM-server| 选择 FrontEnd
   系统。BackEnd 系统的缺点在于通讯的支出较大，但是它提供比较安全的同步，并且
   对应用程序没有什么特殊的限制。
@@ -965,8 +965,8 @@ Ctrl+Space: >
 ":scriptencoding" 命令。这不适用于 <char-> 的构造，因为转换针对的是键盘映射表
 文件本身，而不是产生的字符。
 
-"loadkeymap" 之后的行的解释时，'cpotions' 假设为 "C"。这意味着不能用继续行，而
-反斜杠在映射中有特殊含义。例如: >
+"loadkeymap" 之后的行的解释时，'cpoptions' 假设为 "C"。这意味着不能用继续行，
+而反斜杠在映射中有特殊含义。例如: >
 
 	" 注释行
 	\"	x	把 " 映射为 x
@@ -1221,7 +1221,7 @@ MS-Windows，utf-32 并不是常用的文件格式。
    :set guifont=-misc-fixed-medium-r-normal--15-140-75-75-c-90-iso10646-1
 
 你可能需要设置菜单所需的字体。目前，这只适用于 Motif。你可以用
-":hi Menu font={fontname}" 命令。 |:highlight|
+":hi Menu font={fontname}" 命令。|:highlight|
 
 
 输 入 UTF-8						*utf-8-typing*
