@@ -1,6 +1,22 @@
 @import 'https://fontlibrary.org/face/gnu-unifont';
-@media(max-device-width: 800px) {
-  body { font-size: 32px; }
+@media only screen and (max-width: 768px) {
+  #banner {
+    width: calc(100% - 2em) !important;
+    text-align: center;
+  }
+  #banner hr { display: none; }
+  header { display: none; }
+  footer { display: none; }
+  #outer {
+    position: fixed;
+    top: 4em; right: 1px; bottom: 1px; left: 1px;
+    width: auto !important;
+    max-width: 40em;
+    overflow: scroll;
+  }
+}
+body {
+  font-family: 'Noto Sans Mono CJK SC', WenQuanYiZenHeiMono, Sarasa-Mono-T-SC-Regular, 'MS Hei', NSimsun, UnifontMedium, monospace;
 }
 #outer {
   border: 1px solid;
@@ -9,7 +25,6 @@
   width: 40em;
   padding: 0.5em;
   background: rgb(255, 248, 220);
-  font-family: 'Noto Sans Mono CJK SC', WenQuanYiZenHeiMono, 'MS Hei', NSimsun, UnifontMedium, monospace;
 }
 .inner { white-space: pre; }
 .inner:first-line { line-height: 0; }
@@ -18,8 +33,17 @@
   display: table;
   position: fixed;
   z-index: 1;
-  width: 5em;
+  width: 5.5em;
 }
+#banner form { display: inline; }
+#banner input {
+  width: 5.5em;
+  border-radius: 0.5em;
+  box-sizing: border-box;
+  background: rgb(255, 248, 220);
+  font: inherit;
+}
+#banner iframe { display: none; }
 footer { margin-top: 1em; font-style:italic; }
 code { font-family: inherit; }
 :link {
