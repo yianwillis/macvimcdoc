@@ -1,4 +1,4 @@
-*starting.txt*  适用于 Vim 8.2 版本。	最近更新: 2020年1月
+*starting.txt*  适用于 Vim 8.2 版本。	最近更新: 2020年2月
 
 
 		  VIM 参考手册    by Bram Moolenaar
@@ -55,9 +55,11 @@
 <		开始编辑新缓冲区，并以标准输入读取的文本填充之。通常从标准输入
 		读入的命令现在从标准错误 (stderr) 读入。例如: >
 			find . -name "*.c" -print | vim -
-<		缓冲区不会被标为已修改，以方便退出。如果不想意外地丢失，可以小
-		心地把缓冲区标记成已修改。例如: >
-			ls | view -
+
+<		缓冲区被标为已修改，如果试图退出，这会提醒你要先保存文本。如果
+		不想如此，可在 vimrc 中如此设置: >
+			" 从标准输入读取时不置位 'modified'
+			au StdinReadPost * set nomodified
 <
 		以 Ex 模式启动: >
 			ex -
@@ -666,11 +668,12 @@ Evim 里，以下选项被改变，不同于缺省值:
 	直用 "exrc"。而 "vimrc" 是 Vim 专用的名字。另见 |vimrc-intro|。
 
 	保存你个人初始化的地方是:
-		Unix		    $HOME/.vimrc 或 $HOME/.vim/vimrc
-		MS-Windows	    $HOME/_vimrc、$HOME/vimfiles/vimrc 或
-				    $VIM/_vimrc
-		Amiga		    s:.vimrc、home:.vimrc、home:vimfiles:vimrc
-				    或 $VIM/.vimrc
+		Unix		$HOME/.vimrc 或 $HOME/.vim/vimrc
+		MS-Windows	$HOME/_vimrc、$HOME/vimfiles/vimrc 或
+				$VIM/_vimrc
+		Amiga		s:.vimrc、home:.vimrc、home:vimfiles:vimrc 或
+				$VIM/.vimrc
+		Haiku		$HOME/config/settings/vim/vimrc
 
 	按上述顺序依次寻找，只读入首个成功找到的文件。
 
@@ -814,6 +817,8 @@ gvimrc 文件。
 	~/.vimrc	(Unix)
 	s:.vimrc	(Amiga)
 	$VIM\_vimrc	(Win32)
+	~/config/settings/vim/vimrc (Haiku)
+
 注意 创建 vimrc 文件会使得 'compatible' 选项缺省被关闭。见
 |compatible-default|。
 

@@ -1,4 +1,4 @@
-*eval.txt*      适用于 Vim 8.2 版本。	最近更新: 2020年1月
+*eval.txt*      适用于 Vim 8.2 版本。	最近更新: 2020年2月
 
 
 		  VIM 参考手册    by Bram Moolenaar
@@ -47,7 +47,7 @@
 
 							*Number* *Integer*
 数值		32 位或 64 位带符号整数。|expr-number|
-		64-位整数只有在编译时带 |+num64| 特性时才有效。
+		位数可以 |v:numbersize| 得到。
 		示例:  -123  0x10  0177  0b1011
 
 浮点数		带小数的数值。|floating-point-format| *Float*
@@ -1618,8 +1618,10 @@ v:errors	assert 函数找到的错误，如 |assert_true()|。
 <		如果用非列表来设置 v:errors，assert 函数会把它变成空列表。
 
 					*v:event* *event-variable*
-v:event		包含当前 |autocommand| 信息的字典。|autocommand| 结束后该字典
-		清空。请参见 |dict-identity| 来了解如何取得字典独立的备份。
+v:event		包含当前 |autocommand| 信息的字典。字典放置的内容参见具体事
+		件。
+		|autocommand| 结束后该字典清空，请参见 |dict-identity| 来了解
+		如何取得字典独立的备份。
 
 					*v:exception* *exception-variable*
 v:exception	最近捕获且没有完成的例外的值。见 |v:throwpoint| 和
@@ -1771,6 +1773,9 @@ v:null		空字符串。用于在 JSON 里填入 "null"。见 |json_encode()|。
 			echo v:null
 <			v:null ~
 		这样 eval() 可以把该字符串解析回相同的值。只读。
+
+					*v:numbersize* *numbersize-variable*
+v:numbersize	数值型的位数。通常为 64，但在某些系统上可能为 32。
 
 					*v:oldfiles* *oldfiles-variable*
 v:oldfiles	启动时从 |viminfo| 文件载入的文件名列表。Vim 记住的位置标记所
@@ -2080,7 +2085,7 @@ asin({expr})			浮点	{expr} 的反正弦值
 atan({expr})			浮点	{expr} 的反正切值
 atan2(`{expr}, {expr})		浮点	{expr1} / {expr2} 的反正切值
 balloon_gettext()		字符串	气泡的当前文本
-balloon_show({expr})		空	在气泡内显示{expr}
+balloon_show({expr})		无	在气泡内显示{expr}
 balloon_split({msg})		列表	分割用于的 {msg}
 browse({save}, {title}, {initdir}, {default})
 				字符串	启动文件请求窗口
@@ -2101,8 +2106,8 @@ call({func}, {arglist} [, {dict}])
 				可变	调用函数 {func}，使用参数 {arglist}
 ceil({expr})			浮点	{expr} 向上取整
 ch_canread({handle})		数值	检查是否有可读的内容
-ch_close({handle})		空	关闭 {handle}
-ch_close_in({handle})		空	关闭 {handle} 的 in 部分
+ch_close({handle})		无	关闭 {handle}
+ch_close_in({handle})		无	关闭 {handle} 的 in 部分
 ch_evalexpr({handle}, {expr} [, {options}])
 				可变	在 JSON {handle} 上执行 {expr}
 ch_evalraw({handle}, {string} [, {options}])
@@ -2110,8 +2115,8 @@ ch_evalraw({handle}, {string} [, {options}])
 ch_getbufnr({handle}, {what})	数值	获得 {handle}/{what} 的缓冲区号
 ch_getjob({channel})		作业	获得 {channel} 的相关作业
 ch_info({handle})		字符串	有关通道 {handle} 的信息
-ch_log({msg} [, {handle}])	空	在通道日志文件中写入 {msg}
-ch_logfile({fname} [, {mode}])	空	开始记录通道活动
+ch_log({msg} [, {handle}])	无	在通道日志文件中写入 {msg}
+ch_logfile({fname} [, {mode}])	无	开始记录通道活动
 ch_open({address} [, {options}])
 				通道	打开到 {address} 的通道
 ch_read({handle} [, {options}]) 字符串	从 {handle} 读取
@@ -2124,7 +2129,7 @@ ch_sendexpr({handle}, {expr} [, {options}])
 ch_sendraw({handle}, {expr} [, {options}])
 				可变	在原始 {handle} 上发送 {expr}
 ch_setoptions({handle}, {options})
-				空	设置 {handle} 的选项
+				无	设置 {handle} 的选项
 ch_status({handle} [, {options}])
 				字符串	通道 {handle} 的状态
 changenr()			数值	当前改变号
@@ -2157,6 +2162,7 @@ deletebufline({expr}, {first} [, {last}])
 did_filetype()			数值	用过 FileType 自动命令事件则为 |TRUE|
 diff_filler({lnum})		数值	{lnum} 行之上的 diff 填充行数
 diff_hlID({lnum}, {col})	数值	{lnum}/{col} 位置的 diff 高亮
+echoraw({expr})			无	照原样输出 {expr}
 empty({expr})			数值	如果 {expr} 为空则为 |TRUE|
 environ()			字典	返回所有环境变量
 escape({string}, {chars})	字符串	在 {string} 里用 '\' 转义 {chars}
@@ -2418,7 +2424,7 @@ remote_read({serverid} [, {timeout}])
 				字符串	读入应答字符串
 remote_send({server}, {string} [, {idvar}])
 				字符串	发送键序列
-remote_startserver({name})	空	成为服务器 {name}
+remote_startserver({name})	无	成为服务器 {name}
 remove({list}, {idx} [, {end}])	可变/列表
 					从 {list} 里删除项目 {idx}-{end}
 remove({blob}, {idx} [, {end}])	可变/blob
@@ -2454,7 +2460,7 @@ setbufline({expr}, {lnum}, {text})
 				数值	设置缓冲区 {expr} 第 {lnum} 行为
 					{text}
 setbufvar({expr}, {varname}, {val})
-				空	设置缓冲区 {expr} 的 {varname} 为
+				无	设置缓冲区 {expr} 的 {varname} 为
 					{val}
 setcharsearch({dict})		字典	从 {dict} 设置字符搜索选项
 setcmdpos({pos})		数值	设置命令行的光标位置
@@ -2475,7 +2481,7 @@ settabwinvar({tabnr}, {winnr}, {varname}, {val})
 					{varname} 变量为 {val}
 settagstack({nr}, {dict} [, {action}])
 				数值	用 {dict} 修改标签栈
-setwinvar({nr}, {varname}, {val}) 空	设置窗口 {expr} 的 {varname} 为 {val}
+setwinvar({nr}, {varname}, {val}) 无	设置窗口 {expr} 的 {varname} 为 {val}
 sha256({string})		字符串	{string} 的 SHA256 校验码
 shellescape({string} [, {special}])
 				字符串	转义 {string} 以便用作外壳命令的参数
@@ -2590,33 +2596,36 @@ term_setsize({buf}, {rows}, {cols})
 term_start({cmd} [, {options}])	数值	打开终端窗口并执行作业
 term_wait({buf} [, {time}])	数值	等待屏幕刷新
 test_alloc_fail({id}, {countdown}, {repeat})
-				空	使内存分配失败
-test_autochdir()		空	系统启动中启动 'autochdir'
-test_feedinput({string})	空	给输入缓冲区增加键序列
-test_garbagecollect_now()	空	为测试用，立即释放内存
-test_garbagecollect_soon()	空	为测试用，尽快释放内存
+				无	使内存分配失败
+test_autochdir()		无	系统启动中启动 'autochdir'
+test_feedinput({string})	无	给输入缓冲区增加键序列
+test_garbagecollect_now()	无	为测试用，立即释放内存
+test_garbagecollect_soon()	无	为测试用，尽快释放内存
 test_getvalue({string})		可变	得到内部变量的值
-test_ignore_error({expr})	空	忽略特定的错误
-test_null_blob()		blob	用作测试的空值
-test_null_channel()		通道	用作测试的空值
-test_null_dict()		字典	用作测试的空值
-test_null_job()			作业	用作测试的空值
-test_null_list()		列表	用作测试的空值
-test_null_partial()		函数引用	用作测试的空值
-test_null_string()		字符串	用作测试的空值
+test_ignore_error({expr})	无	忽略特定的错误
+test_null_blob()		blob	用作测试的空值 (null)
+test_null_channel()		通道	用作测试的空值 (null)
+test_null_dict()		字典	用作测试的空值 (null)
+test_null_job()			作业	用作测试的空值 (null)
+test_null_list()		列表	用作测试的空值 (null)
+test_null_partial()		函数引用	用作测试的空值 (null)
+test_null_string()		字符串	用作测试的空值 (null)
+test_unknown()			可变	用作测试的未知值
+test_void()			可变	且作测试的无值 (void)
 test_option_not_set({name})	无	复位指示选项已设置的标志位
-test_override({expr}, {val})    空	Vim 内部覆盖用作测试
+test_override({expr}, {val})    无	Vim 内部覆盖用作测试
 test_refcount({expr})		数值	得到 {expr} 的引用计数
 test_scrollbar({which}, {value}, {dragging})
 				无	为测试用，在 GUI 内滚动
 test_setmouse({row}, {col})	无	为测试用，设置鼠标位置
-test_settime({expr})		空	用作测试的当前时间
+test_srand_seed([seed])		无	为 srand() 测试用，设置种子
+test_settime({expr})		无	用作测试的当前时间
 timer_info([{id}])		列表	定时器信息
-timer_pause({id}, {pause})	空	暂停或继续定时器
+timer_pause({id}, {pause})	无	暂停或继续定时器
 timer_start({time}, {callback} [, {options}])
 				数值	新建定时器
-timer_stop({timer})		空	停止定时器
-timer_stopall()			空	停止所有定时器
+timer_stop({timer})		无	停止定时器
+timer_stopall()			无	停止所有定时器
 tolower({expr})			字符串	字符串 {expr} 变为小写
 toupper({expr})			字符串	字符串 {expr} 变为大写
 tr({src}, {fromstr}, {tostr})	字符串	把 {src} 里的 {fromstr} 字符翻译为
@@ -2642,6 +2651,7 @@ win_id2win({expr})		数值	从窗口 ID 获得窗口号
 win_screenpos({nr})		列表	得到窗口 {nr} 的屏幕位置
 win_splitmove({nr}, {target} [, {options}])
 				数值	移动窗口 {nr} 成为 {target} 的分割窗口
+win_type([{nr}])		字符串	窗口 {nr} 的类型
 winbufnr({nr})			数值	窗口 {nr} 的缓冲区号
 wincol()			数值	光标所在的窗口列
 winheight({nr})			数值	窗口 {nr} 的高度
@@ -3237,7 +3247,7 @@ complete_add({expr})				*complete_add()*
 
 		也可用作 |method|: >
 			GetMoreMatches()->complete_add()
-
+<
 							*complete_info()*
 complete_info([{what}])
 		返回关于插入模式补全信息的字典。见 |ins-completion|。
@@ -3556,6 +3566,16 @@ diff_hlID({lnum}, {col})				*diff_hlID()*
 
 		也可用作 |method|: >
 			GetLnum()->diff_hlID(col)
+
+
+echoraw({expr})						*echoraw()*
+		照原样输出 {expr}，包括非显示字符。可用于输出终端代码。例如，
+		要关闭 modifyOtherKeys: >
+			call echoraw(&t_TE)
+<		要再次打开之: >
+			call echoraw(&t_TI)
+<		使用时要小心，容易把终端搞乱。
+
 
 empty({expr})						*empty()*
 		如果 {expr} 为空，返回数值 1，否则返回 0。
@@ -6086,6 +6106,8 @@ match({expr}, {pat} [, {start} [, {count}]])			*match()*
 		|pattern| 说明可以接受的模式。
 		'ignorecase' 选项用来设定模式是否忽略大小写。_不_使用
 		'smartcase'。匹配总是假定置位了 'magic' 而 'cpoptions' 为空。
+		注意 优先考虑开始处的匹配，所以使用 "*" (任意数目的匹配) 时，
+		模式倾向于寻找开始处的零匹配而不是文本内部的多数目匹配。
 
 		也可用作 |method|: >
 			GetList()->match('word')
@@ -9044,6 +9066,21 @@ win_getid([{win} [, {tab}]])				*win_getid()*
 		也可用作 |method|: >
 			GetWinnr()->win_getid()
 
+
+win_gettype([{nr}])					*win_gettype()*
+		返回窗口类型:
+			"popup"		弹出窗口 |popup|
+			"command"	命令行窗口 |cmdwin|
+			(空)		正常窗口
+			"unknown"	窗口 {nr} 找不到
+
+		{nr} 省略时返回当前窗口的类型。
+		给出 {nr} 时返回给出窗口号或 |window-ID| 的窗口的类型。
+
+		另见 'buftype' 选项。在弹出窗口中运行终端时，'buftype' 为
+		"terminal" 而 win_gettype() 返回 "popup"。
+
+
 win_gotoid({expr})					*win_gotoid()*
 		转到 ID 为 {expr} 的窗口。可能会改变当前标签页。
 		如果成功返回 1，如果找不到这样的窗口，返回零。
@@ -9094,6 +9131,7 @@ win_splitmove({nr}, {target} [, {options}])		*win_splitmove()*
 		也可用作 |method|: >
 			GetWinid()->win_splitmove(target)
 <
+
 							*winbufnr()*
 winbufnr({nr})	返回数值，即窗口 {nr} 相关联的缓冲区号。{nr} 可以是窗口号或
 		|window-ID|。
@@ -9163,6 +9201,7 @@ winline()	返回数值，窗口光标所在的屏幕行，亦即，从窗口顶�
 
 							*winnr()*
 winnr([{arg}])	返回数值，当前窗口的编号。最上面的窗口的编号为 1。
+		弹出窗口返回零。
 
 		可选参数 {arg} 支持以下值:
 			$	返回最后一个窗口的编号 (即窗口的总数)。
@@ -9348,6 +9387,7 @@ browsefilter		编译时加入了 |browsefilter| 的支持。
 bsd			编译时使用了 BSD 家族的 OS (除了 macOS)。
 builtin_terms		编译时打开了一些内建终端。
 byte_offset		编译时加入了 'statusline' 中对 'o' 的支持。
+channel			编译时加入了 |channel| 和 |job| 的支持
 cindent			编译时加入了 'cindent' 的支持。
 clientserver		编译时加入了远程调用的支持。|clientserver|。
 clipboard		编译时加入了 'clipboard' 的支持。
@@ -9390,6 +9430,7 @@ gui_gnome		编译时加入了 Gnome 支持 (同时也定义了 gui_gtk)。
 gui_gtk			编译时加入了 GTK+ GUI (任何版本)。
 gui_gtk2		编译时加入了 GTK+ 2 GUI (同时也定义了 gui_gtk)。
 gui_gtk3		编译时加入了 GTK+ 3 GUI (同时也定义了 gui_gtk)。
+gui_haiku		编译时加入了 Haiku GUI。
 gui_mac			编译时加入了 Macintosh GUI。
 gui_macvim		编译时加入了 MacVim GUI。
 gui_motif		编译时加入了 Motif GUI。
@@ -9397,6 +9438,7 @@ gui_photon		编译时加入了 Photon GUI。
 gui_running		Vim 在 GUI 上运行，或者 GUI 将很快启动。
 gui_win32		编译时加入了 MS Windows Win32 GUI。
 gui_win32s		同上，使用了 Win32s 系统 (Windows 3.1)
+haiku			Vim 的 Haiku 版本。
 hangul_input		编译时加入了韩语输入的支持。|hangul|
 hpux			Vim 的 HP-UX 版本。
 iconv			可以使用 iconv() 进行转换。
@@ -9456,7 +9498,7 @@ python_dynamic		Python 2.x 接口已动态载入。|has-python|
 python3			Python 3.x 接口可用。|has-python|
 python3_compiled	编译时加入了 Python 3.x 接口。|has-python|
 python3_dynamic		Python 3.x 接口已动态载入。|has-python|
-pythonx			编译时加入了 |python_x| 接口。|has-pythonx|
+pythonx			Python 2.x 和/或 3.x 接口可用。|pythonx|
 qnx			Vim 的 QNX 版本。
 quickfix		编译时加入了 |quickfix| 的支持。
 reltime			编译时加入了 |reltime()| 的支持。
@@ -10344,10 +10386,10 @@ text...
 			令，执行从 ":finally" 之后继续。否则，或者在那以后遇到
 			了 ":endtry"，则检查是否存在 (动态的) 往外一层的
 			":try" 以及其相应的 ":finally" 等等。然后，脚本的处理
-			被终止。(函数定义里是否有 "abort" 参数都不相干。)
+			被终止。函数定义里是否有 "abort" 参数都不相干。
 			示例: >
-		:try | edit too much | finally | echo "cleanup" | endtry
-		:echo "impossible"	" 到不了这里，脚本在上面已经终止
+		try | call Unknown() | finally | echomsg "cleanup" | endtry
+		echomsg "not reached"
 <
 			另外，":try" 和 ":endtry" 之间的错误或者中断 (动态地)
 			被转换成一个例外。它的捕获过程如同它被 |:throw| 命令抛
@@ -10360,8 +10402,8 @@ text...
 			名，而 {errmsg} 是错误例外如果没有被捕获的时候会显示的
 			消息，它总以错误号开始。
 			示例: >
-		:try | sleep 100 | catch /^Vim:Interrupt$/ | endtry
-		:try | edit | catch /^Vim(edit):E\d\+/ | echo "error" | endtry
+		try | sleep 100 | catch /^Vim:Interrupt$/ | endtry
+		try | edit | catch /^Vim(edit):E\d\+/ | echo "error" | endtry
 <
 					*:cat* *:catch* *E603* *E604* *E605*
 :cat[ch] /{pattern}/	匹配 {pattern} 的例外抛出时，如果它没有被前一个
@@ -10489,6 +10531,9 @@ text...
 
 			此命令本可缩短为 `:ev` 或 `:eva`，但不易记，所以不提
 			供。
+
+			此命令不能后跟 "|" 加其它命令，因为 "|" 视为表达式的一
+			部分。
 
 
 							*:exe* *:execute*
