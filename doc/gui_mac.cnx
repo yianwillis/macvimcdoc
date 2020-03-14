@@ -430,6 +430,15 @@ MacVim 中的触控栏和工具栏类似 (见 |macvim-toolbar|)。区别在于�
 
 此功能只适用于带触控板的 Mac 设备。否则什么都不会显示。
 
+						    *macvim-touchbar-defaults*
+以下是 MacVim 设置的缺省触控栏按钮列表:
+
+					*macvim-touchbar-fullscreen*
+					*g:macvim_default_touchbar_fullscreen*
+EnterFullScreen		可用于切换 |'fullscreen'| 模式的触控栏按钮。要关闭之，
+ExitFullScreen		在 vimrc 文件里加入: >
+			  let g:macvim_default_touchbar_fullscreen=0
+
 ==============================================================================
 8. 对话框						*macvim-dialogs*
 
