@@ -4959,6 +4959,7 @@ LogiPat-flags	pi_logipat.cnx	/*LogiPat-flags*
 Lua	if_lua.cnx	/*Lua*
 M	motion.cnx	/*M*
 MDI	starting.cnx	/*MDI*
+MMAppearanceModeSelection	gui_mac.cnx	/*MMAppearanceModeSelection*
 MMCellWidthMultiplier	gui_mac.cnx	/*MMCellWidthMultiplier*
 MMDialogsTrackPwd	gui_mac.cnx	/*MMDialogsTrackPwd*
 MMDisableLaunchAnimation	gui_mac.cnx	/*MMDisableLaunchAnimation*
@@ -7728,12 +7729,15 @@ mac-vimfile	os_mac.cnx	/*mac-vimfile*
 macintosh	os_mac.cnx	/*macintosh*
 macro	map.cnx	/*macro*
 macvim	gui_mac.cnx	/*macvim*
+macvim-appearance	gui_mac.cnx	/*macvim-appearance*
+macvim-appearance-mode	gui_mac.cnx	/*macvim-appearance-mode*
 macvim-autocommands	gui_mac.cnx	/*macvim-autocommands*
 macvim-backspace	gui_mac.cnx	/*macvim-backspace*
 macvim-clientserver	remote.cnx	/*macvim-clientserver*
 macvim-colors	gui_mac.cnx	/*macvim-colors*
 macvim-colorscheme	gui_mac.cnx	/*macvim-colorscheme*
 macvim-commands	gui_mac.cnx	/*macvim-commands*
+macvim-dark-mode	gui_mac.cnx	/*macvim-dark-mode*
 macvim-default-menu	gui_mac.cnx	/*macvim-default-menu*
 macvim-delete	gui_mac.cnx	/*macvim-delete*
 macvim-dialogs	gui_mac.cnx	/*macvim-dialogs*

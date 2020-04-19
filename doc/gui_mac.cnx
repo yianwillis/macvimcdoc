@@ -1,4 +1,4 @@
-*gui_mac.txt*   For Vim version 8.1.  最近更新: 2020年1月
+*gui_mac.txt*   For Vim version 8.1.  最近更新: 2020年4月
 
 
 	   VIM 参考手册    by Bjorn Winckler
@@ -11,18 +11,19 @@ MacVim 图形用户介面					*macvim* *gui-macvim*
  1. MacVim 的不同之处		|macvim-differences|
  2. 启动 MacVim			|macvim-start|
  3. 首选项			|macvim-preferences|
- 4. 特殊颜色			|macvim-colors|
- 5. 菜单			|macvim-menus|
- 6. 工具栏			|macvim-toolbar|
- 7. 触控栏			|macvim-touchbar|
- 8. 对话框			|macvim-dialogs|
- 9. 系统服务			|macvim-services|
-10. mvim:// URL 处理程序	|macvim-url-handler|
-11. 键盘快捷键			|macvim-shortcuts|
-12. 触控板手势			|macvim-gestures|
-13. 国际化			|macvim-international|
-14. 已知漏洞/缺失功能		|macvim-todo|
-15. 提示			|macvim-hints|
+ 4. MacVim 外观			|macvim-appearance|
+ 5. 特殊颜色			|macvim-colors|
+ 6. 菜单			|macvim-menus|
+ 7. 工具栏			|macvim-toolbar|
+ 8. 触控栏			|macvim-touchbar|
+ 9. 对话框			|macvim-dialogs|
+10. 系统服务			|macvim-services|
+11. mvim:// URL 处理程序	|macvim-url-handler|
+12. 键盘快捷键			|macvim-shortcuts|
+13. 触控板手势			|macvim-gestures|
+14. 国际化			|macvim-international|
+15. 已知漏洞/缺失功能		|macvim-todo|
+16. 提示			|macvim-hints|
 
 其它相关的文档:
 |gui.txt|	用于 GUI 的通用条目。
@@ -215,6 +216,7 @@ MacVim 可以作为 '外部编辑器'，用于支持 ODB 编辑器协议 (或 '�
 *MMNoFontSubstitution*		关闭自动字体替换 [bool]
 *MMNoTitleBarWindow*		隐藏标题栏 [bool]
 *MMTitlebarAppearsTransparent*	打开透明标题栏 [bool]
+*MMAppearanceModeSelection*	深色模式选择 (|macvim-dark-mode|)[bool]
 *MMShareFindPboard*		将搜索文本分享到查找粘贴板 [bool]
 *MMShowAddTabButton*		在标签页行上打开 "add tab" 按钮 [bool]
 *MMTabMaxWidth*			标签最大宽度 [int]
@@ -250,7 +252,17 @@ MMLoginShellArgument (如设为 "-l")。最后，使用 "bash" 外壳时会自�
 "-l"。要覆盖此行为，设置 MMLoginShellArgument 为 "--"。
 
 ==============================================================================
-4. 特殊颜色						*macvim-colors*
+4. MacVim 外观						*macvim-appearance*
+
+				*macvim-appearance-mode* *macvim-dark-mode*
+MacVim 缺省使用系统外观模式 (浅色或深色)。不过，可以在首选项中手动强制 MacVim
+使用浅色或深色。第四个选项是让 MacVim 遵从 Vim 的 'background' 选项，这会更灵
+活一些，方便处理在系统首选项设置使用浅色模式下载入深色色彩方案之类的情况。如果
+标题栏设置为 "Transparent" (见 |MMTitlebarAppearsTransparent|)，这也是建议的设
+置。
+
+==============================================================================
+5. 特殊颜色						*macvim-colors*
 
 MacVim 在应用捆绑 (MacVim.app/Contents/Resources) 的 "Resources" 目录中的两个
 字典里定义颜色。可以通过修改这些文件来增加更多颜色。Vim 里访问时色彩的大小写不
@@ -287,7 +299,7 @@ MacVim 自带定制的色彩方案，而不用缺省的 Vim 色彩方案。色�
 改变窗口不在激活状态时的高亮色。
 
 ==============================================================================
-5. 菜单							*macvim-menus*
+6. 菜单							*macvim-menus*
 
 macOS 的菜单行为和其它平台稍有不同。因此，为 Vim 新增了两个命令。要理解这些命
 令，你必须先了解 macOS 的菜单工作方式。
@@ -388,7 +400,7 @@ _cycleWindows:			选择下个窗口 (类似于 <D-`>)
 _cycleWindowsBackwards:		选择上个窗口 (类似于 <D-S-`>)
 
 ==============================================================================
-6. 工具栏						*macvim-toolbar*
+7. 工具栏						*macvim-toolbar*
 
 MacVim 的工具栏和其它 GUI 的工作方式一致 (见 |gui-toolbar|)，但加上了两个分隔
 符项目 (见 |menu-separator|)。它们可以这样用: >
@@ -407,7 +419,7 @@ MacVim 的工具栏和其它 GUI 的工作方式一致 (见 |gui-toolbar|)，但
 来代替。
 
 ==============================================================================
-7. 触控栏						*macvim-touchbar*
+8. 触控栏						*macvim-touchbar*
 
 MacVim 中的触控栏和工具栏类似 (见 |macvim-toolbar|)。区别在于使用特殊菜单
 "TouchBar" 而不是 "ToolBar": >
@@ -440,7 +452,7 @@ ExitFullScreen		在 vimrc 文件里加入: >
 			  let g:macvim_default_touchbar_fullscreen=0
 
 ==============================================================================
-8. 对话框						*macvim-dialogs*
+9. 对话框						*macvim-dialogs*
 
 有两种方式可以用键盘控制对话框。对话框的每个按钮缺省和一个键绑定。蓝色高亮的按
 钮和 Enter 绑定，标题为 "Cancel" 的按钮和 Escape 绑定，而标题为 "Don't Save"
@@ -452,7 +464,7 @@ ExitFullScreen		在 vimrc 文件里加入: >
 然后用空格键选择当前按钮。蓝色边框指示当前按钮。
 
 ==============================================================================
-9. 系统服务						*macvim-services*
+10. 系统服务						*macvim-services*
 
 MacVim 支持两种系统服务。可以通过服务菜单的 MacVim 子菜单或右击选择进行访问。
 要使用服务，MacVim.app 必须在 /Applications 目录下。(可以先退出登录再重新登录
@@ -466,7 +478,7 @@ MacVim 支持两种系统服务。可以通过服务菜单的 MacVim 子菜单�
 这些服务遵从 General 首选的 "Open files from applications" 设定。
 
 ==============================================================================
-10. mvim:// URL 处理程序			*mvim://* *macvim-url-handler*
+11. mvim:// URL 处理程序			*mvim://* *macvim-url-handler*
 
 MacVim 支持 "mvim://" URL 的定制 URL 处理程序。此处理程序应该与以下文档所述的
 TextMate 的 URL 方案兼容 >
@@ -487,7 +499,7 @@ TextMate 的 URL 方案兼容 >
 注意 url 必须是指向已存在的本地文件的 file:// url。
 
 ==============================================================================
-11. 键盘快捷键						*macvim-shortcuts*
+12. 键盘快捷键						*macvim-shortcuts*
 
 多数 MacVim 的键盘快捷键和菜单项目绑定，可以通过菜单查看 (|macvim-menus| 说明
 如何建立自己的菜单快捷键，|cmd-key| 说明如果映射自己的命令到 Cmd-key 快捷键)。
@@ -555,7 +567,7 @@ Alt-Down		移动光标后退一个段落 (见 |alt-movement|)。
 - 一些命令快捷键是 MacVim 设置的，见 |cmd-movement|。
 
 ==============================================================================
-12. 触控板手势						*macvim-gestures*
+13. 触控板手势						*macvim-gestures*
 
 MacVim 支持触控板滑动手势。缺省可用于帮助里后退/前进的导航 (试试！)。
 
@@ -586,7 +598,7 @@ MacVim 支持触控板滑动手势。缺省可用于帮助里后退/前进的导
 参见 |key-mapping| 章节，有更多如何对键映射的帮助。
 
 ==============================================================================
-13. 国际化						*macvim-international*
+14. 国际化						*macvim-international*
 
 编辑非英语文本时，如果能把普通和插入模式的键盘布局分开，可能较为方便。在 macOS
 10.5 或之后，这可通过 'imd' 选项支持 (10.4 上 'imd' 选项的支持不太有用，它只能
@@ -602,9 +614,9 @@ MacVim 支持触控板滑动手势。缺省可用于帮助里后退/前进的导
 ":set imd"，然后 ":set noimd"。
 
 ==============================================================================
-14. 已知漏洞/缺失功能					*macvim-todo*
+15. 已知漏洞/缺失功能					*macvim-todo*
 
-此清单不一定完整，只列出最常见的漏洞/缺失功能。
+此清单不一定完整，这里只列出最常见的漏洞/缺失功能。
 
 - macOS Mojave (10.14) 里缺省渲染器 (Core Text renderer) 有性能问题，滚动不如
   之前 macOS 版本 (10.13 或更低) 的流畅。
@@ -629,7 +641,7 @@ MacVim 支持触控板滑动手势。缺省可用于帮助里后退/前进的导
 这也是提出需求请求和关于 MacVim 的通用问题提问的最好的地方。
 
 ==============================================================================
-15. 提示						*macvim-hints*
+16. 提示						*macvim-hints*
 
 本小节给出一些通用的 (未必和 MacVim 相关) 提示。
 
