@@ -1,4 +1,4 @@
-*os_vms.txt*    适用于 Vim 8.2 版本。	最近更新: 2020年1月
+*os_vms.txt*    适用于 Vim 9.0 版本。	最近更新: 2022年7月
 
 
 		  VIM 参考手册
@@ -401,7 +401,6 @@ Terminal entry not found in termcap
     builtin_gui
     builtin_riscos
     builtin_amiga
-    builtin_beos-ansi
     builtin_ansi
     builtin_vt320
     builtin_vt52
@@ -553,13 +552,13 @@ http://www.polarhome.com/vim/files/gnu_tools.zip。我建议把它解压到一�
 	function MyDiff()
 	   let opt = ""
 	   if &diffopt =~ "icase"
-	     let opt = opt . "-i "
+	     let opt = opt .. "-i "
 	   endif
 	   if &diffopt =~ "iwhite"
-	     let opt = opt . "-b "
+	     let opt = opt .. "-b "
 	   endif
-	   silent execute "!mc GNU:diff.exe -a " . opt . v:fname_in . " " .  v:fname_new .
-		\  " > " . v:fname_out
+	   silent execute "!mc GNU:diff.exe -a " .. opt .. v:fname_in .. " " ..  v:fname_new ..
+		\  " > " .. v:fname_out
 	endfunction
       endif
 
@@ -706,6 +705,15 @@ View of Cluster from system ID 11655  node: TOR                                 
 ==============================================================================
 
 9. VMS 相关修改记录 (英文)				*vms-changes*
+
+Version 8.2
+- make all changes needed for clean compile build of v8.2 on VMS on all platforms
+- fix the call mkdir bug (vicente_polo@yahoo.es)
+- test on VSI OpenVMS Alpha and Itanium platforms
+- added LUA support
+- added XPM support - Motif GUI with toolbar on all platforms
+- XPM v3.4.11 libraries for IA64, AXP and VAX are added
+- start integrating the new test scripts
 
 Version 8.1
 - make necessary changes to build v8.1 on VMS

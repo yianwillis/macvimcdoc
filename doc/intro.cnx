@@ -1,4 +1,4 @@
-*intro.txt*     适用于 Vim 8.2 版本。	最近更新: 2019年12月
+*intro.txt*     适用于 Vim 9.0 版本。	最近更新: 2022年7月
 
 
 		  VIM 参考手册    by Bram Moolenaar
@@ -109,13 +109,14 @@ http://www.vim.org/maillist.php
 
 报告漏洞 (bug):				*bugs* *bug-reports* *bugreport.vim*
 
-有两种报告漏洞的方法，两个都可以:
-1. 发送漏洞报告至: Vim Developers <vim-dev@vim.org>
+有三种报告漏洞的方法，两个都可以:
+1. 在 GitHub 上提交新议题: https://github.com/vim/vim/issues
+   文本会转发到 vim-dev 邮件列表。
+2. 运行时文件相关的问题，在头部找找电邮地址或其它方式来向维护者报告问题。
+3. 发送漏洞报告至: Vim Developers <vim-dev@vim.org>
    这是一个邮件列表，你需要先成为成员，而很多人会看到邮件。如果某些情况下例如
    关于安全方面的问题，你不希望如此，可发送邮件到 <bugs@vim.org>，只有 Vim 维
    护者 (Bram 本人) 才看得到。
-2. 在 GitHub 上提交新议题: https://github.com/vim/vim/issues
-   文本会转发到 vim-dev 邮件列表。
 
 请尽量使用精练的语言描述；回答邮件里的问题势必会占用维护者开发 Vim 的时间！要
 给出可重现的导致漏洞的例子，并且尽可能找出是哪个选项或其它东西触发该漏洞。
@@ -191,7 +192,7 @@ Vim 工作过的人士。还有许多朋友通过发补丁、对 Vim 提出建�
 	Daniel Elstner		GTK+ 2 移植
 	Eric Fischer		Mac 系统移植、'cindent'、其它的改进
 	Benji Fisher		解答了许多用户问题
-	Bill Foster		Athena 图形界面移植
+	Bill Foster		Athena 图形界面移植 (后来删除了)
 	Google			让我每星期可以在 Vim 上工作一天
 	Loic Grenie		xvim (多窗口思想)
 	Sven Guckes		Vim 促进者和前网站维护者
@@ -367,7 +368,6 @@ CTRL-{char}	作为控制字符输入的 {char}；也就是说，按住 CTRL 键�
 <Tab>		制表符			CTRL-I	  9	*tab* *Tab*
 							*linefeed*
 <NL>		换行符			CTRL-J	 10 (用作 <Nul>)
-<FF>		换页符			CTRL-L	 12	*formfeed*
 <CR>		回车符			CTRL-M	 13	*carriage-return*
 <Return>	同 <CR>					*<Return>*
 <Enter>		同 <CR>					*<Enter>*
@@ -380,7 +380,7 @@ CTRL-{char}	作为控制字符输入的 {char}；也就是说，按住 CTRL 键�
 <CSI>		命令序列引入		ALT-Esc	155	*<CSI>*
 <xCSI>		图形界面的 CSI				*<xCSI>*
 
-<EOL>		行尾 (可以是 <CR>、<LF> 或 <CR><LF>，
+<EOL>		行尾 (可以是 <CR>、<NL> 或 <CR><NL>，
 		根据不同的系统和 'fileformat' 而定)	*<EOL>*
 
 <Up>		光标上移键			*cursor-up* *cursor_up*
@@ -599,7 +599,7 @@ Ex		 :vi	  --	  --	 --	    --	      --
 另外，CTRL-\ CTRL-N 或 <C-\><C-N> 可以用来从其它模式切换到普通模式。这样可以确
 保 Vim 处于普通模式而不会像 <Esc> 那样产生响声。然而，它不能用在 Ex 模式。当用
 在一个需要参数的命令，诸如 |f| 、|m| 等之后，等待时间由 'ttimeoutlen' 决定。
-焦点在终端窗口时，CTRL-\ CTRL-N 只为一个命令切换到普通模式，见
+焦点在终端窗口时，CTRL-\ CTRL-N 切换到普通模式，直到键入某编辑命令为止，见
 |t_CTRL-\_CTRL-N|。
 
 	*CTRL-\_CTRL-G* *i_CTRL-\_CTRL-G* *c_CTRL-\_CTRL-G* *v_CTRL-\_CTRL-G*
@@ -615,16 +615,18 @@ Q			切换至 "Ex" 模式。有点像一个接一个的 ":" 命令，除了:
 			- 映射和缩写无效。
 			实际上，你正在使用一个 "标准的" 行编辑器。(<Del> 或
 			<BS> 删除一个字符，CTRL-U 删除整行)。
-			如果使用 "ex" 调用 Vim，Vim 缺省进入该模式。
+			如果使用 "ex" 或 |-e| 命令行参数调用 Vim，Vim 缺省进入
+			该模式。
 			用 ":vi" 命令 |:visual| 退出 "Ex" 模式。
 			注意: 老版本的 Vim 里，"Q" 用来排版文本，现在那个功能
-			使用 |gq| 。但是如果你使用 |vimrc_example.vim|，那么
-			"Q" 会和 "gq" 一样。
+			使用 |gq| 。但是如果你使用 |vimrc_example.vim| 脚本或
+			|defaults.vim|，那么 "Q" 会和 "gq" 一样。选择模式除
+			外。
 
 					*gQ*
 gQ			同 "Q" 一样切换到 "Ex" 模式，但与一条接一条的 ":" 命令
 			相当。所有的行编辑、补全等功能都可用。
-			用 ":vi" 命令 |:visual| 退出 "Ex" 模式。
+			用 `:vi` 命令 (`:visual`) 退出 "Ex" 模式。
 
 ==============================================================================
 7. 窗口里的东东					*window-contents*

@@ -1,4 +1,4 @@
-*spell.txt*	适用于 Vim 8.2 版本。	最近更新: 2020年1月
+*spell.txt*	适用于 Vim 9.0 版本。	最近更新: 2022年8月
 
 
 		  VIM 参考手册	  by Bram Moolenaar
@@ -90,7 +90,7 @@ zuW							*zuG* *zuW*
 zuG			撤销 |zW| 和 |zG|，从内部单词列表里删除单词。计数的使
 			用方法同 |zg|。
 
-							*:spe* *:spellgood*
+						*:spe* *:spellgood* *E1280*
 :[count]spe[llgood] {word}
 			把 {word} 作为一个好词加入到 'spellfile'，类似 |zg|。
 			如果没有计数，使用第一个名字项目，计数为 2 使用第二个
@@ -116,8 +116,8 @@ zuG			撤销 |zW| 和 |zG|，从内部单词列表里删除单词。计数的使
 			没有普通模式命令来标记单词为罕见词，因为这是很不常用的
 			命令，而所有直观的命令已经被用掉了。如果你要，可以自动
 			增加映射，如: >
-		nnoremap z?  :exe ':spellrare  ' . expand('<cWORD>')<CR>
-		nnoremap z/  :exe ':spellrare! ' . expand('<cWORD>')<CR>
+		nnoremap z?  :exe ':spellrare  ' .. expand('<cWORD>')<CR>
+		nnoremap z/  :exe ':spellrare! ' .. expand('<cWORD>')<CR>
 <			|:spellundo|、|zuw| 或 |zuW| 可用来撤销此行为。
 
 :spellr[rare]! {word}	把 {word} 作为一个罕见词加入内部单词列表，类似 |zW|。
@@ -180,6 +180,8 @@ z=			为光标所在/之后的单词提供正确拼写单词的建议。即使�
 'spellcapcheck' 选项用来检查句子第一个单词是否以大写字母开头。这不用于文件的首
 个单词。如果句子之后立即换行，下一行的高亮可能被延迟。如果需要的话，用
 |CTRL-L|。另见 |set-spc-auto| 了解如何在设置 'spelllang' 时自动设置本选项。
+
+'spelloptions' 选项有更多的影响拼写检查的工作方式的一些标志位。
 
 Vim 计算好词的使用次数并用来对建议进行排序: 出现过的单词有较小的奖励，经常见到
 的单词有较大的奖励。字缀文件里 COMMON 项目也用来定义常用词，这样新文件或短文件
@@ -541,10 +543,11 @@ Vim 会报告重复单词的个数。这可能是单词列表里的错误，但�
 供你下载拼写文件的机会。你只要按照指示去做就可以了，它会告诉你把文件写到哪里
 (为此，'runtimepath' 中必须要有一个可写的目录)。
 
-包含在该插件里用于寻找拼写文件的缺省位置使用 Vim 的 ftp 服务器。如果你想用其它
-位置或者其它协议，设置 g:spellfile_URL 变量为保存拼写文件目录的位置。|netrw|
-插件用来得到该文件，那里提供了 URL 的格式说明。例如: >
-	let g:spellfile_URL = 'http://ftp.vim.org/vim/runtime/spell'
+该插件里，用于寻找拼写文件的缺省位置使用 Vim 的 ftp 服务器。为安全起见，使用
+SSL (https://) 协议。如果你想用其它位置或者其它协议，设置 g:spellfile_URL 变量
+为保存拼写文件目录的位置。可用 http:// 或 ftp://，但请自行承担安全风险。
+|netrw| 插件用来得到该文件，那里提供了 URL 的格式说明。例如: >
+	let g:spellfile_URL = 'https://ftp.nluug.nl/vim/runtime/spell'
 你可能需要转义字符。
 
 关于下载语言，该插件只会询问你一次。如果你想再做一次，重启 Vim 或者设置
@@ -1077,7 +1080,7 @@ COMPOUNDRULE 项目可以出现多次。它的参数包含一或多个组。每�
 	+	该组出现一或多次，例如，c+
 	?	该组出现零或一次，例如，x?
 
-这和正规表达式的语法相似 (但不完全相同！)。一些例子如下，这里同时列出它们所要
+这和正则表达式的语法相似 (但不完全相同！)。一些例子如下，这里同时列出它们所要
 求的标志位序列:
     COMPOUNDRULE x+	   x xx xxx 等
     COMPOUNDRULE yz	   yz
@@ -1213,7 +1216,7 @@ Vim 会试图判断哪里单词结束而下一个单词开始。如果有拼写�
 							*spell-COMMON*
 可用 COMMON 项目指定常用词。编辑短文件时，它会提供更好的建议。例如:
 
-	COMMON  the of to and a in is it you that he was for on are ~
+	COMMON  the of to and a in is it you that he she was for on are ~
 
 这些单词必须用空格分隔，一行至多 25 个。
 如果 ":mkspell" 命令指定多个区域，所有区域的常用词进行合并并用于所有区域。

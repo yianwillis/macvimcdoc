@@ -1,4 +1,4 @@
-*index.txt*     适用于 Vim 8.2 版本。	最近更新: 2020年3月
+*index.txt*     适用于 Vim 9.0 版本。	最近更新: 2022年7月
 
 
 		  VIM 参考手册    by Bram Moolenaar
@@ -77,7 +77,7 @@ Vim 变量的列表可见 |vim-variable|。
 				按本义插入寄存器内容，而且不自动缩进
 |i_CTRL-R_CTRL-P| CTRL-R CTRL-P {register}
 				按本义插入寄存器内容，而且修正缩进
-		CTRL-S		(用于终端控制流)
+		CTRL-S		不用，或用于终端控制流
 |i_CTRL-T|	CTRL-T		在当前行插入一个 shiftwidth 的缩进
 |i_CTRL-U|	CTRL-U		删除当前行的所有输入字符
 |i_CTRL-V|	CTRL-V {char}	按本义插入下一个非数字字符
@@ -155,6 +155,7 @@ CTRL-X 子模式的命令					*i_CTRL-X_index*
 |i_CTRL-X_CTRL-U|	CTRL-X CTRL-U	用 'completefunc' 补全
 |i_CTRL-X_CTRL-V|	CTRL-X CTRL-V	如同 : 命令行那样补全
 |i_CTRL-X_CTRL-Y|	CTRL-X CTRL-Y	下滚
+|i_CTRL-X_CTRL-Z|	CTRL-X CTRL-Z	停止补全，文本维持原状
 |i_CTRL-X_CTRL-]|	CTRL-X CTRL-]	补全标签
 |i_CTRL-X_s|		CTRL-X s	拼写建议
 
@@ -207,9 +208,9 @@ SECTION	 可能以 '}' 而不是 '{' 开始的小节
 |CTRL-N|	CTRL-N		1  同 "j"
 |CTRL-O|	CTRL-O		1  跳转到跳转表里第 N 个较旧的项目
 |CTRL-P|	CTRL-P		1  同 "k"
-		CTRL-Q		   (用于终端控制流)
+		CTRL-Q		   不用，或用于终端控制流
 |CTRL-R|	CTRL-R		2  重做 'u' 撤销的改变
-		CTRL-S		   (用于终端控制流)
+		CTRL-S		   不用，或用于终端控制流
 |CTRL-T|	CTRL-T		   跳转到标签列表的第 N 个较老的标签 (Tag)
 |CTRL-U|	CTRL-U		   窗口上滚 (Upwards) N 行 (缺省: 半屏)
 |CTRL-V|	CTRL-V		   开始面向列块的可视 (Visual) 模式
@@ -230,8 +231,8 @@ SECTION	 可能以 '}' 而不是 '{' 开始的小节
 |!|		!{motion}{filter}
 				2  用 {filter} 命令过滤 Nmove 文本
 |!!|		!!{filter}	2  用 {filter} 命令过滤 N 行
-|quote|		"{a-zA-Z0-9.%#:-"}  指定下次删除、抽出或放置使用的寄存器
-				   {a-zA-Z0-9.%#:-"} (大写用于添加)
+|quote|		"{register}	   指定下次删除、抽出或放置使用的寄存器
+				   {register}
 				   ({.%#:} 只能用于放置)
 |#|		#		1  反向搜索第 N 次出现的光标所在的标识符
 |$|		$		1  光标移动到往下第 N 行的行尾之后
@@ -264,7 +265,7 @@ SECTION	 可能以 '}' 而不是 '{' 开始的小节
 |.|		.		2  重复最近的改变，其计数被 N 取代
 |/|		/{pattern}<CR>	1  正向搜索第 N 次出现的 {pattern}
 |/<CR>|		/<CR>		1  正向搜索前次搜索使用的 {pattern}
-|count|		0		1  光标移动到本行的首个字符上
+|0|		0		1  光标移动到本行的首个字符上
 |count|		1		   附加于命令前，给出计数
 |count|		2			"
 |count|		3			"
@@ -319,8 +320,8 @@ SECTION	 可能以 '}' 而不是 '{' 开始的小节
 |W|		W		1  光标前移 N 个 WORD
 |X|		["x]X		2  删除光标前的 N 个字符 [到寄存器 x]
 |Y|		["x]Y		   抽出 N 行 [到寄存器 x]；同 "yy"
-|ZZ|		ZZ		   如果修改过，保存当前文件，然后退出
-|ZQ|		ZQ		   无条件退出当前文件
+|ZZ|		ZZ		   如果缓冲区修改过则写入，然后关闭窗口
+|ZQ|		ZQ		   关闭窗口但不写入
 |[|		[{char}		   方括号命令 (见下 |[|)
 		\		   不用
 |]|		]{char}		   方括号命令 (见下 |]|)
@@ -387,6 +388,7 @@ SECTION	 可能以 '}' 而不是 '{' 开始的小节
 |<C-LeftMouse>|	<C-LeftMouse>	   ":ta" 到鼠标点击所在的单词上
 |<C-Right>|	<C-Right>	1  同 "w"
 |<C-RightMouse>| <C-RightMouse>	   同 "CTRL-T"
+|<C-Tab>|	<C-Tab>		   同 "g<Tab>"
 |<Del>|		["x]<Del>	2  同 "x"
 |N<Del>|	{count}<Del>	   删除 {count} 最后的一位数字
 |<Down>|	<Down>		1  同 "j"
@@ -524,6 +526,7 @@ SECTION	 可能以 '}' 而不是 '{' 开始的小节
 				   到文件名后给出的行号上。
 |CTRL-W_gt|	CTRL-W g t	   同 `gt`: 跳转到后一个标签页
 |CTRL-W_gT|	CTRL-W g T	   同 `gT`: 跳转到前一个标签页
+|CTRL-W_g<Tab>|	CTRL-W g <Tab>	   同 |g<Tab>|: 跳转到最近访问的标签页
 |CTRL-W_h|	CTRL-W h	   跳转到左面第 N 个的窗口 (在首个窗口上停止)
 |CTRL-W_i|	CTRL-W i	   分割窗口并跳转到光标所在的标识符的声明上
 |CTRL-W_j|	CTRL-W j	   跳转到下面第 N 个的窗口 (在末个窗口上停止)
@@ -653,8 +656,8 @@ SECTION	 可能以 '}' 而不是 '{' 开始的小节
 |gJ|		gJ		2  连接行，不插入空格
 |gN|		gN	      1,2  使用前次搜索模式搜索前一个匹配，并可视选择
 				   之
-|gP|		["x]gP		2  在光标签放置文本 [从寄存器 x] N 次，光标留
-				   在插入文本之后
+|gP|		["x]gP		2  在光标之前放置文本 [从寄存器 x] N 次，光标
+				   留在插入文本之后
 |gQ|		gQ		   Vim 编辑时进入 "Ex" 模式
 |gR|		gR		2  进入虚拟替换模式
 |gT|		gT		   转到前一个标签页
@@ -702,6 +705,7 @@ SECTION	 可能以 '}' 而不是 '{' 开始的小节
 |g<LeftMouse>|	g<LeftMouse>	   同 <C-LeftMouse>
 		g<MiddleMouse>	   同 <C-MiddleMouse>
 |g<RightMouse>|	g<RightMouse>	   同 <C-RightMouse>
+|g<Tab>|	g<Tab>		   跳转到最近访问的标签页。
 |g<Up>|		g<Up>		1  同 "gk"
 
 ==============================================================================
@@ -722,14 +726,14 @@ SECTION	 可能以 '}' 而不是 '{' 开始的小节
 |zD|		zD		   递归删除折叠
 |zE|		zE		   除去所有折叠
 |zF|		zF		   为 N 行建立折叠
-|zG|		zG		   把单词标记为拼写正确 (good)
+|zG|		zG		   临时把单词标记为拼写正确 (good)
 |zH|		zH		   'wrap' 关闭时向右滚屏半个屏幕宽度
 |zL|		zL		   'wrap' 关闭时向左滚屏半个屏幕宽度
 |zM|		zM		   设置 'foldlevel' 为零
 |zN|		zN		   置位 'foldenable'
 |zO|		zO		   递归打开折叠
 |zR|		zR		   设置 'foldlevel' 为最大折叠级别
-|zW|		zW		   把单词标记为拼写错误 (wrong)
+|zW|		zW		   临时把单词标记为拼写错误 (wrong)
 |zX|		zX		   重新应用 'foldlevel'
 |z^|		z^		   光标移动到第 N 行 (缺省为窗口之前的一行)，
 				   其它同 "z-"
@@ -740,7 +744,7 @@ SECTION	 可能以 '}' 而不是 '{' 开始的小节
 |ze|		ze		   'wrap' 关闭时，水平滚动使得光标定位到屏幕的
 				   尾部 (最右侧)
 |zf|		zf{motion}	   为 Nmove 文本建立折叠
-|zg|		zg		   把单词标记为拼写正确 (good)
+|zg|		zg		   永久把单词标记为拼写正确 (good)
 |zh|		zh		   'wrap' 关闭时，水平右滚屏幕 N 个字符
 |zi|		zi		   切换 'foldenable'
 |zj|		zj		1  移动到后一个折叠的开始处
@@ -749,6 +753,8 @@ SECTION	 可能以 '}' 而不是 '{' 开始的小节
 |zm|		zm		   从 'foldlevel' 减一
 |zn|		zn		   复位 'foldenable'
 |zo|		zo		   打开折叠
+|zp|		zp		   列块模式下粘贴而不带拖尾空白
+|zP|		zP		   列块模式下粘贴而不带拖尾空白
 |zr|		zr		   给 'foldlevel' 加一
 |zs|		zs		   'wrap' 关闭时，水平滚动使得光标定位到屏幕的
 				   起始处 (最左侧)
@@ -757,9 +763,10 @@ SECTION	 可能以 '}' 而不是 '{' 开始的小节
 |zug|		zug		   撤销 |zg|
 |zuW|		zuW		   撤销 |zW|
 |zuG|		zuG		   撤销 |zG|
-|zw|		zw		   把单词标记为拼写错误 (wrong)
+|zw|		zw		   永久把单词标记为拼写错误 (wrong)
 |zv|		zv		   打开足够的折叠，使得当前行可见
 |zx|		zx		   重新应用 'foldlevel' 然后执行 "zv"
+|zy|		zy		   抽出而不带拖尾空白
 |zz|		zz		   重画，光标移动到窗口的中间行
 |z<Left>|	z<Left>		   同 "zh"
 |z<Right>|	z<Right>	   同 "zl"
@@ -806,6 +813,7 @@ SECTION	 可能以 '}' 而不是 '{' 开始的小节
 |v_J|		J		2  连接高亮行
 |v_K|		K		   在高亮区域上运行 'keywordprg'
 |v_O|		O		   水平移动到区域的另外一侧
+|v_P|		P		   用寄存器内容替换高亮区域；不改动寄存器
 		Q		   不启动 Ex 模式
 |v_R|		R		2  删除高亮行并开始插入
 |v_S|		S		2  删除高亮行并开始插入
@@ -860,6 +868,8 @@ SECTION	 可能以 '}' 而不是 '{' 开始的小节
 |v_i{|		i{		   同 iB
 |v_i}|		i}		   同 iB
 |v_o|		o		   移动光标到区域的另一侧
+|v_p|		p		   用寄存器内容替换高亮区域；删除无名寄存器的
+				   文本
 |v_r|		r		2  用字符替换高亮区域
 |v_s|		s		2  删除高亮区域，并开始插入
 |v_u|		u		2  使得高亮区域全变小写
@@ -913,7 +923,7 @@ SECTION	 可能以 '}' 而不是 '{' 开始的小节
 |c_CTRL-R_CTRL-O| CTRL-R CTRL-O {regname}
 				按本义插入寄存器的内容或特殊对象到光标所在的地
 				方
-		CTRL-S		(用于终端控制流)
+		CTRL-S		不用，或用于终端控制流
 |c_CTRL-T|	CTRL-T		'incsearch' 激活时，前个匹配
 |c_CTRL-U|	CTRL-U		删除所有字符
 |c_CTRL-V|	CTRL-V		按本义插入下一个非数字字符，或者插入其后三位数
@@ -966,7 +976,7 @@ SECTION	 可能以 '}' 而不是 '{' 开始的小节
 |t_CTRL-W_:|	CTRL-W :	输入 Ex 命令
 |t_CTRL-W_.|	CTRL-W .	在终端中输入 CTRL-W
 		CTRL-W CTRL-\	给终端中的作业发送 CTRL-\
-|t_CTRL-W_quote|  CTRL-W " {0-9a-z"%#*:=}
+|t_CTRL-W_quote|  CTRL-W " {register}
 				在终端中粘贴寄存器
 |t_CTRL-W_CTRL-C| CTRL-W CTRL-C	强制结束作业
 |t_CTRL-W_CTRL-W| CTRL-W CTRL-W	移动焦点到下个窗口
@@ -991,7 +1001,7 @@ SECTION	 可能以 '}' 而不是 '{' 开始的小节
 |:&|		:&		重复前次的 ":substitute"
 |:star|		:*		执行寄存器的内容
 |:<|		:<		将行左移一个 'shiftwidth'
-|:=|		:=		显示光标所在的行号
+|:=|		:=		显示末行的行号
 |:>|		:>		将行右移一个 'shiftwidth'
 |:@|		:@		执行寄存器的内容
 |:@@|		:@@		重复前次的 ":@"
@@ -1007,6 +1017,7 @@ SECTION	 可能以 '}' 而不是 '{' 开始的小节
 |:anoremenu|	:an[oremenu]	为所有模式输入菜单项，不会被重新映射
 |:args|		:ar[gs]		显示参数列表
 |:argadd|	:arga[dd]	添加项目到参数列表中
+|:argdedupe|	:argded[upe]	删除参数列表里的重复项目
 |:argdelete|	:argd[elete]	从参数列表中删除项目
 |:argedit|	:arge[dit]	添加项目到参数列表中并编辑之
 |:argdo|	:argdo		在参数列表上的所有项目上执行一个命令
@@ -1021,6 +1032,7 @@ SECTION	 可能以 '}' 而不是 '{' 开始的小节
 |:bNext|	:bN[ext]	转到缓冲区列表里的前一个缓冲区
 |:ball|		:ba[ll]		为缓冲区列表里的每个缓冲区打开一个窗口
 |:badd|		:bad[d]		添加缓冲区到缓冲区列表
+|:balt|		:balt		同 ":badd" 且同时设置轮换文件
 |:bdelete|	:bd[elete]	从缓冲区列表删除缓冲区
 |:behave|	:be[have]	设置鼠标和选择行为
 |:belowright|	:bel[owright]	使得分割的窗口出现在右侧或者下方
@@ -1110,6 +1122,7 @@ SECTION	 可能以 '}' 而不是 '{' 开始的小节
 |:debug|	:deb[ug]	在调试模式执行命令
 |:debuggreedy|	:debugg[reedy]	从正常的输入那里读取调试模式命令
 |:def|		:def		定义 Vim9 用户函数
+|:defcompile|	:defc[ompile]	编译当前脚本中的 Vim9 用户函数
 |:delcommand|	:delc[ommand]	删除用户自定的命令
 |:delfunction|	:delf[unction]	删除用户函数
 |:delmarks|	:delm[arks]	删除位置标记
@@ -1135,6 +1148,7 @@ SECTION	 可能以 '}' 而不是 '{' 开始的小节
 |:edit|		:e[dit]		编辑文件
 |:earlier|	:ea[rlier]	回到旧的改变，撤销
 |:echo|		:ec[ho]		回显表达式结果
+|:echoconsole|	:echoc[onsole]	同 :echomsg，但写到标准输出
 |:echoerr|	:echoe[rr]	类似于 :echo，如同错误一样显示和使用历史
 |:echohl|	:echoh[l]	为 echo 等命令设置高亮
 |:echomsg|	:echom[sg]	同 :echo，在历史里放置消息
@@ -1149,6 +1163,7 @@ SECTION	 可能以 '}' 而不是 '{' 开始的小节
 |:endtry|	:endt[ry]	结束最近的 :try
 |:endwhile|	:endw[hile]	结束最近的 :while
 |:enew|		:ene[w]		编辑新的无名缓冲区
+|:eval|		:ev[al]		计算表达式并放弃其值
 |:ex|		:ex		同 ":edit"
 |:execute|	:exe[cute]	执行表达式的结果产生的字符串
 |:exit|		:exi[t]		同 ":xit"
@@ -1159,6 +1174,7 @@ SECTION	 可能以 '}' 而不是 '{' 开始的小节
 |:filetype|	:filet[ype]	切换文件类型检测的打开/关闭
 |:filter|	:filt[er]	过滤跟随的命令的输出结果
 |:find|		:fin[d]		在 'path' 里找寻文件并编辑之
+|:final|	:final		在 Vim9 中声明不可更改的变量
 |:finally|	:fina[lly]	:try 命令的一部分
 |:finish|	:fini[sh]	退出 Vim 脚本的执行
 |:first|	:fir[st]	转到参数列表的首个文件
@@ -1234,6 +1250,7 @@ SECTION	 可能以 '}' 而不是 '{' 开始的小节
 |:lfdo|		:lfd[o]		为每个位置列表的文件执行命令
 |:left|		:le[ft]		左对齐行
 |:leftabove|	:lefta[bove]	使得分割的窗口出现在左侧或者上方
+|:legacy|	:leg[acy]	使后面一个命令应用老式脚本语法
 |:let|		:let		给变量或选项赋值
 |:lexpr|	:lex[pr]	从表达式里读取位置并跳转到其中的首个位置
 |:lfile|	:lf[ile]	从文件里读取位置并跳转到其中的首个位置
@@ -1417,6 +1434,7 @@ SECTION	 可能以 '}' 而不是 '{' 开始的小节
 |:sign|		:sig[n]		操作标号
 |:silent|	:sil[ent]	安静地运行命令
 |:sleep|	:sl[eep]	几秒内不作任何事
+|:sleep!|	:sl[eep]!	几秒内不作任何事，光标也不可见
 |:slast|	:sla[st]	分割窗口并转到参数列表的末个文件
 |:smagic|	:sm[agic]	带 'magic' 的 :substitute
 |:smap|		:smap		类似于 ":map"，但用于选择模式
@@ -1475,9 +1493,9 @@ SECTION	 可能以 '}' 而不是 '{' 开始的小节
 |:tab|		:tab		打开新窗口时建立新的标签页
 |:tag|		:ta[g]		跳转到标签上
 |:tags|		:tags		显示标签栈的内容
-|:tcd|		:tcd		切换标签页的目录
+|:tcd|		:tc[d]		切换标签页的目录
 |:tchdir|	:tch[dir]	切换标签页的目录
-|:tcl|		:tc[l]		执行 Tcl 命令
+|:tcl|		:tcl		执行 Tcl 命令
 |:tcldo|	:tcld[o]	为每行执行 Tcl 命令
 |:tclfile|	:tclf[ile]	执行 Tcl 脚本文件
 |:tearoff|	:te[aroff]	撕下一个菜单
@@ -1513,10 +1531,12 @@ SECTION	 可能以 '}' 而不是 '{' 开始的小节
 |:unsilent|	:uns[ilent]	非安静模式执行命令
 |:update|	:up[date]	如果有修改，写回缓冲区
 |:vglobal|	:v[global]	对不匹配的行，执行命令
+|:var|		:var		Vim9 中变量声明
 |:version|	:ve[rsion]	显示版本号和其它信息
 |:verbose|	:verb[ose]	执行命令，过程中设置 'verbose'
 |:vertical|	:vert[ical]	使得跟随的命令垂直分割
-|:vim9script|	:vim9[script]	指示 Vim9 脚本文件
+|:vim9cmd|	:vim9[cmd]	使下一个命令使用 Vim9 脚本语法
+|:vim9script|	:vim9s[cript]	指示 Vim9 脚本文件
 |:vimgrep|	:vim[grep]	在若干文件里查找模式
 |:vimgrepadd|	:vimgrepa[dd]	类似于 :vimgrep，但附加到当前列表
 |:visual|	:vi[sual]	同 ":edit"，但关掉 "Ex" 模式
@@ -1545,7 +1565,7 @@ SECTION	 可能以 '}' 而不是 '{' 开始的小节
 |:wqall|	:wqa[ll]	写回所有 (改变的) 缓冲区然后退出 Vim
 |:wundo|	:wu[ndo]	把撤销信息写入文件
 |:wviminfo|	:wv[iminfo]	写入 viminfo 文件
-|:xit|		:x[it]		如果缓冲区被改动，写入之。然后退出窗口或者 Vim
+|:xit|		:x[it]		如果缓冲区被改动则写入。然后关闭窗口
 |:xall|		:xa[ll]		同 ":wqall"
 |:xmapclear|	:xmapc[lear]	删除可视模式的所有映射
 |:xmap|		:xm[ap]		类似于 ":map"，但使用可视模式

@@ -1,4 +1,4 @@
-*version5.txt*  适用于 Vim 8.2 版本。	最近更新: 2017年8月
+*version5.txt*  适用于 Vim 9.0 版本。	最近更新: 2022年7月
 
 
 		  VIM 参考手册    by Bram Moolenaar
@@ -37,7 +37,7 @@ BeOS 版本				|added-BeOS|
 Macintosh GUI 版本			|added-Mac|
 和 Vi 更兼容				|more-compatible|
 从标准输入读取输入			|read-stdin|
-正规表达式模式				|added-regexp|
+正则表达式模式				|added-regexp|
 重载的标签				|tag-overloaded|
 新命令					|new-commands|
 新选项					|added-options|
@@ -93,7 +93,7 @@ GTK GUI 移植版本			|new-GTK-GUI|
 Vim 脚本				|new-script-5.4|
 避免 hit-enter 提示			|avoid-hit-enter|
 改进快速修复				|improved-quickfix|
-正规表达式				|regexp-changes-5.4|
+正则表达式				|regexp-changes-5.4|
 改动					|changed-5.4|
 新增					|added-5.4|
 修正					|fixed-5.4|
@@ -373,7 +373,7 @@ Vim 可以用 ":python" 和 ":pyfile" 调用 Python 命令。见 |python|。
 Win32 GUI 版本						*added-win32-GUI*
 -----------------
 
-GUI 被移植到 MS Windows 95 和 NT 上。Windows 用户现在可以使用 X11 GUI 的所有特
+GUI 被移植到 MS-Windows 95 和 NT 上。Windows 用户现在可以使用 X11 GUI 的所有特
 性了。|gui-w32|
 这也修正了在 Windows 95 里运行 Win32 控制台的问题，那里，控制台的支持总是很
 差。
@@ -424,11 +424,11 @@ CTRL-R 用于重复撤销或重做 (像 Nvi 里的 ".")。
 见 |--|。
 
 
-正规表达式模式						*added-regexp*
+正则表达式模式						*added-regexp*
 ---------------------------
 
 增加了指定匹配原匹配次数的范围: "\{a,b}"。	|/\{|
-增加了 "最短匹配" 正规表达式 "\{-}" (Webb)。
+增加了 "最短匹配" 正则表达式 "\{-}" (Webb)。
 增加了 "\s"，匹配空白字符。可以替换 "[ \t]"。	|/\s|
 增加了 "\S"，匹配非空白字符，可以替换 "[^ \t]"。|/\S|
 
@@ -720,7 +720,7 @@ Shift-Insert、Ctrl-Insert、Ctrl-Del 和 Shift-Del。
 
 Unix: 除了 CTRL-C 以外，也可用 tty 设置的 INTR 字符。有人把 INTR 设为 DEL。
 
-允许 ":help" 命令参数里的 <LF> 结束帮助命令，从而可以跟随下一个命令。
+允许 ":help" 命令参数里的 <NL> 结束帮助命令，从而可以跟随下一个命令。
 
 "   #if" 开头的行上按 "%" 过去不跳转到匹配的 "#else"。
 'cpo' 包含 '%' 时，'%' 不识别 "#if"、"#else" 等。|%|
@@ -1574,7 +1574,7 @@ expand() 函数现在用 <NL> 分隔文件名而不是空格。避免内嵌空�
 
 Win32 GUI 新图标。
 
-":tag"、":tselect" 等只当参数以 '/' 开始时把它当作正规表达式。避免 ":tag xx~"
+":tag"、":tselect" 等只当参数以 '/' 开始时把它当作正则表达式。避免 ":tag xx~"
 给出错误信息: "No previous sub.  regexp"。:tag 参数包含通配字符时亦然，过去和
 Vi 不兼容。
 用 '/' 时，按本义接受参数有更高的优先级，在通配匹配之前先使用。
@@ -1984,7 +1984,7 @@ RISC OS 版本。(Thomas Leonard) 见 |riscos|。
 删除了 "os_archie" 文件，反正它们也不再工作了。
 
 
-多字节支持						*new-multi-byte*
+多字节支持				*new-multi-byte* *new-multibyte*
 ------------------
 
 Win32 GUI 的多字节支持。(Baek)
@@ -2282,11 +2282,11 @@ Unix: 找到已有但不能打开的交换文件时，在 ATTENTION 消息里提
 ":menu" 命令可用 "<Tab>" 代替菜单路径里真正的制表。这使输入更容易，因为不需要
 反斜杠。
 
-POSIX 兼容的正规表达式字符类: [:alnum:]、[:alpha:]、[:blank:]、[:cntrl:]、
+POSIX 兼容的正则表达式字符类: [:alnum:]、[:alpha:]、[:blank:]、[:cntrl:]、
 [:digit:]、[:graph:]、[:lower:]、[:print:]、[:punct:], [:space:]、[:upper:]
 和 [:xdigit:]。(Briscoe)
 
-正规表达式字符类 (为了快速语法高亮匹配):
+正则表达式字符类 (为了快速语法高亮匹配):
 	数字:	    \d [0-9]		\D  非数字 (Roemer)
 	十六进制:   \x [0-9a-fA-F]	\X  非十六进制
 	八进制:	    \o [0-7]		\O  非八进制
@@ -3262,18 +3262,18 @@ hit-enter 提示。
 'makeprg' 里的 "$*" 被 ":make" 的参数替换。(Roemer)
 
 
-正规表达式						*regexp-changes-5.4*
+正则表达式						*regexp-changes-5.4*
 -------------------
 
-正规表达式里，"\)" 之前的 '$' 被认为是一行的结束。|/$|
+正则表达式里，"\)" 之前的 '$' 被认为是一行的结束。|/$|
 模式里，"\|" 或 "\(" 之后的 "^" 被认为是一行的开始。|/^| (Robinson)
 
-正规表达式里，在 "\)" 和 "\|" 的前面，"$" 和 "\$" 过去都被认为是一行的结束。现
+正则表达式里，在 "\)" 和 "\|" 的前面，"$" 和 "\$" 过去都被认为是一行的结束。现
 在，"$" 用作行尾而 "\$" 用作按本义出现的美元符号。这同样适用于 "\(" 和 "\|" 之
 后的 '^'。|/\$| |/\^|
 
 有些搜索模式即使它们实际上并不是不合法，但它们可能非常慢。比如:
-"\([^a-z]\+\)\+Q"。用 CTRL-C 可以中止任何正规表达式的搜索。
+"\([^a-z]\+\)\+Q"。用 CTRL-C 可以中止任何正则表达式的搜索。
 
 寄存器 "/: 最近的搜索字符串 (只读)，(Kohan) 被改变为最近使用的搜索模式 (就像
 'hlsearch' 用的一样)。可以这样设置搜索模式 ":let @/ = {expr}"。
@@ -3733,7 +3733,7 @@ compiling pathdef.c.  Replaced it with "tr".
 
 Perl: DO_JOIN was redefined by Perl.  Undefined it in the perl files.
 
-Various XIM and multi-byte fixes:
+Various XIM and multibyte fixes:
 - Fix user cannot see his language while he is typing his language with
   off-the-spot method. (Nagano)
 - Fix preedit position using text/edit area (using gui.wid). (Nagano)
@@ -3750,7 +3750,7 @@ Various XIM and multi-byte fixes:
 - XIM: Composed strings were sometimes ignored.  Vim crashed when compose
   string was longer than 256 bytes.  IM's geometry control is fixed. (Nam,
   Nagano)
-- Win32 multi-byte: hollowed cursor width on a double byte char was wrong.
+- Win32 multibyte: hollowed cursor width on a double byte char was wrong.
   (Nagano)
 - When there is no GUI, selecting XIM caused compilation problems.
   Automatically disable XIM when there is no GUI in configure.
@@ -4073,7 +4073,7 @@ the last char of the line, "<<" moved an extra line.  Also for other operators
 that always work on lines.
 
 link.sh changed "-lnsl_s" to "_s" when looking for "nsl" to be removed.
-Now it only remove whole words.
+Now it only removes whole words.
 
 When jumped to a mark or using "fz", and there is an error, the current column
 was lost.  E.g. when using "$fzj".
@@ -4087,7 +4087,7 @@ Now map <xF4> to <F4>, so that the user can override this.
 When compiling os_win32.c with MIN_FEAT the apply_autocmds() should not be
 used. (Aaron)
 
-This autocommand looped forever: ":au FileChangedShell * nested e <afile>"
+This autocommand looped forever: ":au FileChangedShell * ++nested e <afile>"
 Now FileChangeShell never nests. (Roemer)
 
 When evaluating an ":elseif" that was not going to matter anyway, ignore
@@ -5162,7 +5162,7 @@ Patch 5.4.25
 相关文件:   src/misc1.c
 
 Patch 5.4.26
-问题:	    Multi-byte: a multi-byte character is never recognized in a file
+问题:	    Multi-byte: a multibyte character is never recognized in a file
 	    name, causing a backslash before it to be removed on Windows.
 解决方案:   Assume that a leading-byte character is a file name character in
 	    vim_isfilec().
@@ -5609,7 +5609,7 @@ __TIME__. (John Card II)
 BeOS: Adjust computing the char_height and char_ascent.  Round them up
 separately, avoids redrawing artifacts. (Mike Steed)
 
-Fix a few multi-byte problems in menu_name_skip(), set_reg_ic(), searchc() and
+Fix a few multibyte problems in menu_name_skip(), set_reg_ic(), searchc() and
 findmatchlimit(). (Taro Muraoka)
 
 GTK GUI:
@@ -6295,9 +6295,9 @@ Patch 5.6a.027 (extra)
 相关文件:   src/dosinst.c, src/uninstal.c, gvimext/*, runtime/doc/gui_w32.txt
 
 Patch 5.6a.028 (extra)
-问题:	    Win32 GUI: Dialogs and tear-off menus can't handle multi-byte
+问题:	    Win32 GUI: Dialogs and tear-off menus can't handle multibyte
 	    characters.
-解决方案:   Adjust nCopyAnsiToWideChar() to handle multi-byte characters
+解决方案:   Adjust nCopyAnsiToWideChar() to handle multibyte characters
 	    correctly.
 相关文件:   src/gui_w32.c
 
@@ -6390,9 +6390,9 @@ Many fixes to Macintosh specific parts: (mostly by Dany StAmant)
 - Add digraphs table. (Axel Kielhorn)
 - Multi-byte support: (Kenichi Asai)
   Switch keyscript when going in/out of Insert mode.
-  Draw multi-byte character correctly.
-  Don't use mblen() but highest bit of char to detect multi-byte char.
-  Display value of multi-byte in statusline (also for other systems).
+  Draw multibyte character correctly.
+  Don't use mblen() but highest bit of char to detect multibyte char.
+  Display value of multibyte in statusline (also for other systems).
 - mouse button was not initialized properly to MOUSE_LEFT when
   USE_CTRLCLICKMENU not defined.
 - With Japanese SJIS characters: Make "w", "b", and "e" work
@@ -6644,7 +6644,7 @@ Patch 5.6.036
 相关文件:   src/gui_gtk_x11.c
 
 Patch 5.6.037
-问题:	    Multi-byte: Can't use "f" command with multi-byte character in GUI.
+问题:	    Multi-byte: Can't use "f" command with multibyte character in GUI.
 解决方案:   Enable XIM in Normal mode for the GUI. (Sung-Hyun Nam)
 相关文件:   src/gui_gtk_x11.c, src/multbyte.c
 
@@ -6757,7 +6757,7 @@ Patch 5.6.051
 Patch 5.6.052
 问题:	    Multi-byte: When an Ex command has a '|' or '"' as a second byte,
 	    it terminates the command.
-解决方案:   Skip second byte of multi-byte char when checking for '|' and '"'.
+解决方案:   Skip second byte of multibyte char when checking for '|' and '"'.
 	    (Asai Kenichi)
 相关文件:   src/ex_docmd.c
 
@@ -6909,7 +6909,7 @@ Patch 5.6.073 (extra) (depends on 5.6.034)
 
 Patch 5.6.074 (extra)
 问题:	    Entering CSI directly doesn't always work, because it's recognized
-	    as the start of a special key.  Mostly a problem with multi-byte
+	    as the start of a special key.  Mostly a problem with multibyte
 	    in the GUI.
 解决方案:   Use K_CSI for a typed CSI character.  Use <CSI> for a normal CSI,
 	    <xCSI> for a CSI typed in the GUI.
@@ -7000,7 +7000,7 @@ Patch 5.6.086 (extra)
 相关文件:   src/os_win32.c
 
 Patch 5.6.087
-问题:	    Multi-byte: Commands and messages with multi-byte characters are
+问题:	    Multi-byte: Commands and messages with multibyte characters are
 	    displayed wrong.
 解决方案:   Detect double-byte characters. (Yasuhiro Matsumoto)
 相关文件:   src/ex_getln.c, src/message.c, src/misc2.c, src/screen.c
@@ -7047,9 +7047,9 @@ Patch 5.6.093 (extra)
 相关文件:   src/fileio.c
 
 Patch 5.6.094
-问题:	    Problem with multi-byte string for ":echo var".
+问题:	    Problem with multibyte string for ":echo var".
 解决方案:   Check for length in msg_outtrans_len_attr(). (Sung-Hyun Nam)
-	    Also make do_echo() aware of multi-byte characters.
+	    Also make do_echo() aware of multibyte characters.
 相关文件:   src/eval.c, src/message.c
 
 Patch 5.6.095
@@ -7080,9 +7080,9 @@ Patch 5.7a.002
 
 Patch 5.7a.003
 问题:	    Multi-byte: After using CTRL-O in Insert mode with the cursor at
-	    the end of the line on a multi-byte character the cursor moves to
+	    the end of the line on a multibyte character the cursor moves to
 	    the left.
-解决方案:   Check for multi-byte character at end-of-line. (Taro Muraoka)
+解决方案:   Check for multibyte character at end-of-line. (Taro Muraoka)
 	    Also: fix cls() to detect a double-byte character. (Chong-Dae Park)
 相关文件:   src/edit.c, src/search.c
 
@@ -7283,7 +7283,7 @@ argument was fixed.
 Vim 5.7 预发布补丁:
 
 Patch 5.7.001
-问题:	    When the current buffer is crypted, and another modified buffer
+问题:	    When the current buffer is encrypted, and another modified buffer
 	    isn't, ":wall" will encrypt the other buffer.
 解决方案:   In buf_write() use "buf" instead of "curbuf" to check for the
 	    crypt key.
@@ -7397,7 +7397,7 @@ Patch 5.7.018
 相关文件:   src/misc1.c, src/os_unix.c
 
 Patch 5.7.019
-问题:	    Multibyte: In a substitute string, a multi-byte character isn't
+问题:	    Multibyte: In a substitute string, a multibyte character isn't
 	    skipped properly, can be a problem when the second byte is a
 	    backslash.
 解决方案:   Skip an extra byte for a double-byte character. (Muraoka Taro)

@@ -1,4 +1,4 @@
-*pi_zip.txt*	适用于 Vim 8.2 版本。	最近更新: 2017年8月
+*pi_zip.txt*	适用于 Vim 9.0 版本。	最近更新: 2022年7月
 
 				+====================+
 				|    Zip 文件接口    |
@@ -89,6 +89,9 @@ Copyright: Copyright (C) 2005-2015 Charles E Campbell *zip-copyright*
 
 ==============================================================================
 4. 历史 (英文)							*zip-history* {{{1
+   v32 Oct 22, 2021 * to avoid an issue with a vim 8.2 patch, zipfile: has
+		      been changed to zipfile:// . This often shows up
+		      as zipfile:/// with zipped files that are root-based.
    v29 Apr 02, 2017 * (Klartext) reported that an encrypted zip file could
 		      opened but the swapfile held unencrypted contents.
 		      The solution is to edit the contents of a zip file
@@ -141,4 +144,4 @@ Copyright: Copyright (C) 2005-2015 Charles E Campbell *zip-copyright*
    v1 Sep 15, 2005 * Initial release, had browsing, reading, and writing
 
 ==============================================================================
-vim:tw=78:ts=8:noet:ft=help:fdm=marker
+vim:tw=78:ts=8:ft=help:noet:norl:fdm=marker

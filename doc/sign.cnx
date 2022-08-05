@@ -1,4 +1,4 @@
-*sign.txt*      适用于 Vim 8.2 版本。	最近更新: 2020年1月
+*sign.txt*      适用于 Vim 9.0 版本。	最近更新: 2022年7月
 
 
 		  VIM 参考手册    by Gordon Prieur
@@ -44,6 +44,7 @@
 
 	:highlight SignColumn guibg=darkgrey
 <
+打开 'cursorline' 时，使用 CursorLineSign 高亮组 |hl-CursorLineSign|。
 							*sign-identifier*
 已放置的标号以一个数值识别，称为标号标识符。此标识符用于跳转到标号或删除标号。
 标识符在用 |:sign-place| 命令或 |sign_place()| 函数放置标号时分配。每个标号标
@@ -63,15 +64,21 @@
 每个已放置的标号会分配一个优先值。同一行上如有多个标号放置，使用最高优先级的标
 号的属性，这与标号组无关。标号的缺省优先级是 10。优先级在标号放置时分配。
 
+当出现相同优先级的两个标号且其中一个在标号列上显示图标或文本而另一个有行高亮
+时，两个标号同时显示。
+
 标号放置的行如被删除，移动标号到下一行 (如果没有下一行则为缓冲区的末行)。删除
 如被撤销，标号并不移回。
+
+如果同时有带行高亮的标号和 'cursorline' 高亮，对优先级为 100 或更高的标号，其
+高亮优先，反之则 'cursorline' 高亮优先。
 
 ==============================================================================
 2. 命令						*sign-commands* *:sig* *:sign*
 
 这里提供了一例，在当前文件的第 23 行显示 "piet" 标号，以文字 ">>" 标明。 >
 	:sign define piet text=>> texthl=Search
-	:exe ":sign place 2 line=23 name=piet file=" . expand("%:p")
+	:exe ":sign place 2 line=23 name=piet file=" .. expand("%:p")
 
 删除标号的命令: >
 	:sign unplace 2
@@ -105,6 +112,10 @@
 	linehl={group}
 		用以显示整个标号行的高亮组。多用于定义背景色。
 
+	numhl={group}
+		放置标号的行的行号使用的高亮组。优先于 |hl-LineNr|、
+		|hl-LineNrAbove|、|hl-LineNrBelow| 和 |hl-CursorLineNr|。
+
 	text={text}						*E239*
 		没有图标或者不用 GUI 时显示的文本。只允许可显示字符，而且必须
 		占据一到两个显示单元。
@@ -112,6 +123,13 @@
 	texthl={group}
 		显示文本项目的高亮组。
 
+	culhl={group}
+		打开 'cursorline' 时，光标在标号所在的行时文本项目使用的高亮
+		组。
+
+	示例: >
+		:sign define MySign text=>> texthl=Search linehl=DiffText
+<
 
 删 除 标 号						*:sign-undefine* *E155*
 
@@ -120,6 +138,9 @@
 :sign undefine {name}
 		删除标号的定义。如果 {name} 标号已经放置，会有问题。
 
+		示例: >
+			:sign undefine MySign
+<
 
 列 出 标 号						*:sign-list* *E156*
 
@@ -166,6 +187,10 @@
 		同上，但指定缓冲区 {nr}。如果不给出缓冲区参数，标号放置在当前
 		缓冲区。
 
+		示例: >
+			:sign place 10 line=99 name=sign3
+			:sign place 10 line=99 name=sign3 buffer=3
+<
 							*E885*
 :sign place {id} name={name} file={fname}
 		把文件 {fname} 里用 {id} 记住的标号换成 {name} 指定的新标号。
@@ -175,10 +200,17 @@
 		可选的 "group={group}" 属性可在 "file=" 前使用来选择特定组的标
 		号。可选的 "priority={prio}" 属性可用来发来已有标号的优先级。
 
+		示例: >
+			:sign place 23 name=sign1 file=/path/to/edit.py
+<
 :sign place {id} name={name} [buffer={nr}]
 		同上，但指定缓冲区 {nr}。如果不给出缓冲区参数，使用当前缓冲
 		区。
 
+		示例: >
+			:sign place 23 name=sign1
+			:sign place 23 name=sign1 buffer=7
+<
 
 撤 销 放 置 标 号					*:sign-unplace* *E159*
 
@@ -317,8 +349,11 @@ sign_define({list})
 		支持以下的值:
 		   icon		用于标号的位图文件完整路径。
 		   linehl	用于标号放置所在的整行的高亮组。
+		   numhl	放置标号的行的行号使用的高亮组。
 		   text		没有图标或不使用 GUI 时显示的文本。
 		   texthl	文本项目使用的高亮组
+		   culhl	打开 'cursorline' 时，光标在标号所在的行时文本
+				项目使用的高亮组。
 
 		如果名为 {name} 的标号已存在，更新标号的属性。
 
@@ -351,10 +386,14 @@ sign_getdefined([{name}])				*sign_getdefined()*
 
 		返回值的每个列表项是包含以下项目的字典:
 		   icon		标号的位图文件完整路径
-		   linehl	标号放置所在的整行的高亮组。
+		   linehl	标号放置所在的整行的高亮组；有设置此项目才存在
 		   name		标号名
+		   numhl	放置标号的行的行号使用的高亮组；有设置此项目才
+				存在
 		   text		没有图标或不使用 GUI 时显示的文本。
-		   texthl	文本项目使用的高亮组
+		   texthl	文本项目使用的高亮组；有设置此项目才存在
+		   culhl	打开 'cursorline' 时，光标在标号所在的行时文本
+				项目使用的高亮组；有设置此项目才存在
 
 		如果没有标号或 {name} 找不到，返回空列表。
 
@@ -368,12 +407,12 @@ sign_getdefined([{name}])				*sign_getdefined()*
 		也可用作 |method|: >
 			GetSignList()->sign_getdefined()
 
-sign_getplaced([{expr} [, {dict}]])			*sign_getplaced()*
+sign_getplaced([{buf} [, {dict}]])			*sign_getplaced()*
 		返回一个或所有缓冲区里放置的标号的列表。类似于
 		|:sign-place-list| 命令。
 
-		如果给出可选的缓冲区名 {expr}，只返回该缓冲区里放置的标号列
-		表。{expr} 的用法见 |bufname()|。可选的 {dict} 可包含以下项目:
+		如果给出可选的缓冲区名 {buf}，只返回该缓冲区里放置的标号列表。
+		{buf} 的用法见 |bufname()|。可选的 {dict} 可包含以下项目:
 		   group	只选择此组内的标号
 		   id		选择带此标识符的标号
 		   lnum		选择放置在此行的标号。{lnum} 的用法见
@@ -388,11 +427,11 @@ sign_getplaced([{expr} [, {dict}]])			*sign_getplaced()*
 				下列项的字典
 
 		每个标号的字典包含以下项:
-			group	标号组。全局组设为 ''。
-			id	标号标识符
-			lnum	标号放置的行号
-			name	已定义的标号名
-			priority	标号优先级
+			group	 标号组。全局组设为 ''。
+			id	 标号标识符
+			lnum	 标号放置的行号
+			name	 已定义的标号名
+			priority 标号优先级
 
 		缓冲区里返回的标号以行号和优先级排序。
 
@@ -422,11 +461,12 @@ sign_getplaced([{expr} [, {dict}]])			*sign_getplaced()*
 			GetBufname()->sign_getplaced()
 <
 							*sign_jump()*
-sign_jump({id}, {group}, {expr})
-		打开缓冲区 {expr} 或跳转到包含 {expr} 的窗口，并定位光标到组
+sign_jump({id}, {group}, {buf})
+		打开缓冲区 {buf} 或跳转到包含 {buf} 的窗口，并定位光标到组
 		{group} 里的标号 {id}。类似于 |:sign-jump| 命令。
 
-		{expr} 的用法见 |bufname()|。
+		{group} 为空串时使用全局组。
+		{buf} 的用法见 |bufname()|。
 
 		返回标号的行号。如果参数非法返回 -1。
 
@@ -438,8 +478,8 @@ sign_jump({id}, {group}, {expr})
 			GetSignid()->sign_jump()
 <
 							*sign_place()*
-sign_place({id}, {group}, {name}, {expr} [, {dict}])
-		把 {name} 指定的标号放在文件 {fname} 或缓冲区 {expr} 的第
+sign_place({id}, {group}, {name}, {buf} [, {dict}])
+		把 {name} 指定的标号放在文件 {fname} 或缓冲区 {buf} 的第
 		{lnum} 行，并给标号指定 {id} 和 {group}。类似于 |:sign-place|
 		命令。
 
@@ -449,10 +489,10 @@ sign_place({id}, {group}, {name}, {expr} [, {dict}])
 		|sign-identifier| 和 |sign-group|。
 
 		{name} 指定已定义的标号。
-		{expr} 指定缓冲区名或号。可接受的值见 |bufname()|。
+		{buf} 指定缓冲区名或号。可接受的值见 |bufname()|。
 
 		可选的 {dict} 参数支持以下项目:
-			lnum		放置标号的文件或缓冲区 {expr} 的行号。
+			lnum		放置标号的文件或缓冲区 {buf} 的行号。
 					可接受的值见 |line()|。
 			priority	标号优先级。详见 |sign-priority|。
 

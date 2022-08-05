@@ -1,4 +1,4 @@
-*textprop.txt*	适用于 Vim 8.2 版本。	最近更新: 2020年3月
+*textprop.txt*	适用于 Vim 9.0 版本。	最近更新: 2022年8月
 
 
 		  VIM 参考手册    by Bram Moolenaar
@@ -85,17 +85,19 @@ https://github.com/vim/vim/issues/new
 prop_type_add({name}, {props})		定义新的属性类型
 prop_type_change({name}, {props})	改变已有的属性类型
 prop_type_delete({name} [, {props}])	删除属性类型
-prop_type_get([{name} [, {props}])	获取属性类型值
+prop_type_get({name} [, {props}])	获取属性类型值
 prop_type_list([{props}])		获取属性类型的列表
 
 
 操作文本属性:
 
 prop_add({lnum}, {col}, {props})	新增文本属性
+prop_add_list({props}, [[{lnum}, {col}, {end-lnum}, {end-col}], ...])
+					在多个位置新增文本属性。
 prop_clear({lnum} [, {lnum-end} [, {bufnr}]])
 					删除所有文本属性
 prop_find({props} [, {direction}])	搜索文本属性
-prop_list({lnum} [, {props})		{lnum} 中的文本属性
+prop_list({lnum} [, {props}])		{lnum} 中的文本属性
 prop_remove({props} [, {lnum} [, {lnum-end}]])
 					删除一个文本属性
 
@@ -109,13 +111,27 @@ prop_add({lnum}, {col}, {props})
 		{props} 是带以下域的字典:
 		   length	以字节计的文本长度，只能用于不在另一行继续的属
 				性；可为零
-		   end_lnum	文本结尾的行号
+		   end_lnum	文本结尾的行号 (闭区间)
 		   end_col	文本刚刚结束之后的列；如果 "length" 存在则不
 				用；如果 {col} 和 "end_col" 相等，且
 				"end_lnum" 省略或等于 {lnum}，这是个零宽度的文
 				本属性
-		   bufnr	加入属性的缓冲区；省略是使用当前缓冲区
-		   id		用户定义的属性 ID；必须为数值；省略时使用零
+		   bufnr	加入属性的缓冲区；省略时使用当前缓冲区
+		   id		用户定义的属性 ID；必须为正的数值；使用 "text"
+				时不应给出 "id"，且会自动设为负数；否则使用零
+		   text		{col} 之前要显示的文本，或者当 {col} 为零时在
+				行之后显示
+		   text_align	"text" 给出且 {col} 为零时，指定显示文本的位
+				置:
+				   after   在行尾之后
+				   right   和窗口右对齐
+				   below   在下个屏幕行上
+				省略时使用 "after"。
+		   text_wrap	"text" 给出且 {col} 为零时，指定文本放不下时行
+				为:
+				   wrap      回绕文本到下行
+				   truncate  截短文本以放进
+				省略时使用 "truncate"。
 		   type		文本属性类型名
 		除 "type" 外，所有域均是可选的。
 
@@ -131,9 +147,49 @@ prop_add({lnum}, {col}, {props})
 
 		先在加入属性的缓冲区中寻找 "type"。如果找不到，再使用全局属性
 		类型。还找不到的话会报错。
+							*virtual-text*
+		使用 "text" 且列不为零时，在文本属性的开始位置显示此文本。缓冲
+		区行的文本会移动以腾出空间。这被称为 "虚拟文本"。
+		如果列为零虚拟文本会在缓冲区文本之后显示。"text_align" 和
+		"text_wrap" 参数决定如何显示。
+		此文本会显示，但不是实际缓冲区行的一部分，光标也不能放置其上。
+		鼠标点击此文本会移动光标到文本之后的第一个字符，或者行末尾的字
+		符。
+		会选择负数的 "id" 并返回。一旦缓冲区加入了有 "text" 的文本属
+		性，任何其它的文本属性如果使用负数 "id" 会报错: *E1293*
+		确保使用高亮以清楚告知用户这是虚拟文本，否则出现了不能编辑的文
+		本会很让人混淆。
+		要分隔虚拟文本和缓冲区文本，"text" 字段不妨在前面和/或后面加上
+		空白。
 
 		也可用作 |method|: >
 			GetLnum()->prop_add(col, props)
+<
+						*prop_add_list()*
+prop_add_list({props}, [[{lnum}, {col}, {end-lnum}, {end-col}], ...])
+		类似于 prop_add()，但在多个位置上附属文本属性。
+
+		{props} 是包含以下字段的字典:
+		   bufnr	加入属性的缓冲区；省略时使用当前缓冲区
+		   id		用户定义的属性 ID；必须为数值；省略时使用零
+		   type		文本属性类型名
+		除 "type" 外，所有域均是可选的。
+
+		第二个参数是列表的列表，其中每个列表指定文本的一组开始和结束位
+		置。前两个项目 {lnum} 和 {col} 指定附属属性的文本的开始位置，
+		而后两个项目 {end-lnum} 和 {end-col} 指定紧跟文本之后的那个位
+		置。
+
+		这里不能添加带 "text" 字段的文本属性。
+
+		示例:
+			call prop_add_list(#{type: 'MyProp', id: 2},
+					\ [[1, 4, 1, 7],
+					\  [1, 15, 1, 20],
+					\  [2, 30, 3, 30]]
+
+		也可用作 |method|: >
+			GetProp()->prop_add_list([[1, 1, 1, 2], [1, 4, 1, 8]])
 
 
 prop_clear({lnum} [, {lnum-end} [, {props}]])		*prop_clear()*
@@ -149,10 +205,10 @@ prop_clear({lnum} [, {lnum-end} [, {props}]])		*prop_clear()*
 <
 							*prop_find()*
 prop_find({props} [, {direction}])
-		{尚未实现}
 		搜索 {props} 指定的文本属性:
 		   id		带此 ID 的属性
 		   type		带此类型名的属性
+		   both		"id" 和 "type" 必须同时匹配
 		   bufnr	在其中搜索的缓冲区；如果给出必须用 "lnum" 和
 				"col" 指定开始位置；如果省略使用当前缓冲区
 		   lnum		从此行开始 (省略时从光标所在行开始)
@@ -160,6 +216,7 @@ prop_find({props} [, {direction}])
 				则从光标开始)
 		   skipstart	不寻找开始位置所在的匹配
 
+		"id" 或 "type" 之一匹配时，属性匹配。
 		{direction} 可以是 "f" 用于正向，"b" 用于反向。如果省略执行正
 		向搜索。
 
@@ -170,27 +227,64 @@ prop_find({props} [, {direction}])
 prop_list({lnum} [, {props}])				*prop_list()*
 		返回行 {lnum} 上的所有文本属性的列表。
 
-		如果 {props} 包含 "bufnr" 项目，使用此缓冲区，否则使用当前缓冲
-		区。
+		{props} 支持以下可选项目:
+		   bufnr	使用此缓冲区，否则使用当前缓冲区
+		   end_lnum	返回 {lnum} 和 {end_lnum} (闭区间) 之间所有行
+				的文本属性。
+				负值是相对于缓冲区末行的位移；-1 指向缓冲区末
+				行。
+		   types	属性类型名的列表。只返回匹配其中之一类型名的文
+				本属性。
+		   ids		属性标识符列表。只返回带有其中之一标识符的文本
+				属性。
 
 		属性以开始列和优先级排序。每个属性是带下列项的字典:
+		   lnum		起始行号。仅当返回 {lnum} 和 {end_lnum} 之间的
+				文本属性时才存在。
 		   col		开始列
 		   length	以字节计的长度，如果包含换行符加一
 		   id		属性 ID
 		   type		属性类型名，如果类型已删除则省略
+		   type_bufnr	此类型在其中有定义的缓冲区号；类型为全局时为 0
 		   start	为 TRUE 时属性从这行开始
 		   end		为 TRUE 时属性在这行结束
 
-		如果 "start" 为零，属性从前面行开始，本行是继续行。
+		如果 "start" 为零，属性从前面行开始，本行是续行。
 		如果 "end" 为零，属性从下面行继续。包含此行之后的换行符。
+
+		出错时返回空列表。
+
+		示例:
+		   " 返回放置在第 5 行上的文本属性
+		   echo prop_list(5)
+		   " 返回放置在缓冲区 4 的第 20 行上的文本属性
+		   echo prop_list(20, {'bufnr': 4})
+		   " 返回放置在 1 到 20 行之间的文本属性
+		   echo prop_list(1, {'end_lnum': 20})
+		   " 返回所有类型为 'myprop' 的文本属性
+		   echo prop_list(1, {'types': ['myprop'],
+						\ 'end_lnum': -1})
+		   " 返回所有类型为 'prop1' 或 'prop2' 的文本属性
+		   echo prop_list(1, {'types': ['prop1', 'prop2'],
+						\ 'end_lnum': -1})
+		   " 返回所有 ID 为 8 的文本属性
+		   echo prop_list(1, {'ids': [8], 'end_lnum': line('$')})
+		   " 返回所有 ID 为 10 和 20 的文本属性
+		   echo prop_list(1, {'ids': [10, 20], 'end_lnum': -1})
+		   " 返回所有在缓冲区 4，类型为 'myprop' 且 ID 为 100 的文本属
+		   " 性。
+		   echo prop_list(1, {'bufnr': 4, 'types': ['myprop'],
+					\ 'ids': [100], 'end_lnum': -1})
 
 		也可用作 |method|: >
 			GetLnum()->prop_list()
 <
-						*prop_remove()* *E968*
+						*prop_remove()* *E968* *E860*
 prop_remove({props} [, {lnum} [, {lnum-end}]])
 		删除 {lnum} 上的匹配文本属性。如果给出 {lnum-end}，删除从行
 		{lnum} 到 {lnum-end} (闭区间) 所有匹配的文本属性。
+		{lnum} 省略时删除所有行的匹配文本属性 (这需要遍历所有行，所以
+		行数很多的缓冲区上这会有点慢)。
 
 		{props} 是包含下列域的字典:
 		   id		删除带此 ID 的文本属性
@@ -218,7 +312,7 @@ prop_type_add({name}, {props})		*prop_type_add()* *E969* *E970*
 		   highlight	使用的高亮组名
 		   priority	当一个字符有多个文本属性时使用最高优先级的属
 				性；可用负值，缺省优先级为零
-		   combine	为 TRUE 时和任何语法高亮合并；省略或为 FALSE
+		   combine	省略或为 TRUE 时和任何语法高亮合并；为 FALSE
 				时，不使用语法高亮
 		   start_incl	TRUE 时在起始位置的插入会包含在文本属性内
 		   end_incl	TRUE 时在结束位置的插入会包含在文本属性内
@@ -245,7 +339,7 @@ prop_type_delete({name} [, {props}])			*prop_type_delete()*
 		也可用作 |method|: >
 			GetPropName()->prop_type_delete()
 
-prop_type_get([{name} [, {props}])			*prop_type_get()*
+prop_type_get({name} [, {props}])			*prop_type_get()*
 		返回属性类型 {name} 的属性。这是带和 prop_type_add() 给出的相
 		同域的字典。
 		如果属性类型 {name} 不存在，返回空字典。

@@ -1,4 +1,4 @@
-*windows.txt*	适用于 Vim 8.2 版本。	最近更新: 2020年3月
+*windows.txt*	适用于 Vim 9.0 版本。	最近更新: 2022年7月
 
 
 		  VIM 参考手册    by Bram Moolenaar
@@ -119,8 +119,14 @@ Buf/Win Enter/Leave 等自动命令 |autocommand| 不会在打开窗口或读取
 持斜体，那么状态行还是会以反色显示；这种问题只会出现在有斜体的 termcap 码的终
 端上。
 
+							*filler-lines*
+窗口中缓冲区末行之后的行称为填充行。缺省，这些行以波浪号 (~) 字符开头。
+'fillchars' 选项里的 'eob' 项目可用于改变此字符。缺省，这些字符使用 NonText
+(|hl-NonText|) 高亮。EndOfBuffer 高亮组 (|hl-EndOfBuffer|) 可用于改变填充字符
+的高亮。
+
 ==============================================================================
-3. 打开和关闭窗口					*opening-window* *E36*
+3. 打开和关闭窗口					*opening-window*
 
 CTRL-W s						*CTRL-W_s*
 CTRL-W S						*CTRL-W_S*
@@ -138,7 +144,7 @@ CTRL-W CTRL-S						*CTRL-W_CTRL-S*
 
 		备注: 不是在所有的终端都能使用 CTRL-S，并且可能导致不能继续输
 		入，遇到这种情况，用 CTRL-Q 继续。参见 |++opt| 和 |+cmd|。
-							*E242*
+							*E242* *E1159*
 		在自动命令中分割窗口要小心，如果在其它窗口布局改动的同时发生，
 		可能会搞乱窗口布局。
 
@@ -171,20 +177,21 @@ CTRL-W CTRL_N						*CTRL-W_CTRL-N*
 		4. 在新缓冲区执行 BufEnter
 		这跟先执行 ":split"，再执行一个 ":enew" 命令的效果类同。
 
-:[N]vne[w] [++opt] [+cmd] [file]			*:vne* *:vnew*
-		与 |:new| 命令相似，但是它垂直分割窗口，如果打开了
-		'equalalways' 选项，并且选项 'eadirection' 没有设置为 "ver"，
-		窗口会被均匀地水平铺开，除非你给出了指定窗口宽度的参数。
-
 :[N]new [++opt] [+cmd] {file}
 :[N]sp[lit] [++opt] [+cmd] {file}			*:split_f*
 		创建一个新的窗口并且开始编辑文件 {file}。这跟先执行 ":split"，
-		再执行一个 ":e" 命令的效果类同。
+		再执行一个 ":edit" 命令的效果大致相同，但原先窗口里的轮换文件
+		名被设为 {file}。
 		如果使用了 [+cmd] 参数，文件加载完毕后会执行命令 |+cmd|。
 		另见: |++opt|。
 		新窗口的高度为 N (默认值为现存高度的一半)。减少当前窗口的高
 		度，为新窗口留出空间 (如果你打开了 'equalalways' 选项，其它窗
 		口也会被影响)。
+
+:[N]vne[w] [++opt] [+cmd] [file]			*:vne* *:vnew*
+		与 |:new| 命令相似，但是它垂直分割窗口，如果打开了
+		'equalalways' 选项，并且选项 'eadirection' 没有设置为 "ver"，
+		窗口会被均匀地水平铺开，除非你给出了指定窗口宽度的参数。
 
 :[N]sv[iew] [++opt] [+cmd] [file]		*:sv* *:sview* *splitview*
 		与 ":split" 命令相同，但是会给缓冲区置位 'readonly' 选项。
@@ -204,6 +211,9 @@ CTRL-W :	和 |:| -  输入命令行相同。可用于终端窗口中，那里所
 		令必须以 CTRL-W 或 'termwinkey' 前导。
 
 注意 'splitbelow' 和 'splitright' 选项会影响新窗口的位置。
+								*E36*
+如果没有足够空间，创建窗口会失败。每个窗口需要至少一行屏幕行和一列屏幕列，有时
+要更多。'winminheight' 和 'winminwidth' 是相关选项。
 
 						*:vert* *:vertical*
 :vert[ical] {cmd}
@@ -247,13 +257,15 @@ CTRL-W :	和 |:| -  输入命令行相同。可用于终端窗口中，那里所
 ----------------
 
 :q[uit]
-:{count}q[uit]
+:{count}q[uit]						*:count_quit*
 CTRL-W q						*CTRL-W_q*
 CTRL-W CTRL-Q						*CTRL-W_CTRL-Q*
 		没有 {count}: 退出当前窗口。如果给出 {count}，退出第 {count}
 		个窗口。
 
-		如果退出的是最后一个窗口 (不包括帮助窗口)，就会退出 Vim。
+							*edit-window*
+		如果退出的是最后一个编辑窗口 (不包括帮助或预览窗口)，就会退出
+		Vim。
 
 		如果置位了 'hidden' 并且只有此一个窗口监视当前缓冲区，那么该缓
 		冲区被隐藏。如果没有置位 'hidden'，并且只有当前这一个窗口监视
@@ -269,7 +281,8 @@ CTRL-W CTRL-Q						*CTRL-W_CTRL-Q*
 		    :+quit  " 退出下一个窗口
 		    :+2quit " 退出下面第二个窗口
 <
-		关闭帮助窗口时，Vim 会试图恢复上次的窗口布局 |:helpclose|。
+		关闭帮助窗口时如果它不是唯一的窗口，Vim 会试图恢复上次的窗口布
+		局，见 |:helpclose|。
 
 :q[uit]!
 :{count}q[uit]!
@@ -289,8 +302,8 @@ CTRL-W c					*CTRL-W_c* *:clo* *:close*
 		如果置位了 'hidden'，或者改动了缓冲区但是命令里用了 [!]，缓冲
 		区会被隐藏 (除非还有一个窗口在编辑该缓冲区)。
 
-		如果当前标签页只有一个窗口而且有其它标签页，关闭当前标签页。
-		|tab-page|。
+		如果当前标签页只有一个 |edit-window| 而且有其它标签页，关闭当
+		前标签页。|tab-page|。
 
 		该命令在下述情况下会失败:			*E444*
 		- 屏幕上只剩下最后一个窗口的时候。
@@ -326,8 +339,8 @@ CTRL-W CTRL-C						*CTRL-W_CTRL-C*
 :{count}on[ly][!]
 CTRL-W o						*CTRL-W_o* *E445*
 CTRL-W CTRL-O					*CTRL-W_CTRL-O* *:on* *:only*
-		使当前窗口成为屏幕上唯一的窗口。其它窗口都关闭。关于 {count}
-		可见 |:quit| 命令。
+		使当前窗口成为屏幕上唯一的窗口。其它窗口都关闭。关于 {count}，
+		可见 |:count_quit| 之上的 `:quit` 命令。
 
 		如果置位了 'hidden' 选项，被关闭窗口里的所有缓冲区变成隐藏。
 
@@ -394,7 +407,7 @@ CTRL-W P	移动到预览窗口。如果没有预览窗口就会出错。
 		这个命令在普通模式不可用的时候 (比如在 |CursorHold| 自动命令执
 		行的时候)，或者在启用普通模式不方便时，特别好用。
 		计数也可以是一个窗口号。例如: >
-			:exe nr . "wincmd w"
+			:exe nr .. "wincmd w"
 <		这会切换到窗口 "nr"。
 
 ==============================================================================
@@ -433,12 +446,12 @@ CTRL-W J	把当前窗口放到最底部，并且是最大宽度。这很像在�
 
 						*CTRL-W_H*
 CTRL-W H	把当前窗口放到最左边，并且是最大高度。这很像在关闭当前窗口之
-		后，再用 ":vert topleft split" 打开一个新的窗口，不过新窗口会
+		后，再用 `:vert topleft split` 打开一个新的窗口，不过新窗口会
 		包含当前窗口的内容。
 
 						*CTRL-W_L*
 CTRL-W L	把当前窗口放到最右边，并且是最大高度。这很像在关闭当前窗口之
-		后，再用 ":vert botright split" 打开一个新的窗口，不过新窗口会
+		后，再用 `:vert botright split` 打开一个新的窗口，不过新窗口会
 		包含当前窗口的内容。
 
 						*CTRL-W_T*
@@ -480,7 +493,7 @@ CTRL-W <	使得当前窗口宽度减 N (默认值是 1)。
 						*CTRL-W_>*
 CTRL-W >	使得当前窗口宽度加 N (默认值是 1)。
 
-:vertical res[ize] [N]			*:vertical-resize* *CTRL-W_bar*
+:vert[ical] res[ize] [N]			*:vertical-resize* *CTRL-W_bar*
 CTRL-W |	设置当前窗口的宽度为 N (默认值为最大可能宽度)。
 
 你也可以用鼠标上下拖动状态行来改变窗口的高度，或者左右拖动垂直分割线来改变窗口
@@ -664,14 +677,14 @@ CTRL-W |	设置当前窗口的宽度为 N (默认值为最大可能宽度)。
 
 例子: >
 
-	:windo set nolist nofoldcolumn | normal zn
+	:windo set nolist foldcolumn=0 | normal! zn
 
 这个命令会复位 'list' 选项并在所有的窗口里关闭折叠功能。 >
 
 	:bufdo set fileencoding= | update
 
 此命令在每个缓冲区里复位 'fileencoding' 选项的值，并将改动的缓冲区存盘。结果是
-所有的缓冲区都会用 'encoding' 编码 (如果能够正确转换的话)。
+所有的缓冲区都会用 'encoding' 编码 (如果转换成功的话)。
 
 ==============================================================================
 9. 当前光标处的标签和文件名				*window-tag*
@@ -805,12 +818,12 @@ CTRL-W g }						*CTRL-W_g}*
 <		这很像 |:ptag| 命令，你可以用它自动显示光标所在单词的相关信
 		息。这个命令虽然不如 |:ptag| 强大，但是你可以不使用标签文件，
 		而同样可以找到系统的头文件。例如: >
-  :au! CursorHold *.[ch] nested exe "silent! psearch " . expand("<cword>")
+  :au! CursorHold *.[ch] ++nested exe "silent! psearch " .. expand("<cword>")
 <		警告: 可能会很慢。
 
 例子						*CursorHold-example*  >
 
-  :au! CursorHold *.[ch] nested exe "silent! ptag " . expand("<cword>")
+  :au! CursorHold *.[ch] ++nested exe "silent! ptag " .. expand("<cword>")
 
 如果光标停留达到至少 'updatetime' 指定的时间，这条命令以当前光标位置处的关键字
 为参数，执行 ":ptag" 命令。"nested" 使得其它自动命令得以执行，这样可以在预览窗
@@ -822,7 +835,7 @@ CTRL-W g }						*CTRL-W_g}*
 更好的改进是能高亮找到的标签，光标处没有单词时不执行 ":ptag"，还能处理一些其它
 细节，见下: >
 
-  :au! CursorHold *.[ch] nested call PreviewWord()
+  :au! CursorHold *.[ch] ++nested call PreviewWord()
   :func PreviewWord()
   :  if &previewwindow			" 不要在预览窗口里执行
   :    return
@@ -839,7 +852,7 @@ CTRL-W g }						*CTRL-W_g}*
   :
   :    " 试着显示当前光标处匹配的标签
   :    try
-  :       exe "ptag " . w
+  :       exe "ptag " .. w
   :    catch
   :      return
   :    endtry
@@ -851,10 +864,10 @@ CTRL-W g }						*CTRL-W_g}*
   :	 endif
   :	 call search("$", "b")		" 到前一行的行尾
   :	 let w = substitute(w, '\\', '\\\\', "")
-  :	 call search('\<\V' . w . '\>')	" 定位光标在匹配的单词上
+  :	 call search('\<\V' .. w .. '\>')	" 定位光标在匹配的单词上
   :	 " 给在此位置的单词加上匹配高亮
   :      hi previewWord term=bold ctermbg=green guibg=green
-  :	 exe 'match previewWord "\%' . line(".") . 'l\%' . col(".") . 'c\k*"'
+  :	 exe 'match previewWord "\%' .. line(".") .. 'l\%' .. col(".") .. 'c\k*"'
   :      wincmd p			" 返回原来的窗口
   :    endif
   :  endif
@@ -872,7 +885,7 @@ CTRL-W g }						*CTRL-W_g}*
 令还是会把当前窗口变为隐藏。这种情况发生在: 你试图用 '!' 从窗口里强制删除修改
 过的缓冲区。但 'autowrite' 选项关闭或者缓冲区无法写回，
 
-你可以用任何启动编辑的命令使隐藏的缓冲区不再隐藏。或者用 ":bdelete" 命令将其删
+你可以用任何启动编辑的命令使隐藏的缓冲区不再隐藏，或者用 ":bdelete" 命令将其删
 除。
 
 'hidden' 是全局选项，它作用于所有的缓冲区。'bufhidden' 选项可以作用于指定的缓
@@ -953,9 +966,15 @@ CTRL-W g }						*CTRL-W_g}*
 <
 						*:bad* *:badd*
 :bad[d]	[+lnum] {fname}
-		在缓冲区列表里添加文件名 {fname}，但是不把该文件载入内存。
+		如果 {fname} 尚未列出，在缓冲区列表里添加文件名 {fname}，但不
+		把该文件载入内存。如果该缓冲区之前被删除但不是真正删除，它会被
+		重新列出。
 		如果指定了 "lnum"，那么第一次进入缓冲区时，光标会停留在那一
 		行。注意 其它 + 后面的命令将被忽略。
+
+						 *:balt*
+:balt [+lnum] {fname}
+		类似于 `:badd`，但同时设置当前窗口的轮换文件为 {fname}。
 
 :[N]bd[elete][!]			*:bd* *:bdel* *:bdelete* *E516*
 :bd[elete][!] [N]
@@ -1020,6 +1039,8 @@ CTRL-W g }						*CTRL-W_g}*
 		编辑缓冲区列表中第 [N] 个缓冲区，如果没指定 [N]，就编辑当前的
 		缓冲区。关于 [!] 参见 |:buffer-!|。这个命令同样可以编辑不在列
 		表里的缓冲区，'buflisted' 不会因而被置位。
+		这里不能用单引号记法的数值，`:buf 12'345'` 会把 12'345 当作缓
+		冲区名。
 		另见 |+cmd|。
 
 :[N]b[uffer][!] [+cmd] {bufname}				*{bufname}*
@@ -1160,6 +1181,7 @@ directory	显示目录内容。可用于文件探索器插件。该缓冲区由�
 <		缓冲区的名字就是目录的名字，并且在使用 |:cd| 命令时会作出相应
 		的调整。
 
+						*scratch-buffer*
 scratch		该缓冲区包含的文本可以被随时扔掉。在关闭窗口时，缓冲区被保存下
 		来，要删除缓冲区必须显式进行。
 		设置如下: >
