@@ -3049,36 +3049,37 @@ se[t]			字符串 "set " 或 "se " (注意 空格)；使用 "Vim" 时必须
 	栏) 被隐藏。多数 Vim 窗口的装饰 (如工具栏、标题栏) 也被隐藏。标签页栏
 	和滚动条仍然保留可见。全屏模式时忽略窗口位置的更新。
 
+	缺省使用 macOS 的原生全屏功能，把 MacVim 窗口放在调度中心的另一个空间
+	里。MacVim 也提供了定制的全屏方案，可把 |MMNonNativeFullScreen| 设为
+	NO，或者切换 Preferences → Appearance 来选择。在定制的全屏下，窗口不会
+	放到另一个空间，这样 Cmd-Tab 换到其窗口会容易些。
+
+	定制 / 非原生全屏配置:~
+
 	'fuoptions' 说明 Vim 进入和退出全屏模式时如何调整大小和背景色。
 
-	使用隐藏属性 MMFullScreenFadeTime 可以调整淡入淡出的动画所需的时间。
-	缺省为 0.25 秒钟。|macvim-preference| 说明如何设置隐藏属性。
+	使用隐藏属性 MMFullScreenFadeTime 可以调整淡入淡出的动画所需的时间 (以
+	秒计)。缺省为 0，关闭此效果。设为正值 (如 0.25) 可以创造一种效果，使得
+	全屏转换期间淡出到黑色的感觉比较和谐。
 
-	注意: 置位 'fullscreen' 通常会改变 Vim 控制的大小。不过因为技术原因，
-	'lines' 和 'columns' 目前只有在 Vim 运行事件循环时才会更新。如果在 Vim
-	脚本文件中置位 'fullscreen' 并设置 'lines' 或 'columns'，必须在设置
-	'lines' 和 'columns' 后才置位 'fullscreen'。否则在脚本执行后而重新执行
-	事件循环时，'lines' 和 'columns' 会被 'fullscreen' 提供的值覆盖。
+	注意: 置位 'fullscreen' 时不能设置 'lines' 或 'columns'，因为它们是窗
+	口大小决定的。如果使用定制全屏，'fuoptions' 要以覆盖部分的行为。
 
-	XXX: 新增 fuenter/fuleave 自动事件？例如，可能有人想要只在全屏时才显示
-	NERDTree 或 Tlist。不过，也可以使用如果超过一定的大小才触发的大小改变
-	的自动事件。
-	XXX: 考虑 'fullscreen' 和 'transparency' 应该如何互动。
 
 						*'fuoptions'* *'fuopt'*
 'fuoptions' 'fuopt'	字符串	(缺省为 "maxvert,maxhorz")
 			全局
 			{Vi 无此功能}
 			{仅适用于 MacVim GUI}
-	全屏模式下，屏幕大部分为黑色，只有一部分屏幕为 Vim 控制所实际覆盖。而
-	控制放置于正中。本选项控制 Vim 控制的大小和未使用的屏幕区域的颜色。
+	非原生全屏模式下，MacVim 可以控制显示所有内容以覆盖整个屏幕，蒙昧无知
+	只有一部分屏幕为 Vim 控制所实际覆盖。而控制放置于正中。本选项控制 Vim
+	控制的大小和未使用的屏幕区域的颜色。
 	值	效果	~
-        maxvert	进入全屏时，'lines' 设为全屏模式下屏幕上能填充的最大行数。退出
-		全屏时，如果 'lines' 还等于最大行数，恢复进入全屏前的值。
-	maxhorz	进入全屏时，'columns' 设为全屏模式下屏幕上能填充的最大列数。退
-		出全屏时，如果 'columns' 还等于最大列数，恢复进入全屏前的值。
+        maxvert	进入全屏时，'lines' 设为全屏模式下屏幕上能填充的最大行数。如果
+		不设，进入全屏模式时不改变 'lines'。
+	maxhorz	进入全屏时，'columns' 设为全屏模式下屏幕上能填充的最大列数。如
+		果不设，进入全屏模式时不改变 'columns'。
 	background:color
-		{没有 Mac OS X 自带全屏的支持}
 		进入全屏时，'color' 定义未被 Vim 控制占据的屏幕部分的颜色。如
 		果 'color' 为 '#' 开头的 8-位十六进制数值，解释为显式的颜色值
 		'#aarrggbb'，其中透明度 (alpha)、红、绿、蓝值各占一字节。否
@@ -3095,13 +3096,6 @@ se[t]			字符串 "set " 或 "se " (注意 空格)；使用 "Vim" 时必须
 <	进入全屏时不改变大小，并指定和当前文本背景相似的背景色: >
 	  :set fuoptions=background:Normal
 <
-	XXX: 字体大小改变又如何？此时，可能永远不会还想恢复旧的 'lines' 或
-	'columns' 值。
-	XXX: 每次 Vim 窗口改变大小时 (例如由于字体大小的改变，Vim 重新全屏最大
-	化？)
-	XXX: 此方法不能恢复 Vim 的纵向大小，如果进入 fu 时没有标签页，而退出时
-	有标签页 (反之亦然)。
-
 
 
 				   *'gdefault'* *'gd'* *'nogdefault'* *'nogd'*

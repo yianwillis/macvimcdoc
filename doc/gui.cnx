@@ -1,4 +1,4 @@
-*gui.txt*       适用于 Vim 9.0 版本。	最近更新: 2022年7月
+*gui.txt*       适用于 Vim 9.0 版本。	最近更新: 2022年8月
 
 
 		  VIM 参考手册    by Bram Moolenaar
@@ -17,6 +17,7 @@ Vim 的图形用户界面					*gui* *GUI*
 8. 外壳命令			|gui-shell|
 
 其它的 GUI 文档:
+|gui_mac.txt|	关于 MacVim GUI 的特定内容。
 |gui_x11.txt|	关于 X11 GUI 的特定内容。
 |gui_w32.txt|	关于 Win32 GUI 的特定内容。
 
@@ -77,7 +78,7 @@ GUI 启动时，开展以下初始化操作 (按照给出的顺序):
 置。
 
 建议你把自己的 GUI 初始化部分放在:
-	Unix 和 Mac OS X    $HOME/.gvimrc 或 $HOME/.vim/gvimrc
+	Unix 和 macOS       $HOME/.gvimrc 或 $HOME/.vim/gvimrc
 	Win32		    $HOME/_gvimrc、$HOME/vimfiles/gvimrc 或
 			    $VIM/_gvimrc
 	Amiga		    s:.gvimrc、home:.gvimrc、home:vimfiles:gvimrc 或
@@ -744,9 +745,9 @@ Vim 会继续留在可视模式。最好用 `:nnoremenu` 来避免副作用。
 分割窗口时，并不在新窗口中复制窗口工具条。
 
 							*popup-menu*
-在 Win32、GTK+、Motif 和 Photon GUI 上，可以定义特殊的 "PopUp" 菜单。如果
-'mousemodel' 设为 popup 或者 popup_setpos，这将是按下鼠标右键时显示的菜单。
-示例: >
+在 Win32、MacVim、GTK+、Motif 和 Photon GUI 上，可以定义特殊的 "PopUp" 菜单。
+如果 'mousemodel' 设为 popup 或者 popup_setpos，这将是按下鼠标右键时显示的菜
+单。示例: >
     nnoremenu 1.40 PopUp.&Paste	"+gP
     menu PopUp
 
@@ -852,13 +853,14 @@ GUI 模式下有用的菜单项目。关于一个能用于此目的的选项，�
 
 							*:tmenu* *:tm*
 :tm[enu] {menupath} {rhs}	为菜单或者工具定义提示。
-				{仅存在于 X11 和 Win32 GUI}
+				{仅存在于 X11、MacVim 和 Win32 GUI}
 
-:tm[enu] [menupath]		列出菜单提示。{仅存在于 X11 和 Win32 GUI}
+:tm[enu] [menupath]		列出菜单提示。{仅存在于 X11、MacVim 和 Win32
+				GUI}
 
 							*:tunmenu* *:tu*
 :tu[nmenu] {menupath}		删除菜单或者工具的提示。
-				{仅存在于 X11 和 Win32 GUI}
+				{仅存在于 X11、MacVim 和 Win32 GUI}
 
 备注: 要创建终端模式的菜单，使用 |:tlmenu| 代替。
 
@@ -875,8 +877,8 @@ Windows 菜单提示出现在状态栏那样。(除非 Vim 在命令行模式的
 然后这样删除: >
 	:tunmenu MyMenu.Hello
 
-现在，工具提示只有在 X11 和 Win32 GUI 上才支持。不过，在不远的将来，应该在其它
-gui 平台上也会出现。
+现在，工具提示只有在 X11、MacVim 和 Win32 GUI 上才支持。不过，在不远的将来，应
+该在其它 gui 平台上也会出现。
 
 ":tmenu" 菜单和其它菜单命令使用相同的参数。":tunmenu" 删除已存在的菜单提示，使
 用方式和其它的 umenu 命令一样。
