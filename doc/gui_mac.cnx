@@ -1,4 +1,4 @@
-*gui_mac.txt*   For Vim version 9.0.  最近更新: 2022年8月
+*gui_mac.txt*   For Vim version 9.0.  最近更新: 2022年9月
 
 
 	   VIM 参考手册    by Bjorn Winckler
@@ -209,21 +209,24 @@ MacVim 可以作为 '外部编辑器'，用于支持 ODB 编辑器协议 (或 '�
 
 键				值 ~
 *MMCellWidthMultiplier*		以 em 单位计普通字型的宽度 [float]
+*MMCmdLineAlignBottom*		把命令行固定在 MacVim 底部 [bool]
 *MMDialogsTrackPwd*		打开/保存对话框跟踪 Vim 的当前路径 [bool]
 *MMDisableLaunchAnimation*	打开新 MacVim 窗口时关闭启动动画 [bool]
-*MMFullScreenFadeTime*		非自带全屏的淡入淡出的延迟 [float]
+*MMFontPreserveLineSpacing*	使用字体指定的行间距 [bool]
 *MMLoginShellArgument*		登录外壳的参数 [string]
 *MMLoginShellCommand*		使用哪个外壳来启动 Vim [string]
+*MMFullScreenFadeTime*		非自带全屏的淡入淡出的延迟 [float]
 *MMNativeFullScreen*		使用原生全屏模式 [bool]
 *MMNonNativeFullScreenShowMenu*	非原生全屏模式下显示菜单 [bool]
 *MMNonNativeFullScreenSafeAreaBehavior*
 				非原生全屏模式下关于安全区域 (也就是 "刘海")
 				的行为 [int]
 *MMNoFontSubstitution*		关闭自动字体替换 [bool]
-*MMFontPreserveLineSpacing*	使用字体提供的行距 [bool]
+				(已废弃: 只用于 非-CoreText 渲染器)
 *MMNoTitleBarWindow*		隐藏标题栏 [bool]
 *MMTitlebarAppearsTransparent*	打开透明标题栏 [bool]
-*MMAppearanceModeSelection*	深色模式选择 (|macvim-dark-mode|)[bool]
+*MMAppearanceModeSelection*	深色模式选择 (|macvim-dark-mode|) [bool]
+*MMSmoothResize*		允许平滑调整 MacVim 窗口的大小 [bool]
 *MMShareFindPboard*		将搜索文本分享到查找粘贴板 [bool]
 *MMShowAddTabButton*		在标签页行上打开 "add tab" 按钮 [bool]
 *MMTabMaxWidth*			标签最大宽度 [int]

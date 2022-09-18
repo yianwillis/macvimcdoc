@@ -5415,6 +5415,7 @@ M	motion.cnx	/*M*
 MDI	starting.cnx	/*MDI*
 MMAppearanceModeSelection	gui_mac.cnx	/*MMAppearanceModeSelection*
 MMCellWidthMultiplier	gui_mac.cnx	/*MMCellWidthMultiplier*
+MMCmdLineAlignBottom	gui_mac.cnx	/*MMCmdLineAlignBottom*
 MMDialogsTrackPwd	gui_mac.cnx	/*MMDialogsTrackPwd*
 MMDisableLaunchAnimation	gui_mac.cnx	/*MMDisableLaunchAnimation*
 MMFontPreserveLineSpacing	gui_mac.cnx	/*MMFontPreserveLineSpacing*
@@ -5428,6 +5429,7 @@ MMNonNativeFullScreenSafeAreaBehavior	gui_mac.cnx	/*MMNonNativeFullScreenSafeAre
 MMNonNativeFullScreenShowMenu	gui_mac.cnx	/*MMNonNativeFullScreenShowMenu*
 MMShareFindPboard	gui_mac.cnx	/*MMShareFindPboard*
 MMShowAddTabButton	gui_mac.cnx	/*MMShowAddTabButton*
+MMSmoothResize	gui_mac.cnx	/*MMSmoothResize*
 MMTabMaxWidth	gui_mac.cnx	/*MMTabMaxWidth*
 MMTabMinWidth	gui_mac.cnx	/*MMTabMinWidth*
 MMTabOptimumWidth	gui_mac.cnx	/*MMTabOptimumWidth*
