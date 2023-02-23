@@ -532,6 +532,8 @@ sha256({string})		字符串	{string} 的 SHA256 校验码
 shellescape({string} [, {special}])
 				字符串	转义 {string} 以便用作外壳命令的参数
 shiftwidth([{col}])		数值	'shiftwidth' 的有效值
+showdefinition({string} [, {options}])
+				无	在弹出中显示 {string} 的定义
 sign_define({name} [, {dict}])	数值	定义或更新标号
 sign_define({list})		列表	定义或更新一列标号
 sign_getdefined([{name}])	列表	得到已定义的标号的列表
@@ -7405,6 +7407,21 @@ shiftwidth([{col}])						*shiftwidth()*
 
 		也可用作 |method|: >
 			GetColumn()->shiftwidth()
+
+showdefinition({string} [, {options}])			*showdefinition()*
+		打开 macOS 弹出窗口使用 macOS 内建的查找功能来显示 {string} 的
+		定义。查找的行为取决于文本的上下文。通常是 Siri 知识库文章的字
+		典字义。如果是 URL，会显示网页的预览；如果是地址，会显示地图。
+
+		相当于 Ctrl-Cmd-D 或触控板来查找鼠标下的数据。
+
+		弹出的位置在光标处。可传递 {options} 覆盖，这是包含两个成员的
+		Dict: "row" 和 "col"，代表弹出显示所在的屏幕行和列。也可直接传
+		递 |screenpos()| 的返回值给 {options}。
+
+		也可用作 |method|: >
+			GetText()->showdefinition()
+<		{仅适用于 MacVim GUI}
 
 sign_ 函数文档在这里: |sign-functions-details|。
 
