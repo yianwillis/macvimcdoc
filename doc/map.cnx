@@ -1,4 +1,4 @@
-*map.txt*	适用于 Vim 9.0 版本。	最近更新: 2023年2月
+*map.txt*	适用于 Vim 9.1 版本。	最近更新: 2025年3月
 
 
 		  VIM 参考手册    by Bram Moolenaar
@@ -21,12 +21,13 @@
    1.9 使用映射					|map-typing|
    1.10 映射 ALT 键				|:map-alt-keys|
    1.11 映射 META 键				|:map-meta-keys|
-   1.12 modifyOtherKeys 模式映射		|modifyOtherKeys|
-   1.13 使用 Kitty 键盘协议的映射		|kitty-keyboard-protocol|
+   1.12 映射 SUPER 或 COMMAND 键		|:map-super-keys|
+   1.13 modifyOtherKeys 模式映射		|modifyOtherKeys|
+   1.14 使用 Kitty 键盘协议的映射		|kitty-keyboard-protocol|
    1.14 映射操作符				|:map-operator|
 2. 缩写				|abbreviations|
 3. 局部映射和函数		|script-local|
-4. 用户定义的命令		|user-commands|
+4. 用户定义的命令		|user-commands
 
 ==============================================================================
 1. 键映射				*key-mapping* *mapping* *macro*
@@ -78,6 +79,8 @@
 			在映射命令作用的模式中把键序列 {lhs} 映射为 {rhs} 。禁
 			止对映射后的 {rhs} 进行映射扫描。这个特性可以避免映射
 			的嵌套和递归。通常用于重定义一个命令。
+			注意: 除了 |i_CTRL-]| 和 |c_CTRL-]|，{rhs} 里的键不触
+			发缩写。
 			注意: <Plug> 出现在 {rhs} 时，总会被应用，即使不允许重
 			映射也是如此。
 
@@ -348,10 +351,8 @@ CTRL-L 插入下一个数值，CTRL-R 复位计数且返回空字符串，这样
 
 							*E1255* *E1136*
 <Cmd> 和 <ScriptCmd> 里的命令必须终止，亦即，在映射定义的 {rhs} 里它们必须后跟
-<CR>。从不进入 |Command-line| 模式。
-
-							*E1137*
-<Cmd> 和 <ScriptCmd> 里的命令只能有普通字符，不能包含函数键这样的特殊字符。
+<CR>。从不进入 |Command-line| 模式。在 {rhs} 里要按本义键入 <CR> 这串字符，可
+用 |<lt>|。
 
 
 1.3 映 射 与 运 行 模 式				*:map-modes*
@@ -513,9 +514,11 @@ CTRL-U (<C-U>) 用于删除命令行上 Vim 可能插入的范围。普通模式
 映射列出的同时不能新增或清除映射，如在定时器回调中。  *E1309*
 
 							*:map-verbose*
-如果 'verbose' 非零，列出键映射的同时可以显示它在哪里定义。例如: >
+如果 'verbose' 非零，在首行会显示检测到和实际使用的 'keyprotocol' 值。键映射会
+同时显示它最后在哪里定义。例如: >
 
 	:verbose map <C-W>*
+	Kitty keyboard protocol: Cleared
 	n  <C-W>*      * <C-W><C-S>*
 		Last set from /home/abcd/.vimrc
 
@@ -786,6 +789,10 @@ Vim 将把 x 替换成 y，并把 y 替换成 x，等等。这种情况会发生
 
 1.10 映 射 ALT 键					*:map-alt-keys*
 
+为了使映射命令可读，可用 <A-k> 形式。注意 <A-K> 和 <A-K> 不同，后者使用大写字
+母。实际上，<A-K> 和 <A-S-K> 等价。可用 "M" 代替 "A"。如果实际使用带 Meta 修饰
+符的键，请参见 |:map-meta-keys|。
+
 GUI 上，Vim 自己处理 Alt 键，所以用 ALT 键的映射应该总没有问题。但在终端上，
 Vim 得到字节的序列，它必须自己判断是不是按了 ALT 键。
 
@@ -834,7 +841,17 @@ Meta 修饰符使用 "T" 字符。例如，要在插入模式中映射 Meta-b: >
 	:imap <T-b> terrible
 
 
-1.12 modifyOtherKeys 模 式 映 射			*modifyOtherKeys*
+1.12 映射 SUPER 或 COMMAND 键		     *:map-super-keys* *:map-cmd-key*
+
+Linux 上的 gVim 和 Mac OS 上的 MacVim 在 GUI 模式 (|gui_running| 为 1) 可用
+Super 修饰符。Mac 上它代表 Command 键，而带 GTK GUI 的 Linux 上它代表 Super
+键。
+Super / Command 修饰符使用 "D" 字符。
+
+例如，要在插入模式中映射 Command-b: >
+	:imap <D-b> barritone
+
+1.13 modifyOtherKeys 模 式 映 射			*modifyOtherKeys*
 
 Xterm 和一些其它的终端可以进入一种模式，其中带修饰符的键可以使用特殊的转义代码
 发送。Vim 识别这些代码，所以可以区别 CTRL-H 和退格键，尽管退格键也发送字符 8。
@@ -888,7 +905,7 @@ modifyOtherKeys 打开时可以映射 <C-[> 和 <C-S-{>: >
 都会退出插入模式。
 
 
-1.13 使用 Kitty 键盘协议的映射			 *kitty-keyboard-protocol*
+1.14 使用 Kitty 键盘协议的映射			 *kitty-keyboard-protocol*
 
 'term' 值包含 "kitty" 时，Vim 会发送转义序列以打开 Kitty 键盘协议。可用
 'keyprotocol' 选项改变此行为。
@@ -909,7 +926,7 @@ Kitty 键盘协议是否打开。要确认 Vim 是否检测到了这样的转义
 	Cleared		被 't_TE' 关闭，之前状态未知
 
 
-1.14 映 射 操 作 符					*:map-operator*
+1.15 映 射 操 作 符					*:map-operator*
 
 操作符应用于 {motion} 命令之前。要定义你自己的操作符，你需要先创建映射来设置
 'operatorfunc' 选项，然后调用 |g@| 操作符。这样用户输入 {motion} 命令后，会调
@@ -1207,7 +1224,8 @@ non-id	  匹配的前面是一个空格、制表或者行或插入的开始。
 的。为了避免这种情况，它们可以局部在脚本。
 
 						*<SID>* *<SNR>* *E81*
-字串 "<SID>" 能用于映射或菜单。这要求 'cpoptions' 中没有 '<' 标志位。
+字串 "<SID>" 能用于映射或菜单。这要求 'cpoptions' 中没有 '<' 标志位。可用于映
+射中调用同一脚本里局部于脚本的函数。
    当执行映射命令时，Vim 将把 "<SID>" 替换成特殊键码 <SNR>，后跟一个每个脚本唯
 一的数字编号，和一个下划线。例如: >
 	:map <SID>Add
@@ -1325,6 +1343,10 @@ Vim 和任何其它 Ex 命令一样对待用户自定义命令。它能有参数
 可以进行文件名，缓冲区等补全。具体的工作方式取决于命令的属性，属性在命令被定义
 时被指定。
 
+在脚本里定义用户命令时，它可以调用局部于脚本中的函数和使用局部于脚本的映射。用
+户调用用户命令时，该命令将运行在定义它的脚本的上下文里，如果一个命令中使用了
+|<SID>|，这一点很重要。
+
 属性可分四大类: 参数处理、补全行为、范围处理和特殊情况。下面分类描述之。
 
 参数处理 ~
@@ -1361,13 +1383,16 @@ Vim 和任何其它 Ex 命令一样对待用户自定义命令。它能有参数
 
 	-complete=arglist	参数列表中的文件名
 	-complete=augroup	自动命令组
-	-complete=buffer	缓冲区名
 	-complete=behave	:behave 子选项
+	-complete=breakpoint	|:breakadd| 子选项
+	-complete=buffer	缓冲区名
 	-complete=color		颜色方案
 	-complete=command	Ex 命令 (及其参数)
 	-complete=compiler	编译器
 	-complete=cscope	|:cscope| 子选项
+	-complete=diff_buffer	比较缓冲区名
 	-complete=dir		目录名
+	-complete=dir_in_path	|'cdpath'| 里的目录名
 	-complete=environment	环境变量名
 	-complete=event		自动命令事件
 	-complete=expression	Vim 表达式
@@ -1378,6 +1403,7 @@ Vim 和任何其它 Ex 命令一样对待用户自定义命令。它能有参数
 	-complete=help		帮助主题
 	-complete=highlight	高亮组
 	-complete=history	|:history| 子选项
+	-complete=keymap	键盘映射
 	-complete=locale	locale 名 (和 locale -a 给出的相同)
 	-complete=mapclear	缓冲区参数
 	-complete=mapping	映射名
@@ -1385,7 +1411,11 @@ Vim 和任何其它 Ex 命令一样对待用户自定义命令。它能有参数
 	-complete=messages	|:messages| 子选项
 	-complete=option	选项
 	-complete=packadd	可选包 |pack-add| 名
+	-complete=runtime	|'runtimepath'| 里的文件和目录名
+	-complete=scriptnames	已载入的脚本名
 	-complete=shellcmd	外壳命令
+	-complete=shellcmdline	第一部分是外壳命令，其余是文件句。行为与
+				|:!cmd| 相同
 	-complete=sign		|:sign| 子选项
 	-complete=syntax	语法文件名 |'syntax'|
 	-complete=syntime	|:syntime| 子选项
@@ -1507,6 +1537,9 @@ Vim 和任何其它 Ex 命令一样对待用户自定义命令。它能有参数
 "{" 之前必须有空白。不支持嵌套，不能使用内联函数。对 "|" 可能在参数里出现的命
 令，如带表达式参数的命令，不能后跟 "|" 和其他命令。
 
+如果命令在 Vim9 脚本中定义 (`:vim9script` 开始的脚本和用 `:def` 的函数中)，
+以 Vim9 脚本模式执行 {repl}。这只取决于命令定义的位置，而不是它被调用的位置。
+
 对用户自定义命令的替换文本 {repl} 进行扫描，找到使用 <...> 记法的特殊转义序列。
 转义序列被命令行输入提供的值替换，其它文本不变。最终字符串被作为 Ex 命令来执
 行。要避免替换，使用 <lt> 代替初始的 <。这样，要按本义包含 "<bang>"，请使用
@@ -1581,6 +1614,10 @@ args"，函数参数)。它在空格和制表处分割命令行参数，每个�
 	XX a\\\ b	   'a\ b'
 	XX a\\\\b	   'a\\b'
 	XX a\\\\ b	   'a\\', 'b'
+	XX		   [nothing]
+
+注意 如果要处理 "无参数" 的情形，要确定此函数可以无参数地调用。对已编译的函数，
+可考虑可变参数，见 |vim9-variable-arguments|。
 
 用户命令的示例: >
 
@@ -1627,11 +1664,5 @@ args"，函数参数)。它在空格和制表处分割命令行参数，每个�
 它将调用: >
 	:call Allargs("%s/foo/bar/ge|update")
 <
-如果命令在 Vim9 脚本中定义 (`:vim9script` 开始的脚本并出现在 `:def` 函数中)，
-以 Vim9 脚本模式执行 {repl}。这只取决于命令定义的位置，而不是它被调用的位置。
-
-在脚本里定义用户命令时，它可以调用局部于脚本中的函数和使用局部于脚本的映射。用
-户调用用户命令时，该命令将运行在定义它的脚本的上下文里，如果一个命令中使用了
-|<SID>|，这一点很重要。
 
  vim:tw=78:ts=8:noet:ft=help:norl:

@@ -1,4 +1,4 @@
-*usr_45.txt*	适用于 Vim 9.0 版本。	最近更新: 2022年8月
+*usr_45.txt*	适用于 Vim 9.1 版本。	最近更新: 2025年3月
 
 		     VIM 用户手册 - by Bram Moolenaar
 				译者: lang2
@@ -15,9 +15,9 @@ Vim 中各种的消息可以用多种不同的语言给出。本章就介绍如�
 |45.4|	编辑其它编码的文件
 |45.5|	文本录入
 
-           下一章: |usr_50.txt|  高级 Vim 脚本编写
-           前一章: |usr_44.txt|  自定义语法高亮
-             目录: |usr_toc.txt|
+	下一章: |usr_50.txt|  高级 Vim 脚本编写
+	前一章: |usr_44.txt|  自定义语法高亮
+	  目录: |usr_toc.txt|
 
 ==============================================================================
 *45.1*	消息所用语言
@@ -145,7 +145,7 @@ Vim 在内部使用 Unicode，你将可以用任何编码编辑文件。
 种字体是包括在一个用于增强 xterm 的软件包中的。如果你没有这种字体，你可以在这
 里找到:
 
-	http://www.cl.cam.ac.uk/~mgk25/download/ucs-fonts.tar.gz ~
+	http://www.cl.cam.ac.uk/~mgk25/download/ucs-fonts.tar.gz
 
 对于 MS-Windows，一些字体包含了一些有限的 Unicode 字符。试一下 "Courier New"
 字体。你可以通过 Edit/Select Font... 菜单来选择几种字体试试。但是你只能使用定
@@ -156,7 +156,7 @@ Vim 在内部使用 Unicode，你将可以用任何编码编辑文件。
 如果不行的话，试着找个字体包。你可以在下面这个地址找到，如果 Microsoft 没把它
 移走的话 (译者注: 已经不能用了):
 
-	http://www.microsoft.com/typography/fonts/default.aspx ~
+	http://www.microsoft.com/typography/fonts/default.aspx
 
 现在你已经通知了 Vim 在内部使用 Unicode 并用一种 Unicode 字体显示文本。然而，
 Vim 接收到的输入字符依然来自原来语言的编码字符。这些字符必须被转换成 Unicode。

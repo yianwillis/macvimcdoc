@@ -1,4 +1,4 @@
-*usr_22.txt*	适用于 Vim 9.0 版本。	最近更新: 2020年4月
+*usr_22.txt*	适用于 Vim 9.1 版本。	最近更新: 2025年3月
 
 		     VIM 用户手册 - by Bram Moolenaar
 				译者: Chimin Yen
@@ -15,9 +15,9 @@
 |22.3|	查找文件
 |22.4|	缓冲区列表
 
-       下一章: |usr_23.txt|  编辑特殊文件
-       前一章: |usr_21.txt|  离开和回来
-         目录: |usr_toc.txt|
+	下一章: |usr_23.txt|  编辑特殊文件
+	前一章: |usr_21.txt|  离开和回来
+	  目录: |usr_toc.txt|
 
 ==============================================================================
 *22.1*	文件浏览器
@@ -41,8 +41,8 @@ check/ ~
 Makefile ~
 autocmd.txt ~
 change.txt ~
-eval.txt~ ~
-filetype.txt~ ~
+eval.txt ~
+filetype.txt ~
 help.txt.info ~
 
 你可以看到这样一些条目:

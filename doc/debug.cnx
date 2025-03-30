@@ -1,4 +1,4 @@
-*debug.txt*     适用于 Vim 9.0 版本。	最近更新: 2019年12月
+*debug.txt*     适用于 Vim 9.1 版本。	最近更新: 2025年3月
 
 
 		  VIM 参考手册	  by Bram Moolenaar
@@ -132,7 +132,7 @@ Process (连接到进程)。选择 Vim 进程然后点击 OK。
 重现崩溃，WinDbg 就会自动启动。用上面相同的方法设置符号文件路径和源文件路径。
 
 要保存 minidump，在 WinDbg 命令行上输入: >
-        .dump vim.dmp
+	.dump vim.dmp
 <
 							*debug-minidump*
 3.4 打开 Minidump ~
@@ -150,7 +150,7 @@ WinDbg 里: 选择 File 菜单的 Open Crash Dump，按照 |debug-windbg| 的指
 3.5 获得 Microsoft 调试工具 ~
 
 Debugging Tools for Windows (Windows 调试工具) 可以在这里下载
-    http://www.microsoft.com/whdc/devtools/debugging/default.mspx
+    https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/debugger-download-tools
 它包括 WinDbg 调试器。
 
 Visual C++ 2005 Express Edition 可以在这里免费下载:
