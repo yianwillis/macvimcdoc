@@ -3489,6 +3489,8 @@ getcellpixels()						*getcellpixels()*
 		注意 不同终端可能会有变种。macOS 上系统的 Terminal.app 返回的尺
 		寸以点 (point) 计 (在视网膜缩放之前)，而第三方终端返回原始像素
 		尺寸 (在视网膜缩放之后)。
+		MacVim 里，启动后或改变了 'guifont' 时，此选项会有少许延迟才会
+		返回更新后的值。
 
 		返回类型: list<any>
 

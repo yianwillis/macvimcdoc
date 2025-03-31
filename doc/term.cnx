@@ -996,7 +996,7 @@ GPM 鼠标只有在编译时打开 |+mouse_gpm| 特性才有效。GPM 鼠标驱�
  <X2Release>	 释放 X2 键	    -			*X2Release*
 
 X1 和 X2 按钮指一些鼠标上的附加按钮。'Microsoft Explorer' 鼠标在右拇指位置有这
-些键。目前 X1 和 X2 只能用于 Win32 和 X11 环境。
+些键。目前 X1 和 X2 只能用于 MacVim、Win32 和 X11 环境。
 
 示例: >
 	:noremap <MiddleMouse> <LeftMouse><MiddleMouse>

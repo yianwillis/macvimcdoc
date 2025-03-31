@@ -2150,7 +2150,9 @@ v:operator	普通模式给出的最近的操作符。除了 <g> 或 <z> 开始�
 
                                         *v:os_appearance* *os-appearance-variable*
 v:os_appearance 当前 OS 外观模式。可用于根据 GUI 前端的外观来改变选项
-		|background| 或 |colorscheme|。另见 |OSAppearanceChanged|。
+		|background| 或 |colorscheme|。另见 |OSAppearanceChanged|。如
+		果 "Dark mode selection" ("深色模式选择") 设置不是
+		"Automatic"，此值会反映那里的设置。
 			值      描述 ~
 			0       浅色模式 (在不支持的平台上总为 0)
 			1       深色模式

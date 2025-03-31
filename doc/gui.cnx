@@ -980,12 +980,21 @@ GTK+ 2 和 3 GUI 的字体名看起来如此: >
 <
 (GTK+ 3 GUI 上把 gui_gtk2 换成 gui_gtk3)
 
-Mac OSX 上，你可以这么用: >
-    :set guifont=Monaco:h10
-另见 'macatsui'。可以修正显示问题 {没有 MacVim 支持}。
-MacVim 上, 可以这样设置带空格的字体: >
+MacVim							*macvim-guifont*
+
+MacVim 可以这么用: >
+    :set guifont=Menlo:h10
+可以这样设置带空格的字体: >
     :set guifont=DejaVu\ Sans\ Mono:h13
-<
+要使用加粗/斜体字体，使用字体的完整指定的 PostScript 名，如: >
+    :set guifont=Menlo-Bold:h13
+要使用系统原生等宽字体 (新 macOS 版本上是 SF Mono), 使用 `-monospace-` 关键
+字: >
+    :set guifont=-monospace-:h12
+也可能指定原生等宽字符的字体粗细 (`NSFontWeight` 可取的值参见 Apple 文档): >
+    :set guifont=-monospace-Light:h11
+    :set guifont=-monospace-Medium:h11
+
 等宽字体						*E236*
 
 注意 字体必须等宽 (所有字符相同宽度)。MacVim 和 GTK 是例外: 可以接受所有字体，
