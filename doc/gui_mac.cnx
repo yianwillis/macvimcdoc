@@ -339,10 +339,6 @@ screen (见 |MMNativeFullScreen|)。'fuoptions' 可用来配置背景色和是�
 MacVim 主要使用标准 Vim 色。如何设置和覆盖色彩可见 |gui-colors| 和
 |v:colornames|。
 
-MacVim 在应用捆绑 (MacVim.app/Contents/Resources) 的 "Resources" 目录中的两个
-字典里定义颜色。可以通过修改这些文件来增加更多颜色。Vim 里访问时色彩的大小写不
-敏感，但在字典中必须使用小写。
-
 							*SystemColors.plist*
 |:hi| 命令可使用一些额外的系统颜色。它们在 MacVim.app bundle 里的
 "SystemColors.plist" 字典中定义。这些色彩值对应 macOS 的 NSColor 选择器。可用

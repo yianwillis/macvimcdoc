@@ -1,4 +1,4 @@
-*gui.txt*       适用于 Vim 9.1 版本。  最近更新: 2025年9月
+*gui.txt*       适用于 Vim 9.1 版本。  最近更新: 2025年11月
 
 
 		  VIM 参考手册    by Bram Moolenaar
@@ -982,10 +982,16 @@ GTK+ 2 和 3 GUI 的字体名看起来如此: >
 
 MacVim							*macvim-guifont*
 
-MacVim 可以这么用: >
+MacVim 里，字体可以通过完整的 PostScript 名或家族名来指定 (两者均可在 Font
+Book 应用中找到)，后跟可选的字体尺寸 (缺省是 `h11`)。命令行上，字体名可用
+|complete-set-option| 补全。
+
+基本示例，使用 Menlo 字体，保持默认大小: >
     :set guifont=Menlo:h10
-可以这样设置带空格的字体: >
+要设置家族名带空格的的字体: >
     :set guifont=DejaVu\ Sans\ Mono:h13
+要设置家族名带空格的的字体:，也可用下划线代替空格: >
+    :set guifont=DejaVu_Sans_Mono:h13
 要使用加粗/斜体字体，使用字体的完整指定的 PostScript 名，如: >
     :set guifont=Menlo-Bold:h13
 要使用系统原生等宽字体 (新 macOS 版本上是 SF Mono), 使用 `-monospace-` 关键
