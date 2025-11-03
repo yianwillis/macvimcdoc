@@ -1,4 +1,4 @@
-*os_win32.txt*  适用于 Vim 9.1 版本。	最近更新: 2025年3月
+*os_win32.txt*  适用于 Vim 9.1 版本。  最近更新: 2025年10月
 
 
 		  VIM 参考手册    by George Reilly
@@ -23,7 +23,7 @@ Vim 的 Win32 版本可以在 Windows 7、8、10 和 11 版本上运行，并且
 7. 安装包			|win32-installer|
 8. Win32 常见问题解答 (迷你版)	|win32-faq|
 
-此外，还有一些 Win32 和 DOS 版本通用的条目:
+此外，在 |os_dos.txt| 里还有一些 Win32 和 DOS 版本通用的条目:
 文件位置			|dos-locations|
 使用反斜杠			|dos-backslash|
 标准映射			|dos-standard-mappings|
@@ -79,8 +79,21 @@ WSL 上运行，可用 `exists('$WSLENV')`。
 term 选项						*win32-term*
 
 Vim 的 Win32 版本仅有的终端类型是 "win32"，它是内置的。如果你把 'term' 设置成
-其它的值，Vim 的行为就可能变的很奇怪。所以 Vim 不会从环境变量 "TERM" 里获取
+其它的值，Vim 的行为就可能变得很奇怪。所以 Vim 不会从环境变量 "TERM" 里获取
 'term' 的值。
+
+终端色彩						*win32-term-colors*
+
+Win32 控制台缺省支持 16 色 |dos-colors|。Windows 10 1703 版本 (Creators
+Update) 开始，控制台支持 256 色和真彩 (24-位)。这需要置位 'termguicolors' 而且
+Vim 编译时带上 Virtual Terminal Processing (VTP) (虚拟终端处理) 的支持 |+vtp|。
+
+如果置位了 'termguicolors' 或者 't_Co' 选项设为 256，自动打开虚拟终端处理。这
+会允许色彩的 ANSI 转义序列，改进了多字节字符的渲染，并在窗口控制台里里打开其他
+终端特性。
+
+实际的色彩渲染效果取决于你的终端是否支持 VTP (如 Windows 终端或现代的 Windows
+10/11 控制台)。
 
 $PATH 环境变量						*win32-PATH*
 
@@ -148,7 +161,7 @@ CommandLineToArgvW API 的参考中也有这些规则的描述:
 
 如果你设定了 'restorescreen' 选项 (默认设置)，当你退出 Vim 或者执行外部命令
 时，Vim 能恢复控制台原来的内容。可以用 ":ser nors" 命令关掉这个选项。
-							|'restorescreen'|
+							'restorescreen'
 
 ==============================================================================
 4. 使用鼠标						*win32-mouse*
@@ -211,7 +224,7 @@ https://github.com/vim/vim-win32-installer/releases/ 也提供每日构建版。
     同。在非 UNIX 系统上，首先原文件被改名，然后写入新文件。只有保护位和原文件
     相同。但是，这个方法不能处理 NFS 文件系统，那里除了链接还有一些其它问题。
     唯一的解决办法是禁用备份文件，可以通过命令 ":set nobackup nowritebackup"
-    实现						|'writebackup'|
+    实现						'writebackup'
 
 问: 我正通过 Samba 使用 Vim 编辑 Unix 系统上的一个文件。当我保存文件时，文件所
     有者被改变了。为什么？

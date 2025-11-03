@@ -42,7 +42,10 @@ $quote	eval.cnx	/*$quote*
 ']	motion.cnx	/*']*
 '^	motion.cnx	/*'^*
 'a	motion.cnx	/*'a*
+'ac'	options.cnx	/*'ac'*
 'acd'	options.cnx	/*'acd'*
+'acl'	options.cnx	/*'acl'*
+'act'	options.cnx	/*'act'*
 'ai'	options.cnx	/*'ai'*
 'akm'	options.cnx	/*'akm'*
 'al'	options.cnx	/*'al'*
@@ -63,6 +66,9 @@ $quote	eval.cnx	/*$quote*
 'as'	todo.cnx	/*'as'*
 'asd'	options.cnx	/*'asd'*
 'autochdir'	options.cnx	/*'autochdir'*
+'autocomplete'	options.cnx	/*'autocomplete'*
+'autocompletedelay'	options.cnx	/*'autocompletedelay'*
+'autocompletetimeout'	options.cnx	/*'autocompletetimeout'*
 'autoindent'	options.cnx	/*'autoindent'*
 'autoprint'	vi_diff.cnx	/*'autoprint'*
 'autoread'	options.cnx	/*'autoread'*
@@ -137,6 +143,8 @@ $quote	eval.cnx	/*$quote*
 'ch'	options.cnx	/*'ch'*
 'character'	intro.cnx	/*'character'*
 'charconvert'	options.cnx	/*'charconvert'*
+'chi'	options.cnx	/*'chi'*
+'chistory'	options.cnx	/*'chistory'*
 'ci'	options.cnx	/*'ci'*
 'cia'	options.cnx	/*'cia'*
 'cin'	options.cnx	/*'cin'*
@@ -150,6 +158,7 @@ $quote	eval.cnx	/*$quote*
 'cinw'	options.cnx	/*'cinw'*
 'cinwords'	options.cnx	/*'cinwords'*
 'clipboard'	options.cnx	/*'clipboard'*
+'clipmethod'	options.cnx	/*'clipmethod'*
 'cm'	options.cnx	/*'cm'*
 'cmdheight'	options.cnx	/*'cmdheight'*
 'cmdwinheight'	options.cnx	/*'cmdwinheight'*
@@ -172,6 +181,7 @@ $quote	eval.cnx	/*$quote*
 'completeopt'	options.cnx	/*'completeopt'*
 'completepopup'	options.cnx	/*'completepopup'*
 'completeslash'	options.cnx	/*'completeslash'*
+'completetimeout'	options.cnx	/*'completetimeout'*
 'concealcursor'	options.cnx	/*'concealcursor'*
 'conceallevel'	options.cnx	/*'conceallevel'*
 'confirm'	options.cnx	/*'confirm'*
@@ -180,6 +190,7 @@ $quote	eval.cnx	/*$quote*
 'copyindent'	options.cnx	/*'copyindent'*
 'cot'	options.cnx	/*'cot'*
 'cp'	options.cnx	/*'cp'*
+'cpm'	options.cnx	/*'cpm'*
 'cpo'	options.cnx	/*'cpo'*
 'cpoptions'	options.cnx	/*'cpoptions'*
 'cpp'	options.cnx	/*'cpp'*
@@ -202,6 +213,7 @@ $quote	eval.cnx	/*$quote*
 'cst'	options.cnx	/*'cst'*
 'csto'	options.cnx	/*'csto'*
 'csverb'	options.cnx	/*'csverb'*
+'cto'	options.cnx	/*'cto'*
 'cuc'	options.cnx	/*'cuc'*
 'cul'	options.cnx	/*'cul'*
 'culopt'	options.cnx	/*'culopt'*
@@ -217,9 +229,11 @@ $quote	eval.cnx	/*$quote*
 'delcombine'	options.cnx	/*'delcombine'*
 'dex'	options.cnx	/*'dex'*
 'dg'	options.cnx	/*'dg'*
+'dia'	options.cnx	/*'dia'*
 'dict'	options.cnx	/*'dict'*
 'dictionary'	options.cnx	/*'dictionary'*
 'diff'	options.cnx	/*'diff'*
+'diffanchors'	options.cnx	/*'diffanchors'*
 'diffexpr'	options.cnx	/*'diffexpr'*
 'diffopt'	options.cnx	/*'diffopt'*
 'digraph'	options.cnx	/*'digraph'*
@@ -350,6 +364,7 @@ $quote	eval.cnx	/*$quote*
 'go'	options.cnx	/*'go'*
 'go-!'	options.cnx	/*'go-!'*
 'go-A'	options.cnx	/*'go-A'*
+'go-C'	options.cnx	/*'go-C'*
 'go-F'	options.cnx	/*'go-F'*
 'go-L'	options.cnx	/*'go-L'*
 'go-M'	options.cnx	/*'go-M'*
@@ -443,6 +458,8 @@ $quote	eval.cnx	/*$quote*
 'infercase'	options.cnx	/*'infercase'*
 'insertmode'	options.cnx	/*'insertmode'*
 'is'	options.cnx	/*'is'*
+'ise'	options.cnx	/*'ise'*
+'isexpand'	options.cnx	/*'isexpand'*
 'isf'	options.cnx	/*'isf'*
 'isfname'	options.cnx	/*'isfname'*
 'isi'	options.cnx	/*'isi'*
@@ -472,6 +489,8 @@ $quote	eval.cnx	/*$quote*
 'lazyredraw'	options.cnx	/*'lazyredraw'*
 'lbr'	options.cnx	/*'lbr'*
 'lcs'	options.cnx	/*'lcs'*
+'lhi'	options.cnx	/*'lhi'*
+'lhistory'	options.cnx	/*'lhistory'*
 'linebreak'	options.cnx	/*'linebreak'*
 'lines'	options.cnx	/*'lines'*
 'linespace'	options.cnx	/*'linespace'*
@@ -510,6 +529,7 @@ $quote	eval.cnx	/*$quote*
 'maxmem'	options.cnx	/*'maxmem'*
 'maxmempattern'	options.cnx	/*'maxmempattern'*
 'maxmemtot'	options.cnx	/*'maxmemtot'*
+'maxsearchcount'	options.cnx	/*'maxsearchcount'*
 'mco'	options.cnx	/*'mco'*
 'mef'	options.cnx	/*'mef'*
 'menc'	options.cnx	/*'menc'*
@@ -550,12 +570,14 @@ $quote	eval.cnx	/*$quote*
 'mousetime'	options.cnx	/*'mousetime'*
 'mp'	options.cnx	/*'mp'*
 'mps'	options.cnx	/*'mps'*
+'msc'	options.cnx	/*'msc'*
 'msm'	options.cnx	/*'msm'*
 'mzq'	options.cnx	/*'mzq'*
 'mzquantum'	options.cnx	/*'mzquantum'*
 'mzschemedll'	options.cnx	/*'mzschemedll'*
 'mzschemegcdll'	options.cnx	/*'mzschemegcdll'*
 'nf'	options.cnx	/*'nf'*
+'noac'	options.cnx	/*'noac'*
 'noacd'	options.cnx	/*'noacd'*
 'noai'	options.cnx	/*'noai'*
 'noakm'	options.cnx	/*'noakm'*
@@ -572,6 +594,7 @@ $quote	eval.cnx	/*$quote*
 'noas'	todo.cnx	/*'noas'*
 'noasd'	options.cnx	/*'noasd'*
 'noautochdir'	options.cnx	/*'noautochdir'*
+'noautocomplete'	options.cnx	/*'noautocomplete'*
 'noautoindent'	options.cnx	/*'noautoindent'*
 'noautoread'	options.cnx	/*'noautoread'*
 'noautosave'	todo.cnx	/*'noautosave'*
@@ -816,6 +839,7 @@ $quote	eval.cnx	/*$quote*
 'nowinfixheight'	options.cnx	/*'nowinfixheight'*
 'nowinfixwidth'	options.cnx	/*'nowinfixwidth'*
 'nowiv'	options.cnx	/*'nowiv'*
+'nowlsteal'	options.cnx	/*'nowlsteal'*
 'nowmnu'	options.cnx	/*'nowmnu'*
 'nowrap'	options.cnx	/*'nowrap'*
 'nowrapscan'	options.cnx	/*'nowrapscan'*
@@ -823,6 +847,7 @@ $quote	eval.cnx	/*$quote*
 'nowriteany'	options.cnx	/*'nowriteany'*
 'nowritebackup'	options.cnx	/*'nowritebackup'*
 'nows'	options.cnx	/*'nows'*
+'nowst'	options.cnx	/*'nowst'*
 'noxtermcodes'	options.cnx	/*'noxtermcodes'*
 'nrformats'	options.cnx	/*'nrformats'*
 'nu'	options.cnx	/*'nu'*
@@ -840,7 +865,9 @@ $quote	eval.cnx	/*$quote*
 'opfunc'	options.cnx	/*'opfunc'*
 'optimize'	vi_diff.cnx	/*'optimize'*
 'option'	intro.cnx	/*'option'*
+'osctimeoutlen'	options.cnx	/*'osctimeoutlen'*
 'osfiletype'	options.cnx	/*'osfiletype'*
+'ost'	options.cnx	/*'ost'*
 'pa'	options.cnx	/*'pa'*
 'packpath'	options.cnx	/*'packpath'*
 'para'	options.cnx	/*'para'*
@@ -850,6 +877,7 @@ $quote	eval.cnx	/*$quote*
 'patchexpr'	options.cnx	/*'patchexpr'*
 'patchmode'	options.cnx	/*'patchmode'*
 'path'	options.cnx	/*'path'*
+'pb'	options.cnx	/*'pb'*
 'pdev'	options.cnx	/*'pdev'*
 'penc'	options.cnx	/*'penc'*
 'perldll'	options.cnx	/*'perldll'*
@@ -879,6 +907,7 @@ $quote	eval.cnx	/*$quote*
 'printoptions'	options.cnx	/*'printoptions'*
 'prompt'	options.cnx	/*'prompt'*
 'pt'	options.cnx	/*'pt'*
+'pumborder'	options.cnx	/*'pumborder'*
 'pumheight'	options.cnx	/*'pumheight'*
 'pummaxwidth'	options.cnx	/*'pummaxwidth'*
 'pumwidth'	options.cnx	/*'pumwidth'*
@@ -972,6 +1001,7 @@ $quote	eval.cnx	/*$quote*
 'showmatch'	options.cnx	/*'showmatch'*
 'showmode'	options.cnx	/*'showmode'*
 'showtabline'	options.cnx	/*'showtabline'*
+'showtabpanel'	options.cnx	/*'showtabpanel'*
 'shq'	options.cnx	/*'shq'*
 'si'	options.cnx	/*'si'*
 'sidescroll'	options.cnx	/*'sidescroll'*
@@ -1025,6 +1055,7 @@ $quote	eval.cnx	/*$quote*
 'statusline'	options.cnx	/*'statusline'*
 'stl'	options.cnx	/*'stl'*
 'stmp'	options.cnx	/*'stmp'*
+'stpl'	options.cnx	/*'stpl'*
 'sts'	options.cnx	/*'sts'*
 'su'	options.cnx	/*'su'*
 'sua'	options.cnx	/*'sua'*
@@ -1196,6 +1227,8 @@ $quote	eval.cnx	/*$quote*
 'tabclose'	options.cnx	/*'tabclose'*
 'tabline'	options.cnx	/*'tabline'*
 'tabpagemax'	options.cnx	/*'tabpagemax'*
+'tabpanel'	options.cnx	/*'tabpanel'*
+'tabpanelopt'	options.cnx	/*'tabpanelopt'*
 'tabstop'	options.cnx	/*'tabstop'*
 'tag'	options.cnx	/*'tag'*
 'tagbsearch'	options.cnx	/*'tagbsearch'*
@@ -1246,6 +1279,8 @@ $quote	eval.cnx	/*$quote*
 'toolbar'	options.cnx	/*'toolbar'*
 'toolbariconsize'	options.cnx	/*'toolbariconsize'*
 'top'	options.cnx	/*'top'*
+'tpl'	options.cnx	/*'tpl'*
+'tplo'	options.cnx	/*'tplo'*
 'tpm'	options.cnx	/*'tpm'*
 'tr'	options.cnx	/*'tr'*
 'transp'	options.cnx	/*'transp'*
@@ -1314,6 +1349,7 @@ $quote	eval.cnx	/*$quote*
 'wcr'	options.cnx	/*'wcr'*
 'wd'	options.cnx	/*'wd'*
 'weirdinvert'	options.cnx	/*'weirdinvert'*
+'wfb'	options.cnx	/*'wfb'*
 'wfh'	options.cnx	/*'wfh'*
 'wfw'	options.cnx	/*'wfw'*
 'wh'	options.cnx	/*'wh'*
@@ -1342,6 +1378,9 @@ $quote	eval.cnx	/*$quote*
 'winwidth'	options.cnx	/*'winwidth'*
 'wiv'	options.cnx	/*'wiv'*
 'wiw'	options.cnx	/*'wiw'*
+'wlseat'	options.cnx	/*'wlseat'*
+'wlsteal'	options.cnx	/*'wlsteal'*
+'wltimeoutlen'	options.cnx	/*'wltimeoutlen'*
 'wm'	options.cnx	/*'wm'*
 'wmh'	options.cnx	/*'wmh'*
 'wmnu'	options.cnx	/*'wmnu'*
@@ -1355,6 +1394,9 @@ $quote	eval.cnx	/*$quote*
 'writebackup'	options.cnx	/*'writebackup'*
 'writedelay'	options.cnx	/*'writedelay'*
 'ws'	options.cnx	/*'ws'*
+'wse'	options.cnx	/*'wse'*
+'wst'	options.cnx	/*'wst'*
+'wtm'	options.cnx	/*'wtm'*
 'ww'	options.cnx	/*'ww'*
 'xtermcodes'	options.cnx	/*'xtermcodes'*
 '{	motion.cnx	/*'{*
@@ -1487,6 +1529,7 @@ $quote	eval.cnx	/*$quote*
 +scrollbind	various.cnx	/*+scrollbind*
 +signs	various.cnx	/*+signs*
 +smartindent	various.cnx	/*+smartindent*
++socketserver	various.cnx	/*+socketserver*
 +sodium	various.cnx	/*+sodium*
 +sound	various.cnx	/*+sound*
 +spell	various.cnx	/*+spell*
@@ -1495,6 +1538,7 @@ $quote	eval.cnx	/*$quote*
 +sun_workshop	various.cnx	/*+sun_workshop*
 +syntax	various.cnx	/*+syntax*
 +system()	various.cnx	/*+system()*
++tabpanel	various.cnx	/*+tabpanel*
 +tag_any_white	various.cnx	/*+tag_any_white*
 +tag_binary	various.cnx	/*+tag_binary*
 +tag_old_static	various.cnx	/*+tag_old_static*
@@ -1522,6 +1566,9 @@ $quote	eval.cnx	/*$quote*
 +visualextra	various.cnx	/*+visualextra*
 +vreplace	various.cnx	/*+vreplace*
 +vtp	various.cnx	/*+vtp*
++wayland	various.cnx	/*+wayland*
++wayland_clipboard	various.cnx	/*+wayland_clipboard*
++wayland_focus_steal	various.cnx	/*+wayland_focus_steal*
 +wildignore	various.cnx	/*+wildignore*
 +wildmenu	various.cnx	/*+wildmenu*
 +windows	various.cnx	/*+windows*
@@ -1545,6 +1592,7 @@ $quote	eval.cnx	/*$quote*
 --	starting.cnx	/*--*
 ---	starting.cnx	/*---*
 --clean	starting.cnx	/*--clean*
+--clientserver	remote.cnx	/*--clientserver*
 --cmd	starting.cnx	/*--cmd*
 --echo-wid	starting.cnx	/*--echo-wid*
 --gui-dialog-file	starting.cnx	/*--gui-dialog-file*
@@ -1592,6 +1640,7 @@ $quote	eval.cnx	/*$quote*
 -V	starting.cnx	/*-V*
 -W	starting.cnx	/*-W*
 -X	starting.cnx	/*-X*
+-Y	starting.cnx	/*-Y*
 -Z	starting.cnx	/*-Z*
 -b	starting.cnx	/*-b*
 -background	gui_x11.cnx	/*-background*
@@ -1812,6 +1861,7 @@ $quote	eval.cnx	/*$quote*
 /\{-	pattern.cnx	/*\/\\{-*
 /\~	pattern.cnx	/*\/\\~*
 /^	pattern.cnx	/*\/^*
+/_<Tab>	cmdline.cnx	/*\/_<Tab>*
 /_CTRL-G	cmdline.cnx	/*\/_CTRL-G*
 /_CTRL-L	cmdline.cnx	/*\/_CTRL-L*
 /_CTRL-T	cmdline.cnx	/*\/_CTRL-T*
@@ -2072,7 +2122,20 @@ $quote	eval.cnx	/*$quote*
 :%	cmdline.cnx	/*:%*
 :&	change.cnx	/*:&*
 :&&	change.cnx	/*:&&*
-:'	cmdline.cnx	/*:'*
+:''	cmdline.cnx	/*:''*
+:'(	cmdline.cnx	/*:'(*
+:')	cmdline.cnx	/*:')*
+:'.	cmdline.cnx	/*:'.*
+:'<	cmdline.cnx	/*:'<*
+:'>	cmdline.cnx	/*:'>*
+:'X	cmdline.cnx	/*:'X*
+:'[	cmdline.cnx	/*:'[*
+:']	cmdline.cnx	/*:']*
+:'^	cmdline.cnx	/*:'^*
+:'quote	cmdline.cnx	/*:'quote*
+:'x	cmdline.cnx	/*:'x*
+:'{	cmdline.cnx	/*:'{*
+:'}	cmdline.cnx	/*:'}*
 :++	vim9.cnx	/*:++*
 :,	cmdline.cnx	/*:,*
 :--	vim9.cnx	/*:--*
@@ -2190,6 +2253,7 @@ $quote	eval.cnx	/*$quote*
 :Rexplore	pi_netrw.cnx	/*:Rexplore*
 :RmVimball	pi_vimball.cnx	/*:RmVimball*
 :Run	terminal.cnx	/*:Run*
+:RunOrContinue	terminal.cnx	/*:RunOrContinue*
 :RustEmitAsm	ft_rust.cnx	/*:RustEmitAsm*
 :RustEmitIr	ft_rust.cnx	/*:RustEmitIr*
 :RustExpand	ft_rust.cnx	/*:RustExpand*
@@ -2211,7 +2275,9 @@ $quote	eval.cnx	/*$quote*
 :Termdebug	terminal.cnx	/*:Termdebug*
 :TermdebugCommand	terminal.cnx	/*:TermdebugCommand*
 :Texplore	pi_netrw.cnx	/*:Texplore*
+:ToggleBreak	terminal.cnx	/*:ToggleBreak*
 :Tutor	pi_tutor.cnx	/*:Tutor*
+:URLOpen	eval.cnx	/*:URLOpen*
 :Until	terminal.cnx	/*:Until*
 :Up	terminal.cnx	/*:Up*
 :UseVimball	pi_vimball.cnx	/*:UseVimball*
@@ -2383,6 +2449,7 @@ $quote	eval.cnx	/*$quote*
 :cex	quickfix.cnx	/*:cex*
 :cexpr	quickfix.cnx	/*:cexpr*
 :cf	quickfix.cnx	/*:cf*
+:cfd	quickfix.cnx	/*:cfd*
 :cfdo	quickfix.cnx	/*:cfdo*
 :cfi	quickfix.cnx	/*:cfi*
 :cfile	quickfix.cnx	/*:cfile*
@@ -2413,6 +2480,8 @@ $quote	eval.cnx	/*$quote*
 :clast	quickfix.cnx	/*:clast*
 :cle	motion.cnx	/*:cle*
 :clearjumps	motion.cnx	/*:clearjumps*
+:clip	various.cnx	/*:clip*
+:clipreset	various.cnx	/*:clipreset*
 :clist	quickfix.cnx	/*:clist*
 :clo	windows.cnx	/*:clo*
 :close	windows.cnx	/*:close*
@@ -2505,6 +2574,7 @@ $quote	eval.cnx	/*$quote*
 :def	vim9.cnx	/*:def*
 :defc	vim9.cnx	/*:defc*
 :defcompile	vim9.cnx	/*:defcompile*
+:defe	userfunc.cnx	/*:defe*
 :defer	userfunc.cnx	/*:defer*
 :del	change.cnx	/*:del*
 :delc	map.cnx	/*:delc*
@@ -2802,6 +2872,7 @@ $quote	eval.cnx	/*$quote*
 :lclose	quickfix.cnx	/*:lclose*
 :lcs	if_cscop.cnx	/*:lcs*
 :lcscope	if_cscop.cnx	/*:lcscope*
+:ld	quickfix.cnx	/*:ld*
 :ldo	quickfix.cnx	/*:ldo*
 :le	change.cnx	/*:le*
 :left	change.cnx	/*:left*
@@ -2829,6 +2900,7 @@ $quote	eval.cnx	/*$quote*
 :lex	quickfix.cnx	/*:lex*
 :lexpr	quickfix.cnx	/*:lexpr*
 :lf	quickfix.cnx	/*:lf*
+:lfd	quickfix.cnx	/*:lfd*
 :lfdo	quickfix.cnx	/*:lfdo*
 :lfi	quickfix.cnx	/*:lfi*
 :lfile	quickfix.cnx	/*:lfile*
@@ -3162,6 +3234,8 @@ $quote	eval.cnx	/*$quote*
 :redrawstatus	various.cnx	/*:redrawstatus*
 :redrawt	various.cnx	/*:redrawt*
 :redrawtabline	various.cnx	/*:redrawtabline*
+:redrawtabp	various.cnx	/*:redrawtabp*
+:redrawtabpanel	various.cnx	/*:redrawtabpanel*
 :reg	change.cnx	/*:reg*
 :registers	change.cnx	/*:registers*
 :res	windows.cnx	/*:res*
@@ -3184,6 +3258,7 @@ $quote	eval.cnx	/*$quote*
 :rubydo	if_ruby.cnx	/*:rubydo*
 :rubyf	if_ruby.cnx	/*:rubyf*
 :rubyfile	if_ruby.cnx	/*:rubyfile*
+:rund	undo.cnx	/*:rund*
 :rundo	undo.cnx	/*:rundo*
 :runtime	repeat.cnx	/*:runtime*
 :rv	starting.cnx	/*:rv*
@@ -3342,6 +3417,9 @@ $quote	eval.cnx	/*$quote*
 :so	repeat.cnx	/*:so*
 :sor	change.cnx	/*:sor*
 :sort	change.cnx	/*:sort*
+:sort-l	change.cnx	/*:sort-l*
+:sort-u	change.cnx	/*:sort-u*
+:sort-uniq	change.cnx	/*:sort-uniq*
 :source	repeat.cnx	/*:source*
 :source!	repeat.cnx	/*:source!*
 :source-range	repeat.cnx	/*:source-range*
@@ -3478,6 +3556,7 @@ $quote	eval.cnx	/*$quote*
 :syntax-off	syntax.cnx	/*:syntax-off*
 :syntax-on	syntax.cnx	/*:syntax-on*
 :syntax-reset	syntax.cnx	/*:syntax-reset*
+:synti	syntax.cnx	/*:synti*
 :syntime	syntax.cnx	/*:syntime*
 :t	change.cnx	/*:t*
 :tN	tagsrch.cnx	/*:tN*
@@ -3576,6 +3655,8 @@ $quote	eval.cnx	/*$quote*
 :undolist	undo.cnx	/*:undolist*
 :unh	windows.cnx	/*:unh*
 :unhide	windows.cnx	/*:unhide*
+:uni	change.cnx	/*:uni*
+:uniq	change.cnx	/*:uniq*
 :unl	eval.cnx	/*:unl*
 :unlet	eval.cnx	/*:unlet*
 :unlet-$	eval.cnx	/*:unlet-$*
@@ -3658,6 +3739,8 @@ $quote	eval.cnx	/*$quote*
 :winp	gui.cnx	/*:winp*
 :winpos	gui.cnx	/*:winpos*
 :winsize	gui.cnx	/*:winsize*
+:wl	wayland.cnx	/*:wl*
+:wlrestore	wayland.cnx	/*:wlrestore*
 :wn	editing.cnx	/*:wn*
 :wnext	editing.cnx	/*:wnext*
 :wp	editing.cnx	/*:wp*
@@ -3669,6 +3752,7 @@ $quote	eval.cnx	/*$quote*
 :write_a	editing.cnx	/*:write_a*
 :write_c	editing.cnx	/*:write_c*
 :write_f	editing.cnx	/*:write_f*
+:wu	undo.cnx	/*:wu*
 :wundo	undo.cnx	/*:wundo*
 :wv	starting.cnx	/*:wv*
 :wviminfo	starting.cnx	/*:wviminfo*
@@ -3796,6 +3880,7 @@ $quote	eval.cnx	/*$quote*
 <NL>	motion.cnx	/*<NL>*
 <Nop>	map.cnx	/*<Nop>*
 <Nul>	intro.cnx	/*<Nul>*
+<OSC>	intro.cnx	/*<OSC>*
 <PageDown>	scroll.cnx	/*<PageDown>*
 <PageUp>	scroll.cnx	/*<PageUp>*
 <Plug>	map.cnx	/*<Plug>*
@@ -3920,6 +4005,7 @@ $quote	eval.cnx	/*$quote*
 <xHome>	term.cnx	/*<xHome>*
 <xHome>-xterm	term.cnx	/*<xHome>-xterm*
 <xLeft>	term.cnx	/*<xLeft>*
+<xOSC>	intro.cnx	/*<xOSC>*
 <xRight>	term.cnx	/*<xRight>*
 <xUp>	term.cnx	/*<xUp>*
 =	change.cnx	/*=*
@@ -3995,6 +4081,8 @@ C	change.cnx	/*C*
 C-editing	tips.cnx	/*C-editing*
 C-indenting	indent.cnx	/*C-indenting*
 C89	develop.cnx	/*C89*
+C90	develop.cnx	/*C90*
+C95	develop.cnx	/*C95*
 C99	develop.cnx	/*C99*
 COMSPEC	starting.cnx	/*COMSPEC*
 CR-used-for-NL	pattern.cnx	/*CR-used-for-NL*
@@ -4128,6 +4216,7 @@ Cmdline-mode	cmdline.cnx	/*Cmdline-mode*
 CmdlineChanged	autocmd.cnx	/*CmdlineChanged*
 CmdlineEnter	autocmd.cnx	/*CmdlineEnter*
 CmdlineLeave	autocmd.cnx	/*CmdlineLeave*
+CmdlineLeavePre	autocmd.cnx	/*CmdlineLeavePre*
 CmdwinEnter	autocmd.cnx	/*CmdwinEnter*
 CmdwinLeave	autocmd.cnx	/*CmdwinLeave*
 ColorScheme	autocmd.cnx	/*ColorScheme*
@@ -4414,6 +4503,7 @@ E1231	map.cnx	/*E1231*
 E1232	builtin.cnx	/*E1232*
 E1233	builtin.cnx	/*E1233*
 E1234	vim9.cnx	/*E1234*
+E1235	vim9.cnx	/*E1235*
 E1236	vim9.cnx	/*E1236*
 E1237	map.cnx	/*E1237*
 E1238	vim9.cnx	/*E1238*
@@ -4433,6 +4523,7 @@ E125	userfunc.cnx	/*E125*
 E1250	vim9.cnx	/*E1250*
 E1251	vim9.cnx	/*E1251*
 E1252	vim9.cnx	/*E1252*
+E1253	vim9.cnx	/*E1253*
 E1254	vim9.cnx	/*E1254*
 E1255	map.cnx	/*E1255*
 E1256	vim9.cnx	/*E1256*
@@ -4515,6 +4606,7 @@ E1325	vim9class.cnx	/*E1325*
 E1326	vim9class.cnx	/*E1326*
 E1327	vim9class.cnx	/*E1327*
 E1328	vim9class.cnx	/*E1328*
+E1329	vim9class.cnx	/*E1329*
 E133	userfunc.cnx	/*E133*
 E1330	vim9class.cnx	/*E1330*
 E1331	vim9class.cnx	/*E1331*
@@ -4596,6 +4688,7 @@ E1400	vim9class.cnx	/*E1400*
 E1401	vim9class.cnx	/*E1401*
 E1402	vim9class.cnx	/*E1402*
 E1403	vim9class.cnx	/*E1403*
+E1404	vim9class.cnx	/*E1404*
 E1405	vim9class.cnx	/*E1405*
 E1406	vim9class.cnx	/*E1406*
 E1407	vim9class.cnx	/*E1407*
@@ -4620,8 +4713,17 @@ E1423	vim9class.cnx	/*E1423*
 E1424	vim9class.cnx	/*E1424*
 E1425	vim9class.cnx	/*E1425*
 E1426	vim9class.cnx	/*E1426*
+E1427	vim9class.cnx	/*E1427*
+E1428	vim9class.cnx	/*E1428*
 E1429	vim9class.cnx	/*E1429*
 E143	autocmd.cnx	/*E143*
+E1430	vim9class.cnx	/*E1430*
+E1431	vim9class.cnx	/*E1431*
+E1432	vim9.cnx	/*E1432*
+E1433	vim9.cnx	/*E1433*
+E1434	vim9.cnx	/*E1434*
+E1435	vim9class.cnx	/*E1435*
+E1436	vim9class.cnx	/*E1436*
 E144	various.cnx	/*E144*
 E145	starting.cnx	/*E145*
 E146	change.cnx	/*E146*
@@ -4676,8 +4778,36 @@ E1539	vim9.cnx	/*E1539*
 E154	helphelp.cnx	/*E154*
 E1540	eval.cnx	/*E1540*
 E1541	vi_diff.cnx	/*E1541*
+E1542	options.cnx	/*E1542*
+E1543	options.cnx	/*E1543*
+E1544	options.cnx	/*E1544*
+E1545	quickfix.cnx	/*E1545*
+E1546	autocmd.cnx	/*E1546*
+E1547	various.cnx	/*E1547*
+E1548	wayland.cnx	/*E1548*
+E1549	options.cnx	/*E1549*
 E155	sign.cnx	/*E155*
+E1550	options.cnx	/*E1550*
+E1551	popup.cnx	/*E1551*
+E1552	vim9.cnx	/*E1552*
+E1553	vim9.cnx	/*E1553*
+E1554	vim9.cnx	/*E1554*
+E1555	vim9.cnx	/*E1555*
+E1556	vim9.cnx	/*E1556*
+E1557	vim9.cnx	/*E1557*
+E1558	vim9.cnx	/*E1558*
+E1559	vim9.cnx	/*E1559*
 E156	sign.cnx	/*E156*
+E1560	vim9.cnx	/*E1560*
+E1561	vim9.cnx	/*E1561*
+E1562	options.cnx	/*E1562*
+E1563	remote.cnx	/*E1563*
+E1564	remote.cnx	/*E1564*
+E1565	remote.cnx	/*E1565*
+E1566	remote.cnx	/*E1566*
+E1567	remote.cnx	/*E1567*
+E1568	options.cnx	/*E1568*
+E1569	builtin.cnx	/*E1569*
 E157	sign.cnx	/*E157*
 E158	sign.cnx	/*E158*
 E159	sign.cnx	/*E159*
@@ -5642,6 +5772,7 @@ GetLatestVimScripts_dat	pi_getscript.cnx	/*GetLatestVimScripts_dat*
 Gnome	gui_x11.cnx	/*Gnome*
 H	motion.cnx	/*H*
 Haiku	os_haiku.cnx	/*Haiku*
+HelpToc-mappings	helphelp.cnx	/*HelpToc-mappings*
 I	insert.cnx	/*I*
 ICCF	uganda.cnx	/*ICCF*
 IM-server	mbyte.cnx	/*IM-server*
@@ -5666,6 +5797,7 @@ KVim	gui_x11.cnx	/*KVim*
 KeyInputPre	autocmd.cnx	/*KeyInputPre*
 Kibaale	uganda.cnx	/*Kibaale*
 Korean	mbyte.cnx	/*Korean*
+Kuwasha	uganda.cnx	/*Kuwasha*
 L	motion.cnx	/*L*
 Linux-backspace	options.cnx	/*Linux-backspace*
 List	eval.cnx	/*List*
@@ -5782,6 +5914,7 @@ PHP_outdentSLComments	indent.cnx	/*PHP_outdentSLComments*
 PHP_outdentphpescape	indent.cnx	/*PHP_outdentphpescape*
 PHP_removeCRwhenUnix	indent.cnx	/*PHP_removeCRwhenUnix*
 PHP_vintage_case_default_indent	indent.cnx	/*PHP_vintage_case_default_indent*
+POSIX.1-2001	develop.cnx	/*POSIX.1-2001*
 Partial	eval.cnx	/*Partial*
 Pattern	pattern.cnx	/*Pattern*
 Perl	if_perl.cnx	/*Perl*
@@ -6223,6 +6356,10 @@ assert_notequal()	testing.cnx	/*assert_notequal()*
 assert_notmatch()	testing.cnx	/*assert_notmatch()*
 assert_report()	testing.cnx	/*assert_report()*
 assert_true()	testing.cnx	/*assert_true()*
+assumptions-C-compiler	develop.cnx	/*assumptions-C-compiler*
+assumptions-makefiles	develop.cnx	/*assumptions-makefiles*
+assumptions-prototypes	develop.cnx	/*assumptions-prototypes*
+assumptions-variables	develop.cnx	/*assumptions-variables*
 astro.vim	syntax.cnx	/*astro.vim*
 asy.vim	syntax.cnx	/*asy.vim*
 at	motion.cnx	/*at*
@@ -6510,6 +6647,7 @@ c_space_errors	syntax.cnx	/*c_space_errors*
 c_syntax_for_h	syntax.cnx	/*c_syntax_for_h*
 c_wildchar	cmdline.cnx	/*c_wildchar*
 call()	builtin.cnx	/*call()*
+cangjie.vim	syntax.cnx	/*cangjie.vim*
 carriage-return	intro.cnx	/*carriage-return*
 case	change.cnx	/*case*
 catch-all	eval.cnx	/*catch-all*
@@ -6668,7 +6806,9 @@ cmd-movement	gui_mac.cnx	/*cmd-movement*
 cmd-shortcuts	gui_mac.cnx	/*cmd-shortcuts*
 cmdarg-variable	eval.cnx	/*cmdarg-variable*
 cmdbang-variable	eval.cnx	/*cmdbang-variable*
+cmdcomplete_info()	builtin.cnx	/*cmdcomplete_info()*
 cmdline-arguments	vi_diff.cnx	/*cmdline-arguments*
+cmdline-autocompletion	cmdline.cnx	/*cmdline-autocompletion*
 cmdline-changed	version5.cnx	/*cmdline-changed*
 cmdline-completion	cmdline.cnx	/*cmdline-completion*
 cmdline-editing	cmdline.cnx	/*cmdline-editing*
@@ -6713,6 +6853,7 @@ compiler-dotnet	quickfix.cnx	/*compiler-dotnet*
 compiler-gcc	quickfix.cnx	/*compiler-gcc*
 compiler-gnat	ft_ada.cnx	/*compiler-gnat*
 compiler-groff	quickfix.cnx	/*compiler-groff*
+compiler-hare	ft_hare.cnx	/*compiler-hare*
 compiler-hpada	ft_ada.cnx	/*compiler-hpada*
 compiler-javac	quickfix.cnx	/*compiler-javac*
 compiler-make	quickfix.cnx	/*compiler-make*
@@ -6728,6 +6869,7 @@ compiler-ruff	quickfix.cnx	/*compiler-ruff*
 compiler-select	quickfix.cnx	/*compiler-select*
 compiler-spotbugs	quickfix.cnx	/*compiler-spotbugs*
 compiler-tex	quickfix.cnx	/*compiler-tex*
+compiler-tombi	quickfix.cnx	/*compiler-tombi*
 compiler-tsc	quickfix.cnx	/*compiler-tsc*
 compiler-typst	quickfix.cnx	/*compiler-typst*
 compiler-vaxada	ft_ada.cnx	/*compiler-vaxada*
@@ -6740,7 +6882,9 @@ compl-generic	insert.cnx	/*compl-generic*
 compl-keyword	insert.cnx	/*compl-keyword*
 compl-omni	insert.cnx	/*compl-omni*
 compl-omni-filetypes	insert.cnx	/*compl-omni-filetypes*
+compl-register-words	insert.cnx	/*compl-register-words*
 compl-spelling	insert.cnx	/*compl-spelling*
+compl-states	insert.cnx	/*compl-states*
 compl-stop	insert.cnx	/*compl-stop*
 compl-tag	insert.cnx	/*compl-tag*
 compl-thesaurus	insert.cnx	/*compl-thesaurus*
@@ -6761,6 +6905,7 @@ complete_add()	builtin.cnx	/*complete_add()*
 complete_check()	builtin.cnx	/*complete_check()*
 complete_info()	builtin.cnx	/*complete_info()*
 complete_info_mode	builtin.cnx	/*complete_info_mode*
+complete_match()	builtin.cnx	/*complete_match()*
 completed_item-variable	eval.cnx	/*completed_item-variable*
 completion-functions	usr_41.cnx	/*completion-functions*
 complex-change	change.cnx	/*complex-change*
@@ -6853,6 +6998,7 @@ cpo-x	options.cnx	/*cpo-x*
 cpo-y	options.cnx	/*cpo-y*
 cpo-z	options.cnx	/*cpo-z*
 cpo-{	options.cnx	/*cpo-{*
+cpo-~	options.cnx	/*cpo-~*
 cpp.vim	syntax.cnx	/*cpp.vim*
 crash-recovery	recover.cnx	/*crash-recovery*
 creating-menus	gui.cnx	/*creating-menus*
@@ -6946,6 +7092,7 @@ debugger-support	debugger.cnx	/*debugger-support*
 debugger.txt	debugger.cnx	/*debugger.txt*
 dec-mouse	options.cnx	/*dec-mouse*
 decada_members	ft_ada.cnx	/*decada_members*
+deduplicating	change.cnx	/*deduplicating*
 deepcopy()	builtin.cnx	/*deepcopy()*
 default-constructor	vim9class.cnx	/*default-constructor*
 defaults.vim	starting.cnx	/*defaults.vim*
@@ -6959,6 +7106,7 @@ delete-menus	gui.cnx	/*delete-menus*
 deletebufline()	builtin.cnx	/*deletebufline()*
 deleting	change.cnx	/*deleting*
 demoserver.py	channel.cnx	/*demoserver.py*
+deprecated-features	develop.cnx	/*deprecated-features*
 design-assumptions	develop.cnx	/*design-assumptions*
 design-compatible	develop.cnx	/*design-compatible*
 design-decisions	develop.cnx	/*design-decisions*
@@ -6969,6 +7117,7 @@ design-improved	develop.cnx	/*design-improved*
 design-maintain	develop.cnx	/*design-maintain*
 design-multi-platform	develop.cnx	/*design-multi-platform*
 design-not	develop.cnx	/*design-not*
+design-policy	develop.cnx	/*design-policy*
 design-speed-size	develop.cnx	/*design-speed-size*
 desktop.vim	syntax.cnx	/*desktop.vim*
 develop-spell	develop.cnx	/*develop-spell*
@@ -6989,6 +7138,7 @@ dict-modification	eval.cnx	/*dict-modification*
 did_filetype()	builtin.cnx	/*did_filetype()*
 diff	diff.cnx	/*diff*
 diff()	builtin.cnx	/*diff()*
+diff-anchors	diff.cnx	/*diff-anchors*
 diff-diffexpr	diff.cnx	/*diff-diffexpr*
 diff-func-examples	diff.cnx	/*diff-func-examples*
 diff-mode	diff.cnx	/*diff-mode*
@@ -7444,6 +7594,7 @@ ft-bash-syntax	syntax.cnx	/*ft-bash-syntax*
 ft-basic-syntax	syntax.cnx	/*ft-basic-syntax*
 ft-c-omni	insert.cnx	/*ft-c-omni*
 ft-c-syntax	syntax.cnx	/*ft-c-syntax*
+ft-cangjie-syntax	syntax.cnx	/*ft-cangjie-syntax*
 ft-ch-syntax	syntax.cnx	/*ft-ch-syntax*
 ft-changelog-plugin	filetype.cnx	/*ft-changelog-plugin*
 ft-changelog-syntax	syntax.cnx	/*ft-changelog-syntax*
@@ -7489,14 +7640,21 @@ ft-fvwm-syntax	syntax.cnx	/*ft-fvwm-syntax*
 ft-gdscript-plugin	filetype.cnx	/*ft-gdscript-plugin*
 ft-gitcommit-plugin	filetype.cnx	/*ft-gitcommit-plugin*
 ft-gitrebase-plugin	filetype.cnx	/*ft-gitrebase-plugin*
+ft-gleam-plugin	filetype.cnx	/*ft-gleam-plugin*
 ft-go-plugin	filetype.cnx	/*ft-go-plugin*
 ft-gprof-plugin	filetype.cnx	/*ft-gprof-plugin*
 ft-groff-syntax	syntax.cnx	/*ft-groff-syntax*
 ft-gsp-syntax	syntax.cnx	/*ft-gsp-syntax*
 ft-hare	filetype.cnx	/*ft-hare*
+ft-hare-indent	ft_hare.cnx	/*ft-hare-indent*
+ft-hare-intro	ft_hare.cnx	/*ft-hare-intro*
+ft-hare-plugin	ft_hare.cnx	/*ft-hare-plugin*
+ft-haredoc-plugin	ft_hare.cnx	/*ft-haredoc-plugin*
 ft-haskell-syntax	syntax.cnx	/*ft-haskell-syntax*
+ft-help-omni	helphelp.cnx	/*ft-help-omni*
 ft-html-indent	indent.cnx	/*ft-html-indent*
 ft-html-omni	insert.cnx	/*ft-html-omni*
+ft-html-plugin	filetype.cnx	/*ft-html-plugin*
 ft-html-syntax	syntax.cnx	/*ft-html-syntax*
 ft-htmlos-syntax	syntax.cnx	/*ft-htmlos-syntax*
 ft-ia64-syntax	syntax.cnx	/*ft-ia64-syntax*
@@ -7517,6 +7675,7 @@ ft-lf-syntax	syntax.cnx	/*ft-lf-syntax*
 ft-lifelines-syntax	syntax.cnx	/*ft-lifelines-syntax*
 ft-lisp-syntax	syntax.cnx	/*ft-lisp-syntax*
 ft-lite-syntax	syntax.cnx	/*ft-lite-syntax*
+ft-log-syntax	syntax.cnx	/*ft-log-syntax*
 ft-lpc-syntax	syntax.cnx	/*ft-lpc-syntax*
 ft-lua-plugin	filetype.cnx	/*ft-lua-plugin*
 ft-lua-syntax	syntax.cnx	/*ft-lua-syntax*
@@ -7530,6 +7689,7 @@ ft-markdown-syntax	syntax.cnx	/*ft-markdown-syntax*
 ft-masm-syntax	syntax.cnx	/*ft-masm-syntax*
 ft-mathematica-syntax	syntax.cnx	/*ft-mathematica-syntax*
 ft-matlab-indent	indent.cnx	/*ft-matlab-indent*
+ft-mbsync-syntax	syntax.cnx	/*ft-mbsync-syntax*
 ft-mediawiki-syntax	syntax.cnx	/*ft-mediawiki-syntax*
 ft-metafont	ft_mp.cnx	/*ft-metafont*
 ft-metafont-intro	ft_mp.cnx	/*ft-metafont-intro*
@@ -7619,6 +7779,7 @@ ft-vb-syntax	syntax.cnx	/*ft-vb-syntax*
 ft-verilog-indent	indent.cnx	/*ft-verilog-indent*
 ft-vhdl-indent	indent.cnx	/*ft-vhdl-indent*
 ft-vim-indent	indent.cnx	/*ft-vim-indent*
+ft-vim-omni	insert.cnx	/*ft-vim-omni*
 ft-vim-plugin	filetype.cnx	/*ft-vim-plugin*
 ft-vim-syntax	syntax.cnx	/*ft-vim-syntax*
 ft-xf86conf-syntax	syntax.cnx	/*ft-xf86conf-syntax*
@@ -7627,6 +7788,7 @@ ft-xml-omni	insert.cnx	/*ft-xml-omni*
 ft-xml-syntax	syntax.cnx	/*ft-xml-syntax*
 ft-xpm-syntax	syntax.cnx	/*ft-xpm-syntax*
 ft-yaml-indent	indent.cnx	/*ft-yaml-indent*
+ft-yaml-plugin	filetype.cnx	/*ft-yaml-plugin*
 ft-yaml-syntax	syntax.cnx	/*ft-yaml-syntax*
 ft-zig-plugin	filetype.cnx	/*ft-zig-plugin*
 ft-zimbu-plugin	filetype.cnx	/*ft-zimbu-plugin*
@@ -7657,6 +7819,7 @@ function-range-example	userfunc.cnx	/*function-range-example*
 function-search-undo	userfunc.cnx	/*function-search-undo*
 function_key	intro.cnx	/*function_key*
 functions	eval.cnx	/*functions*
+fuzzy-file-picker	cmdline.cnx	/*fuzzy-file-picker*
 fuzzy-matching	pattern.cnx	/*fuzzy-matching*
 fvwm.vim	syntax.cnx	/*fvwm.vim*
 fvwm2rc	syntax.cnx	/*fvwm2rc*
@@ -7679,6 +7842,7 @@ g:Netrw_corehandler	pi_netrw.cnx	/*g:Netrw_corehandler*
 g:Netrw_funcref	pi_netrw.cnx	/*g:Netrw_funcref*
 g:Openprg	eval.cnx	/*g:Openprg*
 g:actual_curbuf	options.cnx	/*g:actual_curbuf*
+g:actual_curtabpage	options.cnx	/*g:actual_curtabpage*
 g:actual_curwin	options.cnx	/*g:actual_curwin*
 g:ada#Comment	ft_ada.cnx	/*g:ada#Comment*
 g:ada#Ctags_Kinds	ft_ada.cnx	/*g:ada#Ctags_Kinds*
@@ -7740,9 +7904,12 @@ g:gnat.Set_Project_File()	ft_ada.cnx	/*g:gnat.Set_Project_File()*
 g:gnat.Tags()	ft_ada.cnx	/*g:gnat.Tags()*
 g:gnat.Tags_Command	ft_ada.cnx	/*g:gnat.Tags_Command*
 g:gzip_exec	pi_gzip.cnx	/*g:gzip_exec*
+g:hare_indent_case	ft_hare.cnx	/*g:hare_indent_case*
+g:hare_indent_match_switch	ft_hare.cnx	/*g:hare_indent_match_switch*
+g:hare_makeprg_params	ft_hare.cnx	/*g:hare_makeprg_params*
 g:hare_recommended_style	ft_hare.cnx	/*g:hare_recommended_style*
 g:hare_space_error	ft_hare.cnx	/*g:hare_space_error*
-g:haredoc_search_depth	ft_hare.cnx	/*g:haredoc_search_depth*
+g:hare_symbol_operators	ft_hare.cnx	/*g:hare_symbol_operators*
 g:help_example_languages	helphelp.cnx	/*g:help_example_languages*
 g:html_charset_override	syntax.cnx	/*g:html_charset_override*
 g:html_diff_one_file	syntax.cnx	/*g:html_diff_one_file*
@@ -7799,7 +7966,6 @@ g:netrw_dav_cmd	pi_netrw.cnx	/*g:netrw_dav_cmd*
 g:netrw_decompress	pi_netrw.cnx	/*g:netrw_decompress*
 g:netrw_dirhistmax	pi_netrw.cnx	/*g:netrw_dirhistmax*
 g:netrw_dynamic_maxfilenamelen	pi_netrw.cnx	/*g:netrw_dynamic_maxfilenamelen*
-g:netrw_errorlvl	pi_netrw.cnx	/*g:netrw_errorlvl*
 g:netrw_fastbrowse	pi_netrw.cnx	/*g:netrw_fastbrowse*
 g:netrw_fetch_cmd	pi_netrw.cnx	/*g:netrw_fetch_cmd*
 g:netrw_ffkeep	pi_netrw.cnx	/*g:netrw_ffkeep*
@@ -7839,7 +8005,6 @@ g:netrw_maxfilenamelen	pi_netrw.cnx	/*g:netrw_maxfilenamelen*
 g:netrw_menu	pi_netrw.cnx	/*g:netrw_menu*
 g:netrw_mkdir_cmd	pi_netrw.cnx	/*g:netrw_mkdir_cmd*
 g:netrw_mousemaps	pi_netrw.cnx	/*g:netrw_mousemaps*
-g:netrw_nobeval	pi_netrw.cnx	/*g:netrw_nobeval*
 g:netrw_preview	pi_netrw.cnx	/*g:netrw_preview*
 g:netrw_rcp_cmd	pi_netrw.cnx	/*g:netrw_rcp_cmd*
 g:netrw_remote_mkdir	pi_netrw.cnx	/*g:netrw_remote_mkdir*
@@ -7868,7 +8033,6 @@ g:netrw_sshport	pi_netrw.cnx	/*g:netrw_sshport*
 g:netrw_timefmt	pi_netrw.cnx	/*g:netrw_timefmt*
 g:netrw_tmpfile_escape	pi_netrw.cnx	/*g:netrw_tmpfile_escape*
 g:netrw_uid	pi_netrw.cnx	/*g:netrw_uid*
-g:netrw_use_errorwindow	pi_netrw.cnx	/*g:netrw_use_errorwindow*
 g:netrw_use_noswf	pi_netrw.cnx	/*g:netrw_use_noswf*
 g:netrw_use_nt_rcp	pi_netrw.cnx	/*g:netrw_use_nt_rcp*
 g:netrw_usetab	pi_netrw.cnx	/*g:netrw_usetab*
@@ -7900,6 +8064,7 @@ g:rustc_path	ft_rust.cnx	/*g:rustc_path*
 g:rustfmt_autosave	ft_rust.cnx	/*g:rustfmt_autosave*
 g:rustfmt_autosave_if_config_present	ft_rust.cnx	/*g:rustfmt_autosave_if_config_present*
 g:rustfmt_command	ft_rust.cnx	/*g:rustfmt_command*
+g:rustfmt_detect_version	ft_rust.cnx	/*g:rustfmt_detect_version*
 g:rustfmt_emit_files	ft_rust.cnx	/*g:rustfmt_emit_files*
 g:rustfmt_fail_silently	ft_rust.cnx	/*g:rustfmt_fail_silently*
 g:rustfmt_options	ft_rust.cnx	/*g:rustfmt_options*
@@ -7911,7 +8076,6 @@ g:tar_copycmd	pi_tar.cnx	/*g:tar_copycmd*
 g:tar_extractcmd	pi_tar.cnx	/*g:tar_extractcmd*
 g:tar_nomax	pi_tar.cnx	/*g:tar_nomax*
 g:tar_readoptions	pi_tar.cnx	/*g:tar_readoptions*
-g:tar_secure	pi_tar.cnx	/*g:tar_secure*
 g:tar_writeoptions	pi_tar.cnx	/*g:tar_writeoptions*
 g:termdebug_config	terminal.cnx	/*g:termdebug_config*
 g:termdebugger	terminal.cnx	/*g:termdebugger*
@@ -8004,6 +8168,10 @@ gdb	debug.cnx	/*gdb*
 gdb-version	terminal.cnx	/*gdb-version*
 ge	motion.cnx	/*ge*
 gender-neutral	helphelp.cnx	/*gender-neutral*
+generic-function-call	vim9.cnx	/*generic-function-call*
+generic-function-declaration	vim9.cnx	/*generic-function-declaration*
+generic-function-example	vim9.cnx	/*generic-function-example*
+generic-functions	vim9.cnx	/*generic-functions*
 get()	builtin.cnx	/*get()*
 get()-blob	builtin.cnx	/*get()-blob*
 get()-dict	builtin.cnx	/*get()-dict*
@@ -8032,6 +8200,7 @@ getcmdscreenpos()	builtin.cnx	/*getcmdscreenpos()*
 getcmdtype()	builtin.cnx	/*getcmdtype()*
 getcmdwintype()	builtin.cnx	/*getcmdwintype()*
 getcompletion()	builtin.cnx	/*getcompletion()*
+getcompletiontype()	builtin.cnx	/*getcompletiontype()*
 getcurpos()	builtin.cnx	/*getcurpos()*
 getcursorcharpos()	builtin.cnx	/*getcursorcharpos()*
 getcwd()	builtin.cnx	/*getcwd()*
@@ -8177,6 +8346,7 @@ gui-w32-cmdargs	gui_w32.cnx	/*gui-w32-cmdargs*
 gui-w32-dialogs	gui_w32.cnx	/*gui-w32-dialogs*
 gui-w32-printing	gui_w32.cnx	/*gui-w32-printing*
 gui-w32-start	gui_w32.cnx	/*gui-w32-start*
+gui-w32-title-bar	gui_w32.cnx	/*gui-w32-title-bar*
 gui-w32-various	gui_w32.cnx	/*gui-w32-various*
 gui-w32-windowid	gui_w32.cnx	/*gui-w32-windowid*
 gui-w32s	os_win32.cnx	/*gui-w32s*
@@ -8236,9 +8406,7 @@ haiku-vimdir	os_haiku.cnx	/*haiku-vimdir*
 hangul	hangulin.cnx	/*hangul*
 hangulin.txt	hangulin.cnx	/*hangulin.txt*
 hare	ft_hare.cnx	/*hare*
-hare-intro	ft_hare.cnx	/*hare-intro*
-hare-plugin	ft_hare.cnx	/*hare-plugin*
-hare-settings	ft_hare.cnx	/*hare-settings*
+hare.vim	ft_hare.cnx	/*hare.vim*
 has()	builtin.cnx	/*has()*
 has-patch	builtin.cnx	/*has-patch*
 has-python	if_pyth.cnx	/*has-python*
@@ -8338,6 +8506,7 @@ hl-MsgArea	syntax.cnx	/*hl-MsgArea*
 hl-NonText	syntax.cnx	/*hl-NonText*
 hl-Normal	syntax.cnx	/*hl-Normal*
 hl-Pmenu	syntax.cnx	/*hl-Pmenu*
+hl-PmenuBorder	syntax.cnx	/*hl-PmenuBorder*
 hl-PmenuExtra	syntax.cnx	/*hl-PmenuExtra*
 hl-PmenuExtraSel	syntax.cnx	/*hl-PmenuExtraSel*
 hl-PmenuKind	syntax.cnx	/*hl-PmenuKind*
@@ -8346,9 +8515,11 @@ hl-PmenuMatch	syntax.cnx	/*hl-PmenuMatch*
 hl-PmenuMatchSel	syntax.cnx	/*hl-PmenuMatchSel*
 hl-PmenuSbar	syntax.cnx	/*hl-PmenuSbar*
 hl-PmenuSel	syntax.cnx	/*hl-PmenuSel*
+hl-PmenuShadow	syntax.cnx	/*hl-PmenuShadow*
 hl-PmenuThumb	syntax.cnx	/*hl-PmenuThumb*
 hl-PopupNotification	syntax.cnx	/*hl-PopupNotification*
 hl-PopupSelected	syntax.cnx	/*hl-PopupSelected*
+hl-PreInsert	syntax.cnx	/*hl-PreInsert*
 hl-Question	syntax.cnx	/*hl-Question*
 hl-QuickFixLine	syntax.cnx	/*hl-QuickFixLine*
 hl-Scrollbar	syntax.cnx	/*hl-Scrollbar*
@@ -8367,8 +8538,13 @@ hl-TOhtmlProgress	syntax.cnx	/*hl-TOhtmlProgress*
 hl-TabLine	syntax.cnx	/*hl-TabLine*
 hl-TabLineFill	syntax.cnx	/*hl-TabLineFill*
 hl-TabLineSel	syntax.cnx	/*hl-TabLineSel*
+hl-TabPanel	syntax.cnx	/*hl-TabPanel*
+hl-TabPanelFill	syntax.cnx	/*hl-TabPanelFill*
+hl-TabPanelSel	syntax.cnx	/*hl-TabPanelSel*
 hl-Terminal	syntax.cnx	/*hl-Terminal*
 hl-Title	syntax.cnx	/*hl-Title*
+hl-TitleBar	syntax.cnx	/*hl-TitleBar*
+hl-TitleBarNC	syntax.cnx	/*hl-TitleBarNC*
 hl-ToolbarButton	gui.cnx	/*hl-ToolbarButton*
 hl-ToolbarLine	gui.cnx	/*hl-ToolbarLine*
 hl-Tooltip	syntax.cnx	/*hl-Tooltip*
@@ -8506,6 +8682,7 @@ i_CTRL-X_CTRL-L	insert.cnx	/*i_CTRL-X_CTRL-L*
 i_CTRL-X_CTRL-N	insert.cnx	/*i_CTRL-X_CTRL-N*
 i_CTRL-X_CTRL-O	insert.cnx	/*i_CTRL-X_CTRL-O*
 i_CTRL-X_CTRL-P	insert.cnx	/*i_CTRL-X_CTRL-P*
+i_CTRL-X_CTRL-R	insert.cnx	/*i_CTRL-X_CTRL-R*
 i_CTRL-X_CTRL-S	insert.cnx	/*i_CTRL-X_CTRL-S*
 i_CTRL-X_CTRL-T	insert.cnx	/*i_CTRL-X_CTRL-T*
 i_CTRL-X_CTRL-U	insert.cnx	/*i_CTRL-X_CTRL-U*
@@ -8534,7 +8711,6 @@ i`	motion.cnx	/*i`*
 ia64.vim	syntax.cnx	/*ia64.vim*
 ib	motion.cnx	/*ib*
 iccf	uganda.cnx	/*iccf*
-iccf-donations	uganda.cnx	/*iccf-donations*
 icon-changed	version4.cnx	/*icon-changed*
 iconise	starting.cnx	/*iconise*
 iconize	starting.cnx	/*iconize*
@@ -8568,7 +8744,6 @@ improvements-6	version6.cnx	/*improvements-6*
 improvements-7	version7.cnx	/*improvements-7*
 improvements-8	version8.cnx	/*improvements-8*
 improvements-9	version9.cnx	/*improvements-9*
-improvements-9.2	version9.cnx	/*improvements-9.2*
 in_bot	channel.cnx	/*in_bot*
 in_buf	channel.cnx	/*in_buf*
 in_io-buffer	channel.cnx	/*in_io-buffer*
@@ -8606,6 +8781,8 @@ inputlist()	builtin.cnx	/*inputlist()*
 inputrestore()	builtin.cnx	/*inputrestore()*
 inputsave()	builtin.cnx	/*inputsave()*
 inputsecret()	builtin.cnx	/*inputsecret()*
+ins-autocompletion	insert.cnx	/*ins-autocompletion*
+ins-autocompletion-example	insert.cnx	/*ins-autocompletion-example*
 ins-completion	insert.cnx	/*ins-completion*
 ins-completion-menu	insert.cnx	/*ins-completion-menu*
 ins-expandtab	insert.cnx	/*ins-expandtab*
@@ -8659,6 +8836,7 @@ i}	motion.cnx	/*i}*
 j	motion.cnx	/*j*
 java-cinoptions	indent.cnx	/*java-cinoptions*
 java-indenting	indent.cnx	/*java-indenting*
+java-package-info-url	syntax.cnx	/*java-package-info-url*
 java.vim	syntax.cnx	/*java.vim*
 javascript-cinoptions	indent.cnx	/*javascript-cinoptions*
 javascript-indenting	indent.cnx	/*javascript-indenting*
@@ -8699,7 +8877,6 @@ jsbterm-mouse	options.cnx	/*jsbterm-mouse*
 json.vim	syntax.cnx	/*json.vim*
 json_decode()	builtin.cnx	/*json_decode()*
 json_encode()	builtin.cnx	/*json_encode()*
-jtags	tagsrch.cnx	/*jtags*
 jump-motions	motion.cnx	/*jump-motions*
 jumplist	motion.cnx	/*jumplist*
 jumplist-stack	motion.cnx	/*jumplist-stack*
@@ -8800,6 +8977,7 @@ listener_remove()	builtin.cnx	/*listener_remove()*
 lite.vim	syntax.cnx	/*lite.vim*
 literal-Dict	eval.cnx	/*literal-Dict*
 literal-string	eval.cnx	/*literal-string*
+live-grep	cmdline.cnx	/*live-grep*
 lnum-variable	eval.cnx	/*lnum-variable*
 load-plugins	starting.cnx	/*load-plugins*
 load-vim-script	repeat.cnx	/*load-vim-script*
@@ -9014,6 +9192,7 @@ matlab-indent	indent.cnx	/*matlab-indent*
 matlab-indenting	indent.cnx	/*matlab-indenting*
 max()	builtin.cnx	/*max()*
 maxcol-variable	eval.cnx	/*maxcol-variable*
+mbsync.vim	syntax.cnx	/*mbsync.vim*
 mbyte-IME	mbyte.cnx	/*mbyte-IME*
 mbyte-XIM	mbyte.cnx	/*mbyte-XIM*
 mbyte-combining	mbyte.cnx	/*mbyte-combining*
@@ -9101,6 +9280,7 @@ multi-lang	mlang.cnx	/*multi-lang*
 multi-repeat	repeat.cnx	/*multi-repeat*
 multibyte	mbyte.cnx	/*multibyte*
 multibyte-ime	mbyte.cnx	/*multibyte-ime*
+multibyte-ime-compatibility	mbyte.cnx	/*multibyte-ime-compatibility*
 multibyte-input	mbyte.cnx	/*multibyte-input*
 multilang	mlang.cnx	/*multilang*
 multilang-menus	mlang.cnx	/*multilang-menus*
@@ -9282,7 +9462,6 @@ netrw-mm	pi_netrw.cnx	/*netrw-mm*
 netrw-modify	pi_netrw.cnx	/*netrw-modify*
 netrw-mouse	pi_netrw.cnx	/*netrw-mouse*
 netrw-move	pi_netrw.cnx	/*netrw-move*
-netrw-mp	pi_netrw.cnx	/*netrw-mp*
 netrw-mr	pi_netrw.cnx	/*netrw-mr*
 netrw-ms	pi_netrw.cnx	/*netrw-ms*
 netrw-mt	pi_netrw.cnx	/*netrw-mt*
@@ -9348,7 +9527,6 @@ netrw-rightmouse	pi_netrw.cnx	/*netrw-rightmouse*
 netrw-s	pi_netrw.cnx	/*netrw-s*
 netrw-s-cr	pi_netrw.cnx	/*netrw-s-cr*
 netrw-settings	pi_netrw.cnx	/*netrw-settings*
-netrw-settings-window	pi_netrw.cnx	/*netrw-settings-window*
 netrw-sexplore	pi_netrw.cnx	/*netrw-sexplore*
 netrw-sort	pi_netrw.cnx	/*netrw-sort*
 netrw-sort-sequence	pi_netrw.cnx	/*netrw-sort-sequence*
@@ -9407,6 +9585,7 @@ new-diff-mode	version6.cnx	/*new-diff-mode*
 new-encryption	version5.cnx	/*new-encryption*
 new-evim	version6.cnx	/*new-evim*
 new-ex-commands-5.2	version5.cnx	/*new-ex-commands-5.2*
+new-features	develop.cnx	/*new-features*
 new-file-browser	version6.cnx	/*new-file-browser*
 new-file-writing	version6.cnx	/*new-file-writing*
 new-filetype	filetype.cnx	/*new-filetype*
@@ -9618,6 +9797,7 @@ package-hlyank	usr_05.cnx	/*package-hlyank*
 package-justify	usr_25.cnx	/*package-justify*
 package-matchit	usr_05.cnx	/*package-matchit*
 package-nohlsearch	usr_05.cnx	/*package-nohlsearch*
+package-open	eval.cnx	/*package-open*
 package-termdebug	terminal.cnx	/*package-termdebug*
 package-translate_example	repeat.cnx	/*package-translate_example*
 package-translation	repeat.cnx	/*package-translation*
@@ -9783,6 +9963,7 @@ postscript-print-util	print.cnx	/*postscript-print-util*
 postscript-printing	print.cnx	/*postscript-printing*
 pow()	builtin.cnx	/*pow()*
 ppwiz.vim	syntax.cnx	/*ppwiz.vim*
+preinserted()	builtin.cnx	/*preinserted()*
 press-enter	message.cnx	/*press-enter*
 press-return	message.cnx	/*press-return*
 prevcount-variable	eval.cnx	/*prevcount-variable*
@@ -9936,7 +10117,9 @@ quickfix-pandoc	quickfix.cnx	/*quickfix-pandoc*
 quickfix-parse	quickfix.cnx	/*quickfix-parse*
 quickfix-perl	quickfix.cnx	/*quickfix-perl*
 quickfix-size	quickfix.cnx	/*quickfix-size*
+quickfix-stack	quickfix.cnx	/*quickfix-stack*
 quickfix-title	quickfix.cnx	/*quickfix-title*
+quickfix-toml	quickfix.cnx	/*quickfix-toml*
 quickfix-valid	quickfix.cnx	/*quickfix-valid*
 quickfix-window	quickfix.cnx	/*quickfix-window*
 quickfix-window-ID	quickfix.cnx	/*quickfix-window-ID*
@@ -10012,7 +10195,6 @@ reg_executing()	builtin.cnx	/*reg_executing()*
 reg_recording()	builtin.cnx	/*reg_recording()*
 regexp	pattern.cnx	/*regexp*
 regexp-changes-5.4	version5.cnx	/*regexp-changes-5.4*
-register	sponsor.cnx	/*register*
 register-faq	sponsor.cnx	/*register-faq*
 register-functions	usr_41.cnx	/*register-functions*
 register-variable	eval.cnx	/*register-variable*
@@ -10168,6 +10350,7 @@ search()	builtin.cnx	/*search()*
 search()-sub-match	builtin.cnx	/*search()-sub-match*
 search-commands	pattern.cnx	/*search-commands*
 search-offset	pattern.cnx	/*search-offset*
+search-options	pattern.cnx	/*search-options*
 search-pattern	pattern.cnx	/*search-pattern*
 search-range	pattern.cnx	/*search-range*
 search-replace	change.cnx	/*search-replace*
@@ -10216,6 +10399,7 @@ settagstack()	builtin.cnx	/*settagstack()*
 setting-guifont	gui.cnx	/*setting-guifont*
 setting-guitablabel	tabpage.cnx	/*setting-guitablabel*
 setting-tabline	tabpage.cnx	/*setting-tabline*
+setting-tabpanel	tabpage.cnx	/*setting-tabpanel*
 setuid	change.cnx	/*setuid*
 setwinvar()	builtin.cnx	/*setwinvar()*
 sftp	pi_netrw.cnx	/*sftp*
@@ -10293,6 +10477,10 @@ slow-fast-terminal	term.cnx	/*slow-fast-terminal*
 slow-start	starting.cnx	/*slow-start*
 slow-terminal	term.cnx	/*slow-terminal*
 socket-interface	channel.cnx	/*socket-interface*
+socketserver-clientserver	remote.cnx	/*socketserver-clientserver*
+socketserver-differences	remote.cnx	/*socketserver-differences*
+socketserver-name	remote.cnx	/*socketserver-name*
+socketserver-x11	remote.cnx	/*socketserver-x11*
 sort()	builtin.cnx	/*sort()*
 sorting	change.cnx	/*sorting*
 sound-functions	usr_41.cnx	/*sound-functions*
@@ -10510,7 +10698,6 @@ style-changes	develop.cnx	/*style-changes*
 style-clang-format	develop.cnx	/*style-clang-format*
 style-comments	develop.cnx	/*style-comments*
 style-common-functions	develop.cnx	/*style-common-functions*
-style-compiler	develop.cnx	/*style-compiler*
 style-declarations	develop.cnx	/*style-declarations*
 style-examples	develop.cnx	/*style-examples*
 style-functions	develop.cnx	/*style-functions*
@@ -10807,6 +10994,7 @@ tabpage.txt	tabpage.cnx	/*tabpage.txt*
 tabpagebuflist()	builtin.cnx	/*tabpagebuflist()*
 tabpagenr()	builtin.cnx	/*tabpagenr()*
 tabpagewinnr()	builtin.cnx	/*tabpagewinnr()*
+tabpanel	tabpage.cnx	/*tabpanel*
 tag	tagsrch.cnx	/*tag*
 tag-!	tagsrch.cnx	/*tag-!*
 tag-binary-search	tagsrch.cnx	/*tag-binary-search*
@@ -10843,6 +11031,7 @@ tar-contents	pi_tar.cnx	/*tar-contents*
 tar-copyright	pi_tar.cnx	/*tar-copyright*
 tar-history	pi_tar.cnx	/*tar-history*
 tar-manual	pi_tar.cnx	/*tar-manual*
+tar-mappings	pi_tar.cnx	/*tar-mappings*
 tar-options	pi_tar.cnx	/*tar-options*
 tar-usage	pi_tar.cnx	/*tar-usage*
 tcl	if_tcl.cnx	/*tcl*
@@ -10926,6 +11115,7 @@ term_setrestore()	terminal.cnx	/*term_setrestore()*
 term_setsize()	terminal.cnx	/*term_setsize()*
 term_start()	terminal.cnx	/*term_start()*
 term_wait()	terminal.cnx	/*term_wait()*
+termblinkresp-variable	eval.cnx	/*termblinkresp-variable*
 termcap	term.cnx	/*termcap*
 termcap-changed	version4.cnx	/*termcap-changed*
 termcap-colors	term.cnx	/*termcap-colors*
@@ -10933,6 +11123,7 @@ termcap-cursor-color	term.cnx	/*termcap-cursor-color*
 termcap-cursor-shape	term.cnx	/*termcap-cursor-shape*
 termcap-options	term.cnx	/*termcap-options*
 termcap-title	term.cnx	/*termcap-title*
+termda1-variable	eval.cnx	/*termda1-variable*
 termdebug-commands	terminal.cnx	/*termdebug-commands*
 termdebug-communication	terminal.cnx	/*termdebug-communication*
 termdebug-customizing	terminal.cnx	/*termdebug-customizing*
@@ -10941,8 +11132,12 @@ termdebug-example	terminal.cnx	/*termdebug-example*
 termdebug-frames	terminal.cnx	/*termdebug-frames*
 termdebug-mappings	terminal.cnx	/*termdebug-mappings*
 termdebug-prompt	terminal.cnx	/*termdebug-prompt*
+termdebug-remote	terminal.cnx	/*termdebug-remote*
+termdebug-remote-example	terminal.cnx	/*termdebug-remote-example*
+termdebug-remote-window	terminal.cnx	/*termdebug-remote-window*
 termdebug-starting	terminal.cnx	/*termdebug-starting*
 termdebug-stepping	terminal.cnx	/*termdebug-stepping*
+termdebug-substitute-path	terminal.cnx	/*termdebug-substitute-path*
 termdebug-timeout	terminal.cnx	/*termdebug-timeout*
 termdebug-variables	terminal.cnx	/*termdebug-variables*
 termdebug_contributing	terminal.cnx	/*termdebug_contributing*
@@ -10996,7 +11191,12 @@ terminal-window	terminal.cnx	/*terminal-window*
 terminal.txt	terminal.cnx	/*terminal.txt*
 terminalprops()	builtin.cnx	/*terminalprops()*
 terminfo	term.cnx	/*terminfo*
+termosc-variable	eval.cnx	/*termosc-variable*
+termrbgresp-variable	eval.cnx	/*termrbgresp-variable*
 termresponse-variable	eval.cnx	/*termresponse-variable*
+termrfgresp-variable	eval.cnx	/*termrfgresp-variable*
+termstyleresp-variable	eval.cnx	/*termstyleresp-variable*
+termu7resp-variable	eval.cnx	/*termu7resp-variable*
 ternary	eval.cnx	/*ternary*
 test-functions	usr_41.cnx	/*test-functions*
 test-functions-details	testing.cnx	/*test-functions-details*
@@ -11118,6 +11318,8 @@ type-casting	vim9.cnx	/*type-casting*
 type-checking	vim9.cnx	/*type-checking*
 type-inference	vim9.cnx	/*type-inference*
 type-mistakes	tips.cnx	/*type-mistakes*
+type-parameter-naming	vim9.cnx	/*type-parameter-naming*
+type-variable-naming	vim9.cnx	/*type-variable-naming*
 typealias	vim9class.cnx	/*typealias*
 typename()	builtin.cnx	/*typename()*
 typescript.vim	syntax.cnx	/*typescript.vim*
@@ -11149,10 +11351,13 @@ undofile()	builtin.cnx	/*undofile()*
 undotree()	builtin.cnx	/*undotree()*
 unicode	mbyte.cnx	/*unicode*
 uniq()	builtin.cnx	/*uniq()*
+unique	change.cnx	/*unique*
 unix	os_unix.cnx	/*unix*
 unlisted-buffer	windows.cnx	/*unlisted-buffer*
 up-down-motions	motion.cnx	/*up-down-motions*
 uppercase	change.cnx	/*uppercase*
+uri_decode()	builtin.cnx	/*uri_decode()*
+uri_encode()	builtin.cnx	/*uri_encode()*
 urxvt-mouse	options.cnx	/*urxvt-mouse*
 use-visual-cmds	version4.cnx	/*use-visual-cmds*
 useful-mappings	tips.cnx	/*useful-mappings*
@@ -11222,6 +11427,7 @@ v:beval_winnr	eval.cnx	/*v:beval_winnr*
 v:char	eval.cnx	/*v:char*
 v:charconvert_from	eval.cnx	/*v:charconvert_from*
 v:charconvert_to	eval.cnx	/*v:charconvert_to*
+v:clipmethod	eval.cnx	/*v:clipmethod*
 v:cmdarg	eval.cnx	/*v:cmdarg*
 v:cmdbang	eval.cnx	/*v:cmdbang*
 v:collate	eval.cnx	/*v:collate*
@@ -11311,6 +11517,8 @@ v:t_string	eval.cnx	/*v:t_string*
 v:t_tuple	eval.cnx	/*v:t_tuple*
 v:t_typealias	eval.cnx	/*v:t_typealias*
 v:termblinkresp	eval.cnx	/*v:termblinkresp*
+v:termda1	eval.cnx	/*v:termda1*
+v:termosc	eval.cnx	/*v:termosc*
 v:termrbgresp	eval.cnx	/*v:termrbgresp*
 v:termresponse	eval.cnx	/*v:termresponse*
 v:termrfgresp	eval.cnx	/*v:termrfgresp*
@@ -11325,7 +11533,9 @@ v:var	eval.cnx	/*v:var*
 v:version	eval.cnx	/*v:version*
 v:versionlong	eval.cnx	/*v:versionlong*
 v:vim_did_enter	eval.cnx	/*v:vim_did_enter*
+v:vim_did_init	eval.cnx	/*v:vim_did_init*
 v:warningmsg	eval.cnx	/*v:warningmsg*
+v:wayland_display	eval.cnx	/*v:wayland_display*
 v:windowid	eval.cnx	/*v:windowid*
 v_!	change.cnx	/*v_!*
 v_$	visual.cnx	/*v_$*
@@ -11538,6 +11748,7 @@ vim-modes-intro	intro.cnx	/*vim-modes-intro*
 vim-raku	ft_raku.cnx	/*vim-raku*
 vim-script-intro	usr_41.cnx	/*vim-script-intro*
 vim-script-library	eval.cnx	/*vim-script-library*
+vim-script-notation	usr_41.cnx	/*vim-script-notation*
 vim-security	intro.cnx	/*vim-security*
 vim-shebang	various.cnx	/*vim-shebang*
 vim-tutor-create	pi_tutor.cnx	/*vim-tutor-create*
@@ -11597,6 +11808,7 @@ vim:	options.cnx	/*vim:*
 vim_announce	intro.cnx	/*vim_announce*
 vim_dev	intro.cnx	/*vim_dev*
 vim_did_enter-variable	eval.cnx	/*vim_did_enter-variable*
+vim_did_init-variable	eval.cnx	/*vim_did_init-variable*
 vim_mac	intro.cnx	/*vim_mac*
 vim_mac_group	gui_mac.cnx	/*vim_mac_group*
 vim_starting	builtin.cnx	/*vim_starting*
@@ -11669,7 +11881,6 @@ vms-notes	os_vms.cnx	/*vms-notes*
 vms-problems	os_vms.cnx	/*vms-problems*
 vms-started	os_vms.cnx	/*vms-started*
 vms-usage	os_vms.cnx	/*vms-usage*
-vote-for-features	sponsor.cnx	/*vote-for-features*
 votes-for-changes	todo.cnx	/*votes-for-changes*
 vreplace-mode	insert.cnx	/*vreplace-mode*
 vt100-cursor-keys	term.cnx	/*vt100-cursor-keys*
@@ -11684,6 +11895,18 @@ w:quickfix_title	quickfix.cnx	/*w:quickfix_title*
 w:var	eval.cnx	/*w:var*
 waittime	channel.cnx	/*waittime*
 warningmsg-variable	eval.cnx	/*warningmsg-variable*
+wayland	wayland.cnx	/*wayland*
+wayland-and-x11	wayland.cnx	/*wayland-and-x11*
+wayland-focus-steal	wayland.cnx	/*wayland-focus-steal*
+wayland-gnome	wayland.cnx	/*wayland-gnome*
+wayland-gui	wayland.cnx	/*wayland-gui*
+wayland-persist	wayland.cnx	/*wayland-persist*
+wayland-primary-selection	wayland.cnx	/*wayland-primary-selection*
+wayland-seat	wayland.cnx	/*wayland-seat*
+wayland-selections	wayland.cnx	/*wayland-selections*
+wayland-useful	wayland.cnx	/*wayland-useful*
+wayland.txt	wayland.cnx	/*wayland.txt*
+wayland_display-variable	eval.cnx	/*wayland_display-variable*
 wdl-syntax	syntax.cnx	/*wdl-syntax*
 wdl.vim	syntax.cnx	/*wdl.vim*
 white-space	pattern.cnx	/*white-space*
@@ -11691,6 +11914,7 @@ whitespace	pattern.cnx	/*whitespace*
 wildcard	editing.cnx	/*wildcard*
 wildcards	editing.cnx	/*wildcards*
 wildmenumode()	builtin.cnx	/*wildmenumode()*
+wildtrigger()	builtin.cnx	/*wildtrigger()*
 win-scrolled-resized	windows.cnx	/*win-scrolled-resized*
 win16	os_win32.cnx	/*win16*
 win32	os_win32.cnx	/*win32*
@@ -11714,6 +11938,7 @@ win32-quotes	os_win32.cnx	/*win32-quotes*
 win32-restore	os_win32.cnx	/*win32-restore*
 win32-startup	os_win32.cnx	/*win32-startup*
 win32-term	os_win32.cnx	/*win32-term*
+win32-term-colors	os_win32.cnx	/*win32-term-colors*
 win32-vimrun	gui_w32.cnx	/*win32-vimrun*
 win32-win3.1	os_win32.cnx	/*win32-win3.1*
 win32-win95	os_win32.cnx	/*win32-win95*

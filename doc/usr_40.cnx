@@ -1,6 +1,6 @@
-*usr_40.txt*	适用于 Vim 9.1 版本。	最近更新: 2022年8月
+*usr_40.txt*	适用于 Vim 9.1 版本。  最近更新: 2025年10月
 
-		     VIM 用户手册 - by Bram Moolenaar
+		     VIM 用户手册      by Bram Moolenaar
 				译者: lang2
 
 			      创建新的命令
@@ -149,7 +149,7 @@ Ex 模式: >
 执行 ":wnext" 来写入文件并开始编辑下一个。映射以 ",," 结束。这又触发了同一个映
 射，再次执行替换操作，依此类推。
    这个映射会一直进行下去，直至遇到错误为止。在这里可能是查找命令无法匹配到
-"5.1" 。你可以自行插入 "5.1" 然后再次键入 ",,"。或者 ":wnext" 因为遇到最后一个
+"5.1"。你可以自行插入 "5.1" 然后再次键入 ",,"。或者 ":wnext" 因为遇到最后一个
 文件而失败。
    当映射在中途遇到错误时，映射的剩余部分会被放弃。你可用 CTRL-C 中断映射。(在
 MS-Windows 上用 CTRL-Break)。
@@ -521,7 +521,7 @@ FileChangedShell 事件而读入一个文件时，那些被定义来设定语法
 Vim 允许你用模拟某一事件发生的办法来触发一个自动命令。这可以在一个自动命令里用
 来触发另外一个。例如: >
 
-	:autocmd BufReadPost *.new  execute "doautocmd BufReadPost " . expand("<afile>:r")
+	:autocmd BufReadPost *.new  execute "doautocmd BufReadPost " .. expand("<afile>:r")
 
 这定义了一个新文件开始编辑之后触发的自动命令。这个文件的文件名必须以 ".new" 结
 尾。其中的 ":execute" 命令利用表达式求值来组成一个新的命令并执行之。当编辑文件

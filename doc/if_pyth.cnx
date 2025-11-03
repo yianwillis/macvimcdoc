@@ -1,4 +1,4 @@
-*if_pyth.txt*   适用于 Vim 9.1 版本。	最近更新: 2025年4月
+*if_pyth.txt*   适用于 Vim 9.1 版本。  最近更新: 2025年10月
 
 
 		  VIM 参考手册    by Paul Moore
@@ -364,7 +364,7 @@ Python 'runtimepath' 处理				*python-special-path*
 
     sys.path_hooks.append(hook)
 
-vim.VIM_SPECIAL_PATH					*python-VIM_SPECIAL_PATH*
+vim.VIM_SPECIAL_PATH				*python-VIM_SPECIAL_PATH*
 	字符串常数，和 vim 路径钩联合使用。如果 vim 安装的路径钩被要求处理任何
 	非 vim.VIM_SPECIAL_PATH 常数的路径，抛出 ImportError。在唯一可能的另一
 	种情况下，使用特殊载入程序。
@@ -629,7 +629,7 @@ vim.Tuple 对象					*python-Tuple*
 			无参数的版本方法构建空列表 (译者注: 原文如此，应为空元
 			组)。
     示例: >
-        t = vim.Tuple("abc")		# 构造函数，返回, result: ('a', 'b', 'c')
+        t = vim.Tuple("abc")		# 构造函数，返回: ('a', 'b', 'c')
         print t[1:]			# 分片
         print t[0]			# 读取项目
         for i in t:			# 遍历
@@ -645,8 +645,8 @@ vim.Function 对象				*python-Function*
         属性         描述 ~
         name         函数名。
 	args         `None` 或用作参数的 |python-List| 对象。注意 这是参数列表
-		     的备份，每次请求参属性时都会重新构建。列表的修改被忽略 (
-		     但不适用于参数列表里的容器: 类似于 |copy()| 而不是
+		     的备份，每次请求参属性时都会重新构建。列表的修改被忽略
+		     (但不适用于参数列表里的容器: 类似于 |copy()| 而不是
 		     |deepcopy()|)。
         self         `None` 或用作 self 字典的 |python-Dictionary| 对象。注意
                      调用函数对象时显式的 `self` 参数覆盖此属性。

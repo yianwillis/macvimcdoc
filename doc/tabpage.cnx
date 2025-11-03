@@ -1,7 +1,7 @@
-*tabpage.txt*   适用于 Vim 9.1 版本。	最近更新: 2025年3月
+*tabpage.txt*   适用于 Vim 9.1 版本。  最近更新: 2025年9月
 
 
-		  VIM 参考手册	  by Bram Moolenaar
+		  VIM 参考手册    by Bram Moolenaar
 				译者: Willis
 
 
@@ -14,9 +14,11 @@
 2. 命令				|tab-page-commands|
 3. 其它项目			|tab-page-other|
 4. 设置 'tabline'		|setting-tabline|
-5. 设置 'guitablabel'		|setting-guitablabel|
+5. 设置 'tabpanel'		|setting-tabpanel|
+6. 设置 'guitablabel'		|setting-guitablabel|
 
-{仅当编译时加入 |+windows| 特性才能使用多标签页}
+{仅当编译时加入 |+windows| 特性时才能使用多标签页}
+{仅当编译时加入 |+tabpanel| 特性时才能使用 |tabpanel| 功能}
 
 ==============================================================================
 1. 简介						*tab-page-intro*
@@ -98,7 +100,7 @@ CTRL-W gF	打开新标签页，编辑光标所在的文件名并转到文件名�
 关闭标签页的最后一个窗口同时也关闭该标签页，除非它是唯一的标签页。
 
 使用鼠标: 如果显示标签页行，点击右上角的 "X" 可以关闭当前标签页。如果使用自定
-义的 |'tabline'|，显示内容可能有所不同。
+义的 'tabline'，显示内容可能有所不同。
 
 							*:tabc* *:tabclose*
 :tabc[lose][!]	关闭当前标签页。
@@ -151,7 +153,7 @@ CTRL-W gF	打开新标签页，编辑光标所在的文件名并转到文件名�
 切 换 到 另 一 个 标 签 页:
 
 使用鼠标: 如果显示标签页行，某个标签页标签上单击可以切换到该标签页。没有标签的
-地方点击则转到下一个标签页。|'tabline'|
+地方点击则转到下一个标签页。'tabline'
 
 :tabn[ext]				*:tabn* *:tabnext* *gt*
 <C-PageDown>				*CTRL-<PageDown>* *<C-PageDown>*
@@ -314,11 +316,13 @@ TabLeave 和 TabEnter 自动命令事件可以在标签页切换时执行任务�
 包含修改过的窗口的标签页会显示 "+"。同时也显示该标签页里包含的窗口数。所以，
 "3+" 意味着有三个窗口，其中一个有修改过的缓冲区。
 
+有多个标签页打开，且仅当设置了 'mouse' 时，最后列会出现 "X" (关闭按钮)。
+
 'tabline' 选项允许你定义自己喜欢的标签页标签显示方式。实现并不简单，所以这里给
 出一个例子。
 
-基本知识见 'statusline' 选项。'tabline' 选项可以使用相同的项目。此外，还可用
-|tabpagebuflist()|、|tabpagenr()| 和 |tabpagewinnr()| 函数。
+基本知识见 'statusline' 选项。'tabline' 和 'tabpanel' 选项可以使用相同的项目。
+此外，还可用 |tabpagebuflist()|、|tabpagenr()| 和 |tabpagewinnr()| 函数。
 
 因为标签页标签的编号可以不同，你可以指定整个选项为一个函数。就像这样: >
 	:set tabline=%!MyTabLine()
@@ -367,7 +371,60 @@ TabLeave 和 TabEnter 自动命令事件可以在标签页切换时执行任务�
 签宽度。'columns' 选项可以查看可用的空间。
 
 ==============================================================================
-5. 设置 'guitablabel'					*setting-guitablabel*
+5. 设置 'tabpanel'				*tabpanel* *setting-tabpanel*
+
+标签页面板是在窗口边上显示标签页标签的垂直侧边栏。看起来像这样:
+>
+	+-----------+----------------------------------
+	|(1)        |text text text text text text text
+	|  ~/aaa.txt|text text text text text text text
+	|(2)        |text text text text text text text
+	|  ~/.vimrc |text text text text text text text
+	|(3)        |text text text text text text text
+	|  ~/bbb.js |text text text text text text text
+	|  ~/ccc.css|text text text text text text text
+	|           |text text text text text text text
+	|           |text text text text text text text
+	|           |text text text text text text text
+<
+要配置标签页板面，可用以下选项: 'tabpanel'、'showtabpanel' 和 'tabpanelopt'。
+'tabpanel' 选项的功能类似于 'statusline' 或 'tabline'，而 'showtabpanel' 选项
+的功能类似于 'laststatus' 或 'showtabline'。
+
+'tabpanelopt' 选项的 "columns:" 项指定标签页面板的宽度:
+>
+	      +------ 此宽度
+	      |
+	 <----+----->
+	+-----------+----------------------------------
+	|(1)        |text text text text text text text
+	|  ~/aaa.txt|text text text text text text text
+	|(2)        |text text text text text text text
+<
+'tabpanelopt' 选项的 "align:" 项决定标签页面板显示在窗口的左侧或右侧:
+>
+	+----------------------------------+-----------
+	|text text text text text text text|(1)
+	|text text text text text text text|  ~/aaa.txt
+	|text text text text text text text|(2)
+<
+'tabpanelopt' 选项的 "vert" 项指定标签页面板和窗口显示部分间是否显示垂直分割
+符:
+>
+		    +------ 这里
+		    |
+		    v
+	+-----------+----------------------------------
+	|(1)        |text text text text text text text
+	|  ~/aaa.txt|text text text text text text text
+	|(2)        |text text text text text text text
+<
+垂直分割符取自 'fillchars' 里的 "tpl_vert"。
+
+定制标签页面板外观的高亮组: |hl-TabPanel| |hl-TabPanelSel| |hl-TabPanelFill|
+
+==============================================================================
+6. 设置 'guitablabel'					*setting-guitablabel*
 
 如果显示 GUI 的标签页行，'guitablabel' 可以用来指定每个标签页显示的标签。和
 'tabline' 不同，后者一次指定整个标签页行，而 'guitablabel' 分别指定每个标签。

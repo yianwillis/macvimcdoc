@@ -1,4 +1,4 @@
-*index.txt*     适用于 Vim 9.1 版本。	最近更新: 2025年4月
+*index.txt*     适用于 Vim 9.1 版本。  最近更新: 2025年11月
 
 
 		  VIM 参考手册    by Bram Moolenaar
@@ -150,6 +150,7 @@ CTRL-X 子模式的命令					*i_CTRL-X_index*
 |i_CTRL-X_CTRL-N|	CTRL-X CTRL-N	后一个补全
 |i_CTRL-X_CTRL-O|	CTRL-X CTRL-O	全能 (omni) 补全
 |i_CTRL-X_CTRL-P|	CTRL-X CTRL-P	前一个补全
+|i_CTRL-X_CTRL-R|	CTRL-X CTRL-R	从寄存器补全内容
 |i_CTRL-X_CTRL-S|	CTRL-X CTRL-S	拼写建议
 |i_CTRL-X_CTRL-T|	CTRL-X CTRL-T	从同义词词典补全标识符
 |i_CTRL-X_CTRL-U|	CTRL-X CTRL-U	用 'completefunc' 补全
@@ -475,7 +476,7 @@ SECTION	 可能以 '}' 而不是 '{' 开始的小节
 标签		命令		   普通模式下的动作	~
 ------------------------------------------------------------------------------
 |CTRL-W_CTRL-B|	CTRL-W CTRL-B	   同 "CTRL-W b"
-|CTRL-W_CTRL-C|	CTRL-W CTRL-C	   同 "CTRL-W c"
+|CTRL-W_CTRL-C|	CTRL-W CTRL-C	   空操作
 |CTRL-W_CTRL-D|	CTRL-W CTRL-D	   同 "CTRL-W d"
 |CTRL-W_CTRL-F|	CTRL-W CTRL-F	   同 "CTRL-W f"
 		CTRL-W CTRL-G	   同 "CTRL-W g .."
@@ -702,7 +703,7 @@ SECTION	 可能以 '}' 而不是 '{' 开始的小节
 |g@|		g@{motion}	   调用 'operatorfunc'
 |g~|		g~{motion}	2  改变 Nmove 文本的大小写
 |g<Down>|	g<Down>		1  同 "gj"
-|g<End>|	g<End>		1  同 "g$"
+|g<End>|	g<End>		1  与 "g$" 类似，但跳到最右侧的非空白字符
 |g<Home>|	g<Home>		1  同 "g0"
 |g<LeftMouse>|	g<LeftMouse>	   同 <C-LeftMouse>
 		g<MiddleMouse>	   同 <C-MiddleMouse>
@@ -895,7 +896,7 @@ SECTION	 可能以 '}' 而不是 '{' 开始的小节
 |c_CTRL-C|	CTRL-C		同 <Esc>
 |c_CTRL-D|	CTRL-D		列出光标前面模式的所有补全
 |c_CTRL-E|	CTRL-E		光标移动到命令行结束的地方
-|'cedit'|	CTRL-F		'cedit' 的缺省值: 打开命令行窗口；否则不用
+'cedit'		CTRL-F		'cedit' 的缺省值: 打开命令行窗口；否则不用
 |c_CTRL-G|	CTRL-G		'incsearch' 激活时，下个匹配
 |c_<BS>|	<BS>		删除光标前面的字符
 |c_digraph|	{char1} <BS> {char2}
@@ -1109,6 +1110,7 @@ wildmenu 模式下的命令 (see 'wildmenu')
 |:class|	:class		开始类声明
 |:clast|	:cla[st]	跳转到指定的错误上，缺省为末个
 |:clearjumps|	:cle[arjumps	清除跳转列表
+|:clipreset|	:clip[reset]	重置 'clipmethod'
 |:clist|	:cl[ist]	列出所有错误
 |:close|	:clo[se]	关闭当前窗口
 |:cmap|		:cm[ap]		类似于 ":map"，但用于命令行模式
@@ -1366,7 +1368,7 @@ wildmenu 模式下的命令 (see 'wildmenu')
 |:omap|		:om[ap]		类似于 ":map"，但使用操作符等待模式
 |:omapclear|	:omapc[lear]	删除操作符等待模式的所有映射
 |:omenu|	:ome[nu]	为操作符等待模式添加菜单
-|:only|		:on[ly]		关闭当前窗口，除了当前的窗口以外
+|:only|		:on[ly]		关闭除了当前的窗口以外的所有窗口
 |:onoremap|	:ono[remap]	类似于 ":noremap"，但使用操作符等待模式
 |:onoremenu|	:onoreme[nu]	类似于 ":noremenu"，但使用操作符等待模式
 |:options|	:opt[ions]	打开选项窗口
@@ -1423,7 +1425,8 @@ wildmenu 模式下的命令 (see 'wildmenu')
 |:redir|	:redi[r]	重定向消息到文件或者寄存器
 |:redraw|	:redr[aw]	强迫显示的重画
 |:redrawstatus|	:redraws[tatus]	强迫状态行的重画
-|:redrawtabline|  :redrawt[abline]  强迫标签行的重画
+|:redrawtabline|  :redrawt[abline]  强迫标签页行的重画
+|:redrawtabpanel| :redrawtabp[anel] 强迫标签页面板的重画
 |:registers|	:reg[isters]	显示寄存器的内容
 |:resize|	:res[ize]	改变当前窗口的高度
 |:retab|	:ret[ab]	改变制表大小
@@ -1500,6 +1503,7 @@ wildmenu 模式下的命令 (see 'wildmenu')
 |:stjump|	:stj[ump]	执行 ":tjump" 并分割窗口
 |:stselect|	:sts[elect]	执行 ":tselect" 并分割窗口
 |:sunhide|	:sun[hide]	同 ":unhide"
+|:uniq|		:uni[q]		去重文本行
 |:sunmap|	:sunm[ap]	类似于 ":unmap"，但用于选择模式
 |:sunmenu|	:sunme[nu]	删除选择模式的菜单
 |:suspend|	:sus[pend]	同 ":stop"
@@ -1595,6 +1599,7 @@ wildmenu 模式下的命令 (see 'wildmenu')
 |:winsize|	:wi[nsize]	取得或者设置窗口大小 (已废弃)
 |:wincmd|	:winc[md]	执行窗口 (CTRL-W) 命令
 |:winpos|	:winp[os]	取得或者设置窗口位置
+|:wlrestore|	:wl[restore]	恢复 Wayland 合成器 (compositor) 连接
 |:wnext|	:wn[ext]	写回文件，然后跳转到参数列表的后一个文件
 |:wprevious|	:wp[revious]	写回文件，然后跳转到参数列表的前一个文件
 |:wq|		:wq		写回文件，然后退出窗口或者 Vim

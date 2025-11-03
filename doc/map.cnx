@@ -1,4 +1,4 @@
-*map.txt*	适用于 Vim 9.1 版本。	最近更新: 2025年3月
+*map.txt*	适用于 Vim 9.1 版本。  最近更新: 2025年9月
 
 
 		  VIM 参考手册    by Bram Moolenaar
@@ -76,7 +76,7 @@
 :ln[oremap] {lhs} {rhs}		|mapmode-l|	*:ln*  *:lnoremap*
 :cno[remap] {lhs} {rhs}		|mapmode-c|	*:cno* *:cnor* *:cnoremap*
 :tno[remap] {lhs} {rhs}		|mapmode-t|	*:tno* *:tnoremap*
-			在映射命令作用的模式中把键序列 {lhs} 映射为 {rhs} 。禁
+			在映射命令作用的模式中把键序列 {lhs} 映射为 {rhs}。禁
 			止对映射后的 {rhs} 进行映射扫描。这个特性可以避免映射
 			的嵌套和递归。通常用于重定义一个命令。
 			注意: 除了 |i_CTRL-]| 和 |c_CTRL-]|，{rhs} 里的键不触
@@ -442,7 +442,7 @@ l[nore]map     |  -   | yes | yes |  -  |  -  |  -  |  -   | yes  |
 
 							*mapmode-t*
 终端映射用于终端窗口中，其中输入的键用于终端中运行的作业。见
-|terminal-typing| 。
+|terminal-typing|。
 
 							*omap-info*
 操作符等待映射可以用来定义和任何操作符一起使用的移动命令。简单例子: >
@@ -561,7 +561,7 @@ CTRL-U (<C-U>) 用于删除命令行上 Vim 可能插入的范围。普通模式
 你不能期望 "<C-V>" 像 CTRL-V 那样转换后来者的特殊含义。
 
 要映射反斜杠，或者在 {rhs} 中使用按本义出现的反斜杠，可以使用特殊字符序列
-"<Bslash>" 。这可以避免在使用嵌套映射时使用双反斜杠的需要。
+"<Bslash>"。这可以避免在使用嵌套映射时使用双反斜杠的需要。
 
 						*map_CTRL-C* *map-CTRL-C*
 {lhs} 里可以使用 CTRL-C，但只有在 Vim 等待输入键时才可以，Vim 忙着做别的事情的
@@ -614,8 +614,8 @@ CTRL-V)。
 变，也不会影响已定义的映射。
 
 					*<LocalLeader>* *maplocalleader*
-<LocalLeader> 和 <Leader> 类似，除了它使用 "maplocalleader" 而非 "mapleader"
-以外。<LocalLeader> 用于局部于缓冲区的映射，例如: >
+<LocalLeader> 和 <Leader> 类似，只是使用了 "maplocalleader" 而非 "mapleader"。
+<LocalLeader> 用于局部于缓冲区的映射，例如: >
       :map <buffer> <LocalLeader>A  oanother line<Esc>
 <
 在一个全局插件里应该使用 <Leader> 而在一个文件类型插件里应该用 <LocalLeader>。
@@ -1120,7 +1120,7 @@ non-id	  匹配的前面是一个空格、制表或者行或插入的开始。
 						*:ab* *:abbreviate*
 :ab[breviate]		列出所有的缩写。第一栏中的字符表示该缩写作用的模式:
 			'i' 指插入模式，'c' 指命令行模式，'!' 指两种模式都有。
-			这和映射的相同，参看 |map-listing| 。
+			这和映射的相同，参看 |map-listing|。
 
 						*:abbreviate-verbose*
 如果 'verbose' 非零，缩写列出的同时显示它最近定义的位置。例如: >
@@ -1262,11 +1262,11 @@ non-id	  匹配的前面是一个空格、制表或者行或插入的开始。
 ==============================================================================
 4. 用户定义的命令				*user-commands*
 
-可以定义你自己的 Ex 命令。用户自定义命令可以和内建命令一样运行 (它可以有范围或
-参数，参数可以是自动补全的文件名或缓冲区名，等等)，除了当该命令执行时，它会被
-转换成一个普通的 Ex 命令然后再被执行以外。
+可以定义你自己的 Ex 命令。用户自定义命令可以像内建命令一样运行 (支持范围或参
+数，参数可被作为文件句或缓冲区名进行自动补全，等等)，只不过当该命令执行时，它
+会先被转换成一个普通的 Ex 命令再执行。
 
-对于初学者来说: 参考用户手册中的 |40.2| 。
+对于初学者来说: 参考用户手册中的 |40.2|。
 
 					*E183* *E841* *user-cmd-ambiguous*
 所有用户定义的命令都必须以大写字母开头，来避免与内建命令的冲突。以下内建命令是
@@ -1392,13 +1392,13 @@ Vim 和任何其它 Ex 命令一样对待用户自定义命令。它能有参数
 	-complete=cscope	|:cscope| 子选项
 	-complete=diff_buffer	比较缓冲区名
 	-complete=dir		目录名
-	-complete=dir_in_path	|'cdpath'| 里的目录名
+	-complete=dir_in_path	'cdpath' 里的目录名
 	-complete=environment	环境变量名
 	-complete=event		自动命令事件
 	-complete=expression	Vim 表达式
 	-complete=file		文件和目录名
-	-complete=file_in_path	|'path'| 中的文件和目录名
-	-complete=filetype	文件类型名 |'filetype'|
+	-complete=file_in_path	'path' 中的文件和目录名
+	-complete=filetype	文件类型名 'filetype'
 	-complete=function	函数名
 	-complete=help		帮助主题
 	-complete=highlight	高亮组
@@ -1411,13 +1411,13 @@ Vim 和任何其它 Ex 命令一样对待用户自定义命令。它能有参数
 	-complete=messages	|:messages| 子选项
 	-complete=option	选项
 	-complete=packadd	可选包 |pack-add| 名
-	-complete=runtime	|'runtimepath'| 里的文件和目录名
+	-complete=runtime	'runtimepath' 里的文件和目录名
 	-complete=scriptnames	已载入的脚本名
 	-complete=shellcmd	外壳命令
 	-complete=shellcmdline	第一部分是外壳命令，其余是文件句。行为与
 				|:!cmd| 相同
 	-complete=sign		|:sign| 子选项
-	-complete=syntax	语法文件名 |'syntax'|
+	-complete=syntax	语法文件名 'syntax'
 	-complete=syntime	|:syntime| 子选项
 	-complete=tag		标签
 	-complete=tag_listfiles	标签，但敲入 CTRL-D 时显示文件名
@@ -1514,7 +1514,7 @@ Vim 和任何其它 Ex 命令一样对待用户自定义命令。它能有参数
 
 	-bang	    这些命令可以使用一个 ! 修饰符 (和 :q 或 :w 类似)
 	-bar	    这些命令可以跟随一个 "|" 和其它命令。那么命令参数中就
-		    不允许有 "|" 。用一个 " 可以开始一个注释。
+		    不允许有 "|"。用一个 " 可以开始一个注释。
 	-register   给这些命令的第一个参数可以是一个可选的寄存器名
 		    (和 :del，:put，:yank 类似)。
 	-buffer	    这些命令仅在当前缓冲区里有效。
@@ -1540,9 +1540,9 @@ Vim 和任何其它 Ex 命令一样对待用户自定义命令。它能有参数
 如果命令在 Vim9 脚本中定义 (`:vim9script` 开始的脚本和用 `:def` 的函数中)，
 以 Vim9 脚本模式执行 {repl}。这只取决于命令定义的位置，而不是它被调用的位置。
 
-对用户自定义命令的替换文本 {repl} 进行扫描，找到使用 <...> 记法的特殊转义序列。
-转义序列被命令行输入提供的值替换，其它文本不变。最终字符串被作为 Ex 命令来执
-行。要避免替换，使用 <lt> 代替初始的 <。这样，要按本义包含 "<bang>"，请使用
+对用户自定义命令的替换文本 {repl} 进行扫描，找到使用 <...> 记法的特殊转义序
+列。转义序列被命令行输入提供的值替换，其它文本不变。最终字符串被作为 Ex 命令来
+执行。要避免替换，使用 <lt> 代替初始的 <。这样，要按本义包含 "<bang>"，请使用
 "<lt>bang>"。
 
 有效的转义序列有
@@ -1616,8 +1616,8 @@ args"，函数参数)。它在空格和制表处分割命令行参数，每个�
 	XX a\\\\ b	   'a\\', 'b'
 	XX		   [nothing]
 
-注意 如果要处理 "无参数" 的情形，要确定此函数可以无参数地调用。对已编译的函数，
-可考虑可变参数，见 |vim9-variable-arguments|。
+注意 如果要处理 "无参数" 的情形，要确定此函数可以无参数地调用。对已编译的函
+数，可考虑可变参数，见 |vim9-variable-arguments|。
 
 用户命令的示例: >
 

@@ -1,4 +1,4 @@
-*term.txt*      适用于 Vim 9.1 版本。	最近更新: 2025年3月
+*term.txt*      适用于 Vim 9.1 版本。  最近更新: 2025年10月
 
 
 		  VIM 参考手册    by Bram Moolenaar
@@ -394,13 +394,13 @@ Vim 增加的 (它们没有标准代码):
 		|termcap-cursor-shape|
 	t_RV	请求终端版本字符串 (适用于 xterm 和其它终端模	*t_RV* *'t_RV'*
 		拟器) 其响应存于 |v:termresponse| |xterm-8bit|
-		|'ttymouse'| |xterm-codes|
+		'ttymouse' |xterm-codes|
 	t_XM	打开/关闭鼠标报告。				*t_XM* *'t_XM'*
 		见下 |mouse-reporting|
 	t_RK	请求终端键盘协议状态；				*t_RK* *'t_RK'*
 		|t_TI| 之后发送
 	t_u7	请求光标位置 (适用于 xterm)			*t_u7* *'t_u7'*
-		见 |'ambiwidth'|
+		见 'ambiwidth'
 		其响应存于 |v:term7resp|
 	t_RF	请求终端前景色					*t_RF* *'t_RF'*
 		其响应存于 |v:termfgresp|
@@ -867,7 +867,7 @@ Vim 之前在外壳上执行 "stty cs8 -istrip -parenb"。
 	"g<RightMouse>" 是 "<C-RightMouse>	("CTRL-T")
 
 					*mouse-mode-table* *mouse-overview*
-如果 'mousemodel' 是 "extend" ，鼠标按钮的功能的概述在此:
+如果 'mousemodel' 是 "extend"，鼠标按钮的功能的概述在此:
 
 普通模式:
 事件	      移动光标	   选择		改变窗口   行动	~

@@ -1,4 +1,4 @@
-*windows.txt*	适用于 Vim 9.1 版本。	最近更新: 2025年3月
+*windows.txt*	适用于 Vim 9.1 版本。  最近更新: 2025年11月
 
 
 		  VIM 参考手册    by Bram Moolenaar
@@ -122,7 +122,7 @@ Buf/Win Enter/Leave 等自动命令 |autocommand| 不会在打开窗口或读取
 
 							*filler-lines*
 窗口中缓冲区末行之后的行称为填充行。缺省，这些行以波浪号 (~) 字符开头。
-'fillchars' 选项里的 'eob' 项目可用于改变此字符。缺省，这些字符使用 NonText
+'fillchars' 选项里的 "eob" 项目可用于改变此字符。缺省，这些字符使用 NonText
 (|hl-NonText|) 高亮。EndOfBuffer 高亮组 (|hl-EndOfBuffer|) 可用于改变填充字符
 的高亮。
 
@@ -140,14 +140,22 @@ CTRL-W CTRL-S						*CTRL-W_CTRL-S*
 		项，并且 'eadirection' 没有设置为 "hor"，并且其它窗口中的一个
 		高于当前或新窗口的话，其它窗口也被影响)。
 
-		如果给出 [file]，在新窗口中编辑该文件。如果还未在任何缓冲区中
-		载入，先读入该文件。否则新窗口会使用已载入的缓冲区。
-
 		备注: 不是在所有的终端都能使用 CTRL-S，并且可能导致不能继续输
-		入，遇到这种情况，用 CTRL-Q 继续。参见 |++opt| 和 |+cmd|。
+		入，遇到这种情况，用 CTRL-Q 继续。
+		另见 |++opt| 和 |+cmd|。
 							*E242* *E1159*
 		在自动命令中分割窗口要小心，如果在其它窗口布局改动的同时发生，
 		可能会搞乱窗口布局。
+
+:[N]sp[lit] [++opt] [+cmd] {file}			*:split_f*
+		和 |:split| 类似，但会新建窗口并在其中开始编辑文件 {file}。
+		这跟先执行 ":split"，再执行一个 ":edit" 命令的效果大致相同，但
+		原先窗口里的轮换文件名被设为 {file}。
+		如果使用了 [+cmd] 参数，文件加载完毕后会执行命令 |+cmd|。
+		另见: |++opt|。
+		新窗口的高度为 N (默认值为现存高度的一半)。减少当前窗口的高
+		度，为新窗口留出空间 (如果你打开了 'equalalways' 选项，其它窗
+		口也会被影响)。
 
 CTRL-W CTRL-V						*CTRL-W_CTRL-V*
 CTRL-W v						*CTRL-W_v*
@@ -180,15 +188,7 @@ CTRL-W CTRL-N						*CTRL-W_CTRL-N*
 		这跟先执行 ":split"，再执行一个 ":enew" 命令的效果类同。
 
 :[N]new [++opt] [+cmd] {file}
-:[N]sp[lit] [++opt] [+cmd] {file}			*:split_f*
-		创建一个新的窗口并且开始编辑文件 {file}。这跟先执行 ":split"，
-		再执行一个 ":edit" 命令的效果大致相同，但原先窗口里的轮换文件
-		名被设为 {file}。
-		如果使用了 [+cmd] 参数，文件加载完毕后会执行命令 |+cmd|。
-		另见: |++opt|。
-		新窗口的高度为 N (默认值为现存高度的一半)。减少当前窗口的高
-		度，为新窗口留出空间 (如果你打开了 'equalalways' 选项，其它窗
-		口也会被影响)。
+		相当于 |:split_f|，创建一个新的窗口并且开始编辑文件 {file}。
 
 :[N]vne[w] [++opt] [+cmd] [file]			*:vne* *:vnew*
 		与 |:new| 命令相似，但是它垂直分割窗口，如果打开了
@@ -226,7 +226,7 @@ CTRL-W :	和 |:| -  输入命令行相同。可用于终端窗口中，那里所
 						*:hor* *:horizontal*
 :hor[izontal] {cmd}
 		执行 {cmd}。当前唯一的区别是
-		`horizontal wincmd =`里仅在水平方向使窗口大小相等 (即等宽)。
+		`horizontal wincmd =` 里仅在水平方向使窗口大小相等 (即等宽)。
 
 :lefta[bove] {cmd}				*:lefta* *:leftabove*
 :abo[veleft] {cmd}				*:abo* *:aboveleft*
@@ -1043,16 +1043,17 @@ CTRL-W g }						*CTRL-W_g}*
 		    :%bdelete	    " 删除所有缓冲区
 <
 
-:bdelete[!] {bufname}						*E93* *E94*
+:bd[elete][!] {bufname}						*E93* *E94*
 		类似 ":bdelete[!] [N]"，但是使用名字指定缓冲区，见
 		|{bufname}|。
 
-:bdelete[!] N1 N2 ...
+:bd[elete][!] N1 N2 ...
 		对缓冲区 N1、N2、…… 执行 ":bdelete[!]"。参数可以是缓冲区名或
 		号 (但不能是本身为数字的缓冲区名)。如果名字里含有空格，在空格
 		前插入反斜杠。
 
-:N,Mbdelete[!]	对 N 到 M 号 (包含 N 和 M |inclusive|) 缓冲区执行
+:N,Mbd[elete][!]
+		对 N 到 M 号 (包含 N 和 M |inclusive|) 缓冲区执行
 		":bdelete[!]"。
 
 :[N]bw[ipeout][!]			*:bw* *:bwipe* *:bwipeout* *E517*
@@ -1077,14 +1078,15 @@ CTRL-W g }						*CTRL-W_g}*
 		么 Vim 会显示另一个缓冲区来代替。具体来说，Vim 会选择跳转表里
 		最新且已经载入的缓冲区。
 
-:bunload[!] {bufname}
+:bun[load][!] {bufname}
 		类似 ":bunload[!] [N]"，但是使用名字指定缓冲区。亦见
 		|{bufname}|。
 
-:N,Mbunload[!]	对 N 到 M 号 (包含 N 和 M |inclusive|) 缓冲区执行
-		":bunload[!]" 。
+:N,Mbun[load][!]
+		对 N 到 M 号 (包含 N 和 M |inclusive|) 缓冲区执行
+		":bunload[!]"。
 
-:bunload[!] N1 N2 ...
+:bun[load][!] N1 N2 ...
 		对缓冲区 N1、N2、…… 执行 ":bunload[!]"。参数可以是缓冲区名或
 		号 (但不能是本身为数字的缓冲区名)。如果名字里含有空格，在空格
 		前插入反斜杠。
@@ -1100,8 +1102,9 @@ CTRL-W g }						*CTRL-W_g}*
 :[N]b[uffer][!] [+cmd] {bufname}				*{bufname}*
 		编辑缓冲区列表中 {bufname} 对应的缓冲区。名字的部分也可以，只
 		要在缓冲区列表中是唯一的。
-		注意 如果缓冲区名字是一个数字，不能使用名字来访问；而应用其编
-		号代替。
+		注意 如果缓冲区名字是一个数字，不能使用名字来访问；而应该用其
+		编号代替。'+' 打头的缓冲区名也是如此，它会被解释为 |+cmd| 的开
+		始。
 		如果名字里含有空格，在空格前插入反斜杠。
 		关于 [!] 参见 |:buffer-!|。
 		这个命令同样可以编辑不在列表里的缓冲区，'buflisted' 不会因而被

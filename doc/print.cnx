@@ -1,4 +1,4 @@
-*print.txt*     适用于 Vim 9.1 版本。	最近更新: 2025年3月
+*print.txt*     适用于 Vim 9.1 版本。  最近更新: 2025年9月
 
 
 		  VIM 参考手册    by Bram Moolenaar
@@ -167,8 +167,8 @@ MacVim 的缺省行为是把 PostScript 文件转换为 PDF，然后在 Preview.
 							*pfn-option* *E613*
 'printfont' 'pfn'	字符串	(缺省为 "courier")
 			全局
-|:hardcopy| 命令输出使用的字体名。它和 'guifont' 选项的格式一样，除了只能给出
-一个字体的名字，而且不能使用特殊的 "guifont=*" 语法以外。
+|:hardcopy| 命令输出使用的字体名。它和 'guifont' 选项的格式一样，但只能给出一
+个字体的名字，而且不能使用特殊的 "guifont=*" 语法。
 
 在 Win32 GUI 版本上，它指定字体名还有附加属性，就如同 'guifont' 选项那样。
 
@@ -384,8 +384,9 @@ PostScript 打印有若干限制:
 								*E618* *E619*
 打印 8 位字符数据，如果要使用你自己的打印字符编码，你需要定义自己的 PostScript
 字体编码。关于如果定义字体编码向量的细节超出了本帮助文件的范围。为此，你可查阅
-Addison-Wesley 出版的 PostScript 语言参考手册第三版，或从 http://www.adobe.com
-得到 PDF 版本。以下，说明一下如果使 Vim 找到并使用你自己的打印字符编码。
+Addison-Wesley 出版的 PostScript 语言参考手册第三版，或从
+https://www.adobe.com/ 得到 PDF 版本。以下，说明一下如果使 Vim 找到并使用你自
+己的打印字符编码。
 
 i.   为你的编码向量定义一个唯一的名字，以不与 Vim 使用的已识别的或标准的编码名
      字冲突为原则 (这些编码可以参见 |encoding-names|)。最好是一个别人也不太可
@@ -398,7 +399,7 @@ iii. 编辑你换名了的 latin1.ps。把所有出现的 latin1 替代成你的
 iv.  在 Vim 里，设置 'printencoding' 为你的唯一的编码名，然后打印你的文件。
      Vim 会使用你自定义的打印字符编码。
 
-如果除了 %%Title: 开头一行里的编码名字和 %%Version:: 开头的一行里的版本以外，
+除了 %%Title: 开头一行里的编码名字和 %%Version:: 开头的一行里的版本以外，如果
 你修改了前三行的顺序或者任何别的内容，Vim 会报告此资源文件有错误。
 
 [对通晓 PostScript 者的技术解释 - Vim 打印时，查找并使用和编码同名的文件。该文
@@ -445,7 +446,7 @@ CJK 字体可以很大，因为它们包含了数以千计的字形，即使如�
 的代码输出 ASCII 字符。
 
 可以定义你自己的多字节字符集，虽然这个过程不应轻易尝试。关于此过程的讨论超出了
-这些帮助文件的范围。具体细节可见 http://www.adobe.com 提供的 PDF 文件格式的文
+这些帮助文件的范围。具体细节可见 https://www.adobe.com 提供的 PDF 文件格式的文
 档 'Adobe CMap and CIDFont Files Specification, Version 1.0' 里的 CMap (字符映
 射表) 文件。
 
@@ -539,7 +540,7 @@ OpenVMS
 
 - 看起来，在主代码已经支持 (未经测试)。见 (链接看来已失效):
 
-    http://wwwthep.physik.uni-mainz.de/~plass/gv/
+    wwwthep.physik.uni-mainz.de/~plass/gv/
 
 MS-Windows
 

@@ -1,4 +1,4 @@
-*cmdline.txt*   适用于 Vim 9.1 版本。	最近更新: 2025年3月
+*cmdline.txt*   适用于 Vim 9.1 版本。  最近更新: 2025年11月
 
 
 		  VIM 参考手册    by Bram Moolenaar
@@ -21,6 +21,7 @@
 5. Ex 命令行的标志位		|ex-flags|
 6. Ex 特殊字符			|cmdline-special|
 7. 命令行窗口			|cmdline-window|
+8. 命令行自动补全		|cmdline-autocompletion|
 
 ==============================================================================
 1. 命令行编辑						*cmdline-editing*
@@ -51,15 +52,15 @@
 - 一个是为调试模式下的命令准备的
 
 这些记录是完全分开的。每一种输入模式只能访问与之相关的一个记录。
-选项 'history' 用来设定保存历史记录的行数 (默认值: 50 ) 。
+选项 'history' 用来设定保存历史记录的行数 (默认值: 50 )。
 
 注意:
 - 如果你输入了一条命令与历史记录中已有的命令完全相同，那么历史记录中的这条旧命
   令会被删除 (这样做是为了避免历史列表被大量的重复指令占据)。
-- 只有键入的命令才会记录下来。完全来自映射的命令不会。
+- 只有键入的命令才会记录下来。完全通过映射执行的命令不会。
 - 所有的搜索操作都会放到与搜索相关的历史记录中，包括通过 "*" 和 "#" 进行的搜
   索。但是对于映射，只有最近一次的搜索会被记录下来 (这样是为了避免很长的映射把
-  历史记录搞乱) 。
+  历史记录搞乱)。
 {仅当编译的时候加入 |+cmdline_hist| 特性才可用}
 
 命令行的自动匹配功能；见 |cmdline-completion|。
@@ -270,7 +271,7 @@ CTRL-_		a - 在希伯来语和英语的键盘模式之间切换，这只是针�
 
 							*c_CTRL-^*
 CTRL-^		语言映射 |:lmap| 和/或 输入法的开关。
-		如果输入搜索模式且 'imsearch' 的值不是 -1 ，VAL 是 'imsearch'
+		如果输入搜索模式且 'imsearch' 的值不是 -1，VAL 是 'imsearch'
 		的值，否则，VAL 是 'iminsert' 的值。
 		如果定义了语言映射:
 		- VAL 为 1 (使用 langmap 映射) 时变成 0 (不使用 langmap 映
@@ -284,8 +285,8 @@ CTRL-^		语言映射 |:lmap| 和/或 输入法的开关。
 		命令行输入时，langmap 映射关闭，因为假定你想输入命令。即使你用
 		CTRL-^ 打开了映射，新的状态也不会被下一条命令或搜索模式再次使
 		用。
-		(译者注: 此处的语言映射或 langmap 映射与 |'langmap'| 选项是不
-		同的概念，后者只适用于普通模式。)
+		(译者注: 此处的语言映射或 langmap 映射与 'langmap' 选项是不同
+		的概念，后者只适用于普通模式。)
 
 						*c_CTRL-]*
 CTRL-]		激活缩写，但不插入任何字符。
@@ -353,6 +354,8 @@ CTRL-]		激活缩写，但不插入任何字符。
 
 帮助条目的匹配数目有上限 (目前是 300 个)，以避免过多匹配造成的延迟问题。
 
+要在输入时自动补全 (而无需按 <Tab> 这样的键)，见 |cmdline-autocompletion|。
+
 以下是可以使用的命令:
 
 							*c_CTRL-D*
@@ -362,13 +365,17 @@ CTRL-D		列出与光标前面的模式所匹配的名字。
 		要列出匹配标签所在的文件，可以设置选项 'wildoptions' 为
 		"tagfile"。
 
-					*c_CTRL-I* *c_wildchar* *c_<Tab>*
+				*c_CTRL-I* *c_wildchar* *c_<Tab>* */_<Tab>*
 'wildchar' 选项
 		用光标前的模式完成匹配。匹配的项目 (如果有多项匹配，则选第一
 		项) 会插入并取代模式。(注意: 该功能不能用于宏，因为在大多数情
 		况下 <Tab> 或 <Esc> 被用做 'wildchar'，而这些键在某些宏里面有
 		特殊的意义。) 如果再次输入，并且有多项匹配时，则插入下一项匹
 		配。在最后一项匹配之后，会再次匹配第一项 (循环使用)。
+
+		在搜索上下文下，可用 <CTRL-V><Tab> 或 "\t" 来搜索按本义出现的
+		<Tab>，而不触发补全。
+
 		该行为可以通过设置 'wildmode' 选项来改变。
 							*c_<S-Tab>*
 <S-Tab>		和 'wildchar' 或 <Tab> 类似，但从最末匹配开始，依次选择前一项
@@ -394,7 +401,7 @@ CTRL-L		用光标前的模式完成匹配。如果有匹配的项目，则插入
 	                                            *c_CTRL-G* */_CTRL-G*
 CTRL-G		如果置位 'incsearch'，用 "/" 或 "?" 录入搜索模式而显示当前的匹
 		配时， CTRL-G 会移动到下一个匹配 (不考虑 |search-offset|)。
-		CTRL-T 移动到前一个匹配。提示: 在常规键盘上 T 在 G 上方。
+		CTRL-T 移动到前一个匹配。提示: 在常规键盘上 G 在 T 下方。
 	                                            *c_CTRL-T* */_CTRL-T*
 CTRL-T		如果置位 'incsearch'，用 "/" 或 "?" 录入搜索模式而显示当前的匹
 		配时， CTRL-T 会移动到前一个匹配 (不考虑 |search-offset|)。
@@ -523,7 +530,7 @@ Ex 命令有几个特别的地方:
 
 							*:bar* *:\bar*
 '|' 可以用来分割命令，所以你可以在一行里输入多个命令。如果你想在参数里使用
-'|' ，应该在前面加上 '\'。
+'|'，应该在前面加上 '\'。
 
 下面这些命令把 '|' 当作它们的参数，所以后面不能跟别的 Vim 命令:
     :argdo
@@ -646,11 +653,12 @@ Ex 命令有几个特别的地方:
 作范围，也可以是表达式的继续: >
 	var result = start
 	+ print
-如果 "+" 用作范围，须在前加上冒号: >
-	var result = start
+如果 "+" 用作范围，就像这里所示的，Vim9 脚本里须在前面加上冒号 (否则会报错
+|E1050|): >
+	vim9script
 	:+ print
 <
-						*:,* *:;*
+								*:,* *:;*
 当范围被 ';' 分割时，在解释下一个行限定符之前，光标的位置会被设置为前一个行限
 定符确定的行值。这种情况不会发生在 ',' 上。例如: >
    4,/this line/
@@ -659,31 +667,67 @@ Ex 命令有几个特别的地方:
 <	从第 5 行到匹配第 5 行之后的一个 "that line" 为止的范围。
 
 对大多数命令而言，默认的行限定符就是光标的位置，但是 ":write" 和 ":global" 命
-令的默认值是整个文件 (1,$)。
+令的默认值是整个缓冲区 (1,$)。
 
-若行限定符的个数多于命令需要的数量，则第一个 (或前几个) 限定符被忽略。
+若行限定符的个数多于命令需要的数量，使用逗号分隔时，则前几个被忽略，如: >
+	:-2,+,-2,. print
+里的 -2,+。
+
+使用分号分隔时，则倒数第二个及之前的限定符被加总，如: >
+	:-4;+3;-1;+2 print
+里 -4 + 3 - 1 = -2。
 
 行号可以用下列符号限定:				*:range* *{address}*
 	{number}	行号  *E1247*
-	.		当前行					  *:.*
-	$		文件的最后一行				  *:$*
-	%		相当于 1,$ (整个文件)			  *:%*
-	't		标记 t 的位置 (小写)			  *:'*
-	'T		标记 T 的位置 (大写)；如果标记存在于另一个文件中，则不
-			能在范围里应用。
-	/{pattern}[/]	下一个匹配 {pattern} 的行		  *:/*
+	.		当前行					   *:.*
+	$		缓冲区的最后一行			   *:$*
+	%		相当于 1,$ (整个缓冲区)			   *:%*
+	*		相当于 '<,'> (最近选中的可视区域里的行；见
+			下 |:star|)
+	'x		标记 x 的位置所在行			   *:'x*
+			(其中 x 是任意的 {a-z} 位置标记)
+	'X		标记 X 的位置所在行			   *:'X*
+			(其中 x 是任意的 {A-Z0-9} 位置标记，但 X
+			如果在另一缓冲区里，不能在范围里应用)
+	'[		最近改变或抽出的首行			   *:'[*
+	']		最近改变或抽出的末行			   *:']*
+	'<		最近选择的可视区域的首行		   *:'<*
+	'>		最近选择的可视区域的末行		   *:'>*
+	''		到前次跳转之前或者上次 "m'" 或者 "m`" 命令 *:''*
+			给出的位置所在行 (但不在当前缓冲区时，''
+			为 1)
+	'"		前次离开本缓冲区时的光标位置所在行	   *:'quote*
+	'^		前次插入模式关闭的光标位置所在行	   *:'^*
+	'.		缓冲区前次改变的光标位置所在行		   *:'.*
+	'(		当前句子的首个字符所在行		   *:'(*
+	')		当前句子结尾处之后的首个字符所在行	   *:')*
+	'{		光标所在的段落之前的首个空行		   *:'{*
+	'}		光标所在的段落之后的首个空行		   *:'}*
+	/{pattern}[/]	下一个匹配 {pattern} 的行		   *:/*
 				另见下述的 |:range-pattern|
-	?{pattern}[?]	前一个匹配 {pattern} 的行		  *:?*
+	?{pattern}[?]	前一个匹配 {pattern} 的行		   *:?*
 				另见下述的 |:range-pattern|
-	\/		下一个与前次搜索模式匹配的行
-	\?		前一个与前次搜索模式匹配的行
-	\&		下一个与前次替代模式匹配的行
+	\/		下一个与最近搜索模式匹配的行
+	\?		前一个与最近搜索模式匹配的行
+	\&		下一个与最近替代模式匹配的行
+
+	注意: "下一个行" 与 "前一个行" 不包含出现在当前行里其他匹配。
 
 						*:range-offset*
-这些符号后面可以跟 (一个或多个) '+' 或 '-' 和一个可选的数字。该数字会与前面的
-行号相加或相减。若该数字省略，则认为是 1。如果 '+' 或 '-' 前为空，使用当前行。
-
-						*:range-closed-fold*
+每个行指定符后面可跟一或多个 '+' 或 '-' 和可选的数值。该值会与前面的行号相加或
+相减。所以，例如，'x+2 是包含位置标记 x 所在行之后的两行。如果省略数值，每个
+'+' 使用 +1 而每个 '-' 使用 -1，因而 'x++ 和 'x+2 同义。如果 '+' 或 '-' 之前未
+给出行号，用于 [range] 里第一个行号时，使用当前行作为相对开始点。所以，-,. 代
+表 "当前行的前一行到当前行"。用于 [range] 里的第二个行号时，取决于行号的分隔符
+是逗号还是分号 (见 |:,| 或 |:;|)。
+例如: 如果光标在本行下方的行，下面的任何命令会显示标签行 ":range-offset" 和
+"每个..." 行: >
+	:-8;+1 print
+	:--------,-7 print
+	:?每个行?-;+ print
+	:'{+,'{+2 print
+	:'{+1;')-1 print
+<						*:range-closed-fold*
 逗号之后的行号如果位于关闭的折叠内部，调整为折叠的尾行，从而包含整个折叠。
 
 如果要附加一个数值，在折叠尾行调整完后再进行。这意味着范围会附加这些行。例
@@ -727,8 +771,8 @@ Ex 命令有几个特别的地方:
 			光标留在第 7 行。
 
 {number} 必须在 0 和文件的总行数之间。当使用 0 (零) 的时候，大多数命令会把它解
-释成 1 。把它用作计数器的命令会将它解释为零 (|:tag|，|:pop| 等)。有些命令会把
-零解释为 "在第一行之前" (|:read|，搜索模式等)。
+释成 1。把它用作计数器的命令会将它解释为零 (|:tag|，|:pop| 等)。有些命令会把零
+解释为 "在第一行之前" (|:read|，搜索模式等)。
 
 例如: >
 	.+3		光标下面三行
@@ -911,7 +955,7 @@ Ex 命令有几个特别的地方:
 		下，则文件名不会被改变。
 	:.	如果可能，路径名缩减为基于当前目录的相对路径。若文件不在当前目
 		录下，则文件名不会被改变。
-		要想尽可能缩减，可使用 ":~:." 。
+		要想尽可能缩减，可使用 ":~:."。
 	:h	文件名的头部 (除去文件名的最后一部分以及路径分隔符)。
 		不能与 :e，:r 或 :t 一起使用。
 		可以被重复使用来删除后面的多个部分。
@@ -940,7 +984,7 @@ Ex 命令有几个特别的地方:
 	:S	转义所有外壳命令使用的特殊字符 (见 |shellescape()|)。必须是最
 		后一个修饰符。示例: >
 		    :!dir <cfile>:S
-		    :call system('chmod +w -- ' . expand('%:S'))
+		    :call system('chmod +w -- ' .. expand('%:S'))
 
 例如，如果文件名是 "src/version.c"，当前目录是 "/home/mool/vim": >
   :p			/home/mool/vim/src/version.c
@@ -1035,7 +1079,7 @@ Ex 命令有几个特别的地方:
 
 有两种方法可以打开命令行窗口:
 1. 在命令行模式里，用 'cedit' 选项所指定的键。
-   在没有置位 'compatible' 的情况下，默认值是 CTRL-F 。
+   在没有置位 'compatible' 的情况下，默认值是 CTRL-F。
 2. 在普通模式里，用 "q:"，"q/" 或 "q?" 命令。
    它们分别开始编辑 Ex 命令 ("q:") 或搜索字符串 ("q/" 或 "q?")。 注意，处于记
    录状态时不能使用 ("q" 会结束记录)。
@@ -1077,9 +1121,10 @@ CTRL-C		继续回到命令行模式。光标下的命令被用做命令行的命
 :qall!		退出 Vim，放弃所做的改动。
 
 一旦命令行窗口关闭，旧的窗口就会立刻恢复原先的大小。待执行的命令会作用于调用该
-命令行窗口或缓冲区，就好像没有没有用过命令行窗口一样 (除了会有一次额外的屏幕刷
-新以外)。命令行窗口用过的缓冲区会被删除。对其中的命令所做的改动 (如果没有用
-<CR> 执行过) 会全部丢失。
+命令行的窗口或缓冲区，就好像没有没有用过命令行窗口一样，只是会有一次额外的屏幕
+刷新。
+命令行窗口用过的缓冲区会被删除。对其中的命令所做的改动，除了用 <CR> 执行过的那
+行以外，会全部丢失。
 
 如果你想执行光标所在的命令后再次打开命令行窗口，可用以下映射: >
 
@@ -1130,8 +1175,9 @@ CTRL-C		继续回到命令行模式。光标下的命令被用做命令行的命
 	:au CmdwinLeave :  let &cpt = b:cpt_save
 设置 'complete' 选项，以便在当前窗口用 |i_CTRL-N| 进行匹配。
 另一个例子: >
-	:au CmdwinEnter [/?]  startinsert
+	:au CmdwinEnter [/\?]  startinsert
 将使 Vim 在打开命令行窗口时切换到插入模式。
+注意: "?" 需要被转义，因为那是 |file-pattern|。另见 |cmdline-autocompletion|。
 
 						*cmdwin-char*
 模式使用的下列字符用于指示命令行的种类:
@@ -1142,5 +1188,80 @@ CTRL-C		继续回到命令行模式。光标下的命令被用做命令行的命
 	=	"= 表达式 |expr-register|
 	@	|input()| 字符串
 	-	|:insert| 或 |:append| 的文本
+
+==============================================================================
+8. 命令行补全					 *cmdline-autocompletion*
+
+自动补全在你键入时，通过显示包含建议值的弹出菜单，会使命令行更有效率及方便导
+航，这包括搜索 (/ 或 ?) 或输入命令 (:)。
+
+基本的设置是: >
+	autocmd CmdlineChanged [:\/\?] call wildtrigger()
+	set wildmode=noselect:lastused,full
+	set wildoptions=pum
+
+通过此配置，立即出现各种建议值，可用 <Tab> 或方向键在不同值间移动。
+
+要使 <Up>/<Down> 能保留正常的命令行历史导航功能: >
+	cnoremap <expr> <Up>   wildmenumode() ? "\<C-E>\<Up>"   : "\<Up>"
+	cnoremap <expr> <Down> wildmenumode() ? "\<C-E>\<Down>" : "\<Down>"
+
+也可使选项只适用于特定命令行。如只在搜索里使弹出菜单高度更矮: >
+	autocmd CmdlineEnter [\/\?] set pumheight=8
+	autocmd CmdlineLeave [\/\?] set pumheight&
+
+附 加					*fuzzy-file-picker* *live-grep*
+
+命令行自动补全可扩展，以提供高级用法。
+例如，可把原生的 |:find| 命令变成模糊匹配与交互的文件选择器: >
+
+	set findfunc=Find
+	func Find(arg, _)
+	  if empty(s:filescache)
+	    let s:filescache = globpath('.', '**', 1, 1)
+	    call filter(s:filescache, '!isdirectory(v:val)')
+	    call map(s:filescache, "fnamemodify(v:val, ':.')")
+	  endif
+	  return a:arg == '' ? s:filescache : matchfuzzy(s:filescache, a:arg)
+	endfunc
+	let s:filescache = []
+	autocmd CmdlineEnter : let s:filescache = []
+
+`:Grep` 命令搜索匹配模式的行，并在键入过程中动态更新结果 (两个字符后触发；
+注意: 需要下一个小节里的 `CmdlineLeavePre` 自动命令): >
+
+	command! -nargs=+ -complete=customlist,<SID>Grep
+		\ Grep call <SID>VisitFile()
+
+	func s:Grep(arglead, cmdline, cursorpos)
+	  if match(&grepprg, '\$\*') == -1 | let &grepprg ..= ' $*' | endif
+	  let cmd = substitute(&grepprg, '\$\*', shellescape(escape(a:arglead, '\')), '')
+	  return len(a:arglead) > 1 ? systemlist(cmd) : []
+	endfunc
+
+	func s:VisitFile()
+	  let item = getqflist(#{lines: [s:selected]}).items[0]
+	  let pos  = '[0,\ item.lnum,\ item.col,\ 0]'
+	  exe $':b +call\ setpos(".",\ {pos}) {item.bufnr}'
+	  call setbufvar(item.bufnr, '&buflisted', 1)
+	endfunc
+
+退出命令行时自动选择补全列表的首个项目，且对 `:Grep` 而言，把键入的模式加入命
+令行历史: >
+
+	autocmd CmdlineLeavePre :
+	      \ if get(cmdcomplete_info(), 'matches', []) != [] |
+	      \   let s:info = cmdcomplete_info() |
+	      \   if getcmdline() =~ '^\s*fin\%[d]\s' && s:info.selected == -1 |
+	      \     call setcmdline($'find {s:info.matches[0]}') |
+	      \   endif |
+	      \   if getcmdline() =~ '^\s*Grep\s' |
+	      \     let s:selected = s:info.selected != -1
+	      \         ? s:info.matches[s:info.selected] : s:info.matches[0] |
+	      \     call setcmdline(s:info.cmdline_orig) |
+	      \   endif |
+	      \ endif
+
+关于插入模式下的自动补全，参见 |ins-autocompletion|。
 
  vim:tw=78:ts=8:noet:ft=help:norl:

@@ -1,4 +1,4 @@
-*mbyte.txt*     适用于 Vim 9.1 版本。	最近更新: 2025年3月
+*mbyte.txt*     适用于 Vim 9.1 版本。  最近更新: 2025年10月
 
 
 		  VIM 参考手册    by Bram Moolenaar et al.
@@ -29,7 +29,7 @@
 号或者方框。
 
 ==============================================================================
-1.初步						*mbyte-first*
+1. 初步						*mbyte-first*
 
 这里对 Vim 的多字节特点作总体介绍。幸运的话，你的 vim 一切都运行正常，如果不正
 常，请阅读以下内容。你可能需要花一些时间，经过多次试验才能使 vim 支持多字节。
@@ -160,7 +160,8 @@ territory 表示国家 (或者它的一部份)，codeset 表示文字 (字符集
     GB2312	    中文 (简体)           zh_CN.EUC、zh_CN.GB2312
     Big5	    中文 (繁体)	          zh_TW.BIG5、zh_TW.Big5
     CNS-11643	    中文 (繁体)           zh_TW
-    EUC-JP	    日语		  ja、ja_JP.EUC、ja_JP.ujis、ja_JP.eucJP
+    EUC-JP	    日语		  ja、ja_JP.EUC、ja_JP.ujis、
+					  ja_JP.eucJP
     Shift_JIS	    日语		  ja_JP.SJIS、ja_JP.Shift_JIS
     EUC-KR	    韩语		  ko、ko_KR.EUC
 
@@ -406,7 +407,7 @@ iconv() 的功能影响。因为这取决于你所用的系统，这里无法给
 	|charset| 有: ISO-2202-CN，ISO-2202-JP，ISO-2202-KR，EUC-CN，EUC-JP，
 	EUC-KR，EUC-TW，UTF-7，UTF-8，ISO-8859 系列，Shift_JIS，Big5 和 HZ。Lv
 	可以在以下地址找到 (链接看来已失效):
-	http://www.ff.iij4u.or.jp/~nrt/lv/index.html
+	ff.iij4u.or.jp/~nrt/lv/index.html
 
 
 							*mbyte-conversion*
@@ -705,7 +706,7 @@ XIM 是 X 的多语种输入模块。有两种构架，Xlib unit 类型和 |IM-s
   后，我们把平假名转换成汉字或者需要的话，片假名 (Kata-Kana)。有很多
   Kana-Kanji 的服务器: jserver (随 Wnn 发布，见下) 和 canna。Canna 可以在这里
   找到:
-  https://osdn.net/projects/canna/
+  (死链) https://osdn.net/projects/canna/
 
 Wnn4.2 是一个好输入系统。Wnn 4.2 包括，
     xwnmo (|IM-server|)
@@ -847,6 +848,29 @@ Input Method Manager (Global IME) 的文档:
 3. 语言与输入法 (译者注: 此处似乎不同版本不同。但大致可以参考)
 4. 加入安装的输入语言 -> Chinese(PRC) (中文/中国)
    缺省仍然 (可以) 是 English (United Stated) (英语/美国)
+
+
+MS-Windows IME 兼容性				*multibyte-ime-compatibility*
+
+Vim 通过 'imm32.dll' (Input Method Manager，输入法管理器) 管理 Windows 系统的
+输入法。实现可追溯到 Windows 2000 年代，因此可能和现代输入法不完全兼容。现代输
+入法处理已转换到文本服务框架 (Text Services Framework, TSF)，其行为和传统的
+IME 接口不完全一致。关于 IME 和 TSF 详情，参见 Microsoft 文档网站 (省略链接，
+因为 MS 文档 URL 经常变动)。
+
+某些情况下，窗口显示语言是 CJK 语言时，Vim 会在启动时错误地于普通模式下打开输
+入法 (IM)。要绕过这个问题，可以试试在 |gvimrc| 里加入: >
+
+	autocmd VimEnter * set imdisable | set noimdisable
+<
+如果在诊断或解决这些问题方面有任何进展，欢迎回馈。
+
+注意: IME 行为因不同广商实现的差异可有不同。如果遇到特定输入法的问题，建议换换
+其他输入法再测试一下。
+
+要和 Vim 的 |+multi_byte_ime| 系统完美集成， Vim 的源码中 `ImmGetOpenStatus()`
+函数必须能检测到输入法的状态改变。目前，有些支持多语种输入的输入法有些内部状态
+改变不能被 gVim 捕捉到。
 
 
 当 IME 或 XIM 打开时光标的色彩				*CursorIM*
@@ -1121,8 +1145,8 @@ Vim 有 'imactivatefunc' 和 'imstatusfunc' 选项。用于以任意方式来激
 11. 使用 UTF-8				*mbyte-utf8* *UTF-8* *utf-8* *utf8*
 							*Unicode* *unicode*
 Unicode 字符集的设计就是要包含所有其他的字符集。这样你就可以用 Unicode 写任何
-文字 (除了少数偏僻的语种以外)。它也最大限度的提供了在一个文件里混合各种语言的
-能力，这用其他编码是不可能的。
+文字 (少数偏僻的语种除外)。它也最大限度地提供了在一个文件里混合各种语言的能
+力，用其他编码这是不可能的。
 
 Unicode 可以有几种编码方式。最流行的是 UTF-8 编码，它使用一到多字节编码单个字
 符，和 ASCII 后向兼容。MS-Windows 上也使用 UTF-16 (以前的 UCS-2) 编码，它使用

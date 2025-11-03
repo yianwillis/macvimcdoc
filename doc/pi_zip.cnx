@@ -1,4 +1,4 @@
-*pi_zip.txt*	适用于 Vim 9.1 版本。	最近更新: 2025年3月
+*pi_zip.txt*	适用于 Vim 9.1 版本。  最近更新: 2025年10月
 
 				+====================+
 				|    Zip 文件接口    |
@@ -45,8 +45,9 @@ Copyright: Copyright (C) 2005-2015 Charles E Campbell *zip-copyright*
    不同的操作系统可能使用一个或多个外壳来执行命令。Zip 试图猜测正确的引号使用
    机制，使得文件名中可以包含空格和其它；如果猜错了，可用 >
 	g:zip_shq
-<  修正。它在 Unix 上缺省是单引号 (')，而 Windows 上缺省是双引号 (")。如果你希
-   望不用引号，简单地在 <.vimrc> 里把 g:zip_shq 置为空串 (let g:zip_shq= "")。
+<   修正。它在 Unix 上缺省是单引号 (')，而 Windows 上缺省是双引号 (")。如果你
+   希望不用引号，简单地在 <.vimrc> 里把 g:zip_shq 置为空串
+   (let g:zip_shq= "")。
 
 							*g:zip_unzipcmd*
    用此选项指定执行 "unzip" 任务的程序，用于浏览。缺省: >
@@ -62,10 +63,18 @@ Copyright: Copyright (C) 2005-2015 Charles E Campbell *zip-copyright*
 	let g:zip_extractcmd= g:zip_unzipcmd
 <
 							*g:zip_exec*
-因为安全原因，你可能不想 Vim 在打开缓冲区时自动执行外部程序。此选项 (缺省: "1")
-设为 "0" 时可防止 "unzip" 命令的执行: >
+   因为安全原因，你可能不想 Vim 在打开缓冲区时自动执行外部程序。此选项 (缺省:
+   "1") 设为 "0" 时可防止 "unzip" 命令的执行: >
 	:let g:zip_exec = 0
 <
+   POWERSHELL CORE 作为备用 ~
+
+   此插件会首先尝试使用 (能力更强的) GNU zip/unzip 命令。如果这些命令不可用或
+   失败，而用户在使用 PowerShell Core (也即，'shell' 选项包含 "pwsh") 时，插件
+   会用 PowerShell Core cmdlet 作为后备。PowerShell Core cmdlet 有局限性: 它们
+   不能写或提取 zip 归档里子目录里的文件。不过，优点是不需要安装单独的 unzip
+   程序。
+
    禁 止 载 入~
 
    如果由于某种原因你不想 vim 检查 zip 文件，在 <.vimrc> 中定义两个变量就可以
@@ -85,15 +94,31 @@ Copyright: Copyright (C) 2005-2015 Charles E Campbell *zip-copyright*
 <
    你可以自由扩展该行以包含更多应被当作 zip 文件的扩展名。
 
-   此外，也可以在 .vimrc 里改变 *g:zipPlugin_ext* 。 当前 (11/30/15) 包含了: >
+   此外，也可以在 .vimrc 里改变 *g:zipPlugin_ext* 。
+   当前 (2025 年 10 月) 包含了: >
 
-	let g:zipPlugin_ext= '*.zip,*.jar,*.xpi,*.ja,*.war,*.ear,*.celzip,
-       \ *.oxt,*.kmz,*.wsz,*.xap,*.docx,*.docm,*.dotx,*.dotm,*.potx,*.potm,
-       \ *.ppsx,*.ppsm,*.pptx,*.pptm,*.ppam,*.sldx,*.thmx,*.xlam,*.xlsx,*.xlsm,
-       \ *.xlsb,*.xltx,*.xltm,*.xlam,*.crtx,*.vdw,*.glox,*.gcsx,*.gqsx,*.epub'
+        let g:zipPlugin_ext='*.aar,*.apk,*.celzip,*.crtx,*.docm,*.docx,
+       \ *.dotm,*.dotx,*.ear,*.epub,*.gcsx,*.glox,*.gqsx,*.ja,*.jar,*.kmz,
+       \ *.odb,*.odc,*.odf,*.odg,*.odi,*.odm,*.odp,*.ods,*.odt,*.otc,*.otf,
+       \ *.otg,*.oth,*.oti,*.otp,*.ots,*.ott,*.oxt,*.pkpass,*.potm,*.potx,
+       \ *.ppam,*.ppsm,*.ppsx,*.pptm,*.pptx,*.sldx,*.thmx,*.vdw,*.war,*.whl,
+       \ *.wsz, *.xap,*.xlam,*.xlsb,*.xlsm,*.xlsx,*.xltm,*.xltx,*.xpi,*.zip'
 
 ==============================================================================
 4. 历史 (英文)							*zip-history* {{{1
+   unreleased:
+       Sep 19, 2025 * support PowerShell Core
+       Jul 12, 2025 * drop ../ on write to prevent path traversal attacks
+       Mar 11, 2025 * handle filenames with leading '-' correctly
+       Aug 21, 2024 * simplify condition to detect MS-Windows
+       Aug 18, 2024 * correctly handle special globbing chars
+       Aug 05, 2024 * clean-up and make it work with shellslash on Windows
+       Aug 05, 2024 * workaround for the FreeBSD's unzip
+       Aug 04, 2024 * escape '[' in name of file to be extracted
+       Jul 30, 2024 * fix opening remote zipfile
+       Jul 24, 2024 * use delete() function
+       Jul 23, 2024 * fix 'x' command
+       Jun 16, 2024 * handle whitespace on Windows properly (#14998)
    v33 Dec 07, 2021 * *.xlam mentioned twice in zipPlugin
    v32 Oct 22, 2021 * to avoid an issue with a vim 8.2 patch, zipfile: has
 		      been changed to zipfile:// . This often shows up
