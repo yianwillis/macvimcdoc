@@ -1,7 +1,7 @@
-*tabpage.txt*   适用于 Vim 9.1 版本。  最近更新: 2025年9月
+*tabpage.txt*	适用于 Vim 9.1 版本。  最近更新: 2025年9月
 
 
-		  VIM 参考手册    by Bram Moolenaar
+		  VIM 参考手册	by Bram Moolenaar
 				译者: Willis
 
 
@@ -387,7 +387,7 @@ TabLeave 和 TabEnter 自动命令事件可以在标签页切换时执行任务�
 	|           |text text text text text text text
 	|           |text text text text text text text
 <
-要配置标签页板面，可用以下选项: 'tabpanel'、'showtabpanel' 和 'tabpanelopt'。
+要配置标签页面板，可用以下选项: 'tabpanel'、'showtabpanel' 和 'tabpanelopt'。
 'tabpanel' 选项的功能类似于 'statusline' 或 'tabline'，而 'showtabpanel' 选项
 的功能类似于 'laststatus' 或 'showtabline'。
 

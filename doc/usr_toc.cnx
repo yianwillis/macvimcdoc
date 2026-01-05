@@ -1,6 +1,6 @@
 *usr_toc.txt*	适用于 Vim 9.1 版本。  最近更新: 2025年3月
 
-		     VIM 用户手册      by Bram Moolenaar
+		     VIM 用户手册	by Bram Moolenaar
 
 			      目      录		*user-manual* *usr*
 
@@ -349,7 +349,7 @@
 编写 Vim 脚本 ~
 
 |usr_50.txt|  高级 Vim 脚本编写
-		|50.1|	例外
+		|50.1|	异常
 		|50.2|	带可变数目参数的函数
 		|50.3|	恢复视图
 

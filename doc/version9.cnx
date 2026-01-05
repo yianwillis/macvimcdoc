@@ -1,7 +1,7 @@
-*version9.txt*  适用于 Vim 9.1 版本。  最近更新: 2025年10月
+*version9.txt*	适用于 Vim 9.1 版本。  最近更新: 2025年12月
 
 
-		  VIM 参考手册    by Bram Moolenaar
+		  VIM 参考手册	by Bram Moolenaar
 				译者: Willis
 
 				*vim-9.0* *vim-9* *version-9.0* *version9.0*
@@ -41558,8 +41558,8 @@ Vim9 脚本的泛型函数支持 |generic-functions|
 ------------------
 - 支持 GTK 里用 <D-Key> 的 Super 键映射。
 
-- 包含新插件 |package-comment|、|package-nohlsearch|、|package-hlyank| 和
-  |help-TOC|。
+- 包含新可选包 |package-comment|、|package-nohlsearch|、|package-hlyank|、
+  |help-TOC|、|package-helpcurwin| 和 |package-osc52|。
 
 - 包含了互动教程插件 |vim-tutor-mode|，可用 |:Tutor| 启动。
 
@@ -41579,6 +41579,8 @@ Vim9 脚本的泛型函数支持 |generic-functions|
 
 - |items()| 函数现在支持 blob。
 
++- 新增剪贴板提供者特性 |clipboard-providers|。
+
 							*changed-9.2*
 改动~
 -------
@@ -41593,7 +41595,7 @@ Vim9 脚本的泛型函数支持 |generic-functions|
 - 改进的可视高亮 |hl-Visual|
 - 使用非兼容模式时 'showcmd' 的缺省值总是打开 (之前，UNIX 系统上是关闭的)，相
   应地并从 |defaults.vim| 里去除
-- 改进比较模式体验， 更新 'diffopt' 缺省值为
+- 改进比较模式体验，更新 'diffopt' 缺省值为
   "internal,filler,closeoff,indent-heuristic,inline:char"。
 - 'ruler' 选项值在非兼容模式下总是打开，并从 |defaults.vim| 里去除
 
@@ -41611,6 +41613,7 @@ Vim9 脚本的泛型函数支持 |generic-functions|
 - 'smartcase' 适用于补全过滤
 
 选项: ~
+- 'commentstring' 现在可用于所有构造版本，不再需要 |+folding| 特性。
 - 'commentstring' 的缺省包含空白填充使自动注释更美观 |comment-install|
 - 'completeopt' 现在是 |global-local| 选项。
 - 新增 'cpoptions' 标志位 "z" |cpo-z|，以关闭一些 (传统) vi 行为/不一致性 (见
@@ -41632,7 +41635,12 @@ Vim9 脚本的泛型函数支持 |generic-functions|
   listchars "extend" 子选项为 ">"，指示有超出窗口宽度的文本。
 - 'guioptions': 新值 |'go-C'| 来风格化 Windows 11 的标题栏 (另见下面平台特定的
   相关改动)。
+- 'guioptions': 通过 |'go-d'| 来支持 MS-Windows 上用于菜单和标题栏的深色模式
+  (另见下面平台特定的相关改动)。
+- 'guioptions': 新值 |'go-s'| 来支持 MS-Windows GUI 上的全屏 (另见下面平台特定
+  的相关改动)。
 - 'completepopup': 增加更多值来风格化弹出窗口。
+- 'fsync' 现在是 |global-local| 选项。
 
 Ex 命令: ~
 - 定义新标号时允许指定优先级 |:sign-define|
@@ -41648,13 +41656,15 @@ Ex 命令: ~
   前选择。
 - 允许传递 Vim 脚本的局部变量到 python 解释器 |py3eval()|
 - |getwininfo()| 现在也返回窗口的 "leftcol" 属性
-- |v:stacktrace| 最近捕获且未完成的例外的栈追踪
+- |v:stacktrace| 最近捕获且未完成的异常的栈追踪
 - 新增 |getchar()| 可选的 {opts} |Dict| 参数以控制: 光标行为、返回类型和是否简
   化返回键
 - |chdir()| 接受可选的作用域参数
 - |matchfuzzy()| 和 |matchfuzzypos()| 使用改进了的模糊匹配算法 (和 fzy 相同)。
 - |sha256()| 也接受 |Blob| 作为参数。
 - |listener_add()| 允许注册未经缓冲的监听器，改动一旦发生就会立即被处理。
+- |redraw_listener_add()| 和 |redraw_listened_remove()| 新增/删除重画事件的回
+  调。
 
 插件~
 - |zip| 插件现在支持 PowerShell Core。
@@ -41662,9 +41672,13 @@ Ex 命令: ~
 平台特定 ~
 - MS-Windows: "\Windows" 和 "/Windows" 这样的路径现在被视作 (在当前驱动器上的)
   绝对路径而不再是相对路径。
-- MS-Windows: 标题栏遵循 |hl-TitleBar| 和 |hl-TitleBarNC| 高亮组
-  |gui-w32-title-bar|。
+- MS-Windows: 使用 |'go-C'| 时，标题栏遵循 |hl-TitleBar| 和 |hl-TitleBarNC| 高
+  亮组 |gui-w32-title-bar|。
+- MS-Windows: 使用 |'go-d'| 时，支持菜单和标题栏的深色模式
+- MS-Windows: Vim 在执行外部命令时不再搜索当前目录下的可执行程序，如果要保留老
+  式的行为，可用相对或绝对路径前缀 |$NoDefaultCurrentDirectoryInExePath|。
 - macOS: 提升缺省调度程序优先级为 TASK_DEFAULT_APPLICATION。
+- MS-Windows: 新值 |'go-s'| 可支持 MS-Windows GUI 上的全屏
 
 其他: ~
 - 正则表达式引擎正确匹配大小写不敏感多字节字符 (并适用合适的大小写折叠)
@@ -41705,7 +41719,6 @@ Ex 命令: ~
 |blob2str()|		转换 blob 为字符串列表
 |bindtextdomain()|	设置消息查找翻译的基础路径
 |cmdcomplete_info()|	取得当前命令行补全信息
-|complete_match()|	取得补全和触发器信息
 |diff()|		比较两个字符串列表
 |filecopy()|		把 {from} 文件复制到 {to}
 |foreach()|		在列表的项目上应用函数
@@ -41723,6 +41736,8 @@ Ex 命令: ~
 |ngettext()|		查找单数/复数的消息翻译
 |popup_setbuf()|	弹出切换到另一缓冲区
 |preinserted()|		是否在补全时插入了预插入文本 (见 'completeopt')
+|redraw_listener_add()|	新增重画监听器回调
+|redraw_listener_remove()|  删除重画监听器回调
 |str2blob()|		转换字符串列表为 blob
 |test_null_tuple()|	返回 null 元组
 |tuple2list()|		把项目元组转换为列表
@@ -41776,13 +41791,11 @@ Ex-命令: ~
 'autocompletetimeout'	用于自动补全算法的初始衰减超时
 'chistory'		快速修复堆栈的大小 |quickfix-stack|
 'clipmethod'		如何访问剪贴板
-'completefuzzycollect'	为 (若干) |ins-completion| 模式打开候选的模糊收集
 'completeitemalign'	插入模式补全弹出里的 |complete-items| 顺序
 'completetimeout'	用于 CTRL-N 和 CTRL-P 的初始衰减超时
 'diffanchors'		用于比较的强制同步使用的 {address} 列表
 'eventignorewin'	窗口中忽略自动命令事件
 'findfunc'		用于取得 |:find| 命令结果的 Vim 函数
-'isexpand'		定义用于补全的触发器
 'lhistory'		位置列表堆栈的大小 |quickfix-stack|
 'maxsearchcount'	用于搜索统计 |shm-S| 的最大值
 'messagesopt'		配置 |:messages| 和 |hit-enter| 提示
@@ -41801,7 +41814,8 @@ Ex-命令: ~
 
 Vim 变量: ~
 |v:clipmethod|		当前 'clipmethod'。
-|v:stacktrace|		最近捕获的例外。
+|v:clipproviders|	包含剪贴板提供者配置的字典 |clipboard-providers|。
+|v:stacktrace|		最近捕获的异常。
 |v:t_enumvalue|		|enumvalue| 的值。
 |v:t_enum|		|enum| 类型值。
 |v:t_tuple|		|Tuple| 类型值。

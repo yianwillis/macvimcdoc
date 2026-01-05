@@ -1,7 +1,7 @@
-*usr_41.txt*	适用于 Vim 9.1 版本。  最近更新: 2025年9月
+*usr_41.txt*	适用于 Vim 9.1 版本。  最近更新: 2025年12月
 
-		     VIM 用户手册      by Bram Moolenaar
-				译者: lang2、Willis
+		     VIM 用户手册	by Bram Moolenaar
+					译者: lang2、Willis
 
 			      编写 Vim 脚本
 
@@ -995,7 +995,7 @@ Blob 操作:						*blob-functions*
 	|bufwinid()|		取得某缓冲区的窗口 ID
 	|bufwinnr()|		取得某缓冲区的窗口号
 	|winbufnr()|		取得某窗口的缓冲区号
-	|listener_add()|	新增回调来监听改动
+	|listener_add()|	新增改动监听器回调
 	|listener_flush()|	调用监听器回调
 	|listener_remove()|	删除监听器回调
 	|win_findbuf()|		寻找包括某缓冲区的窗口
@@ -1043,7 +1043,6 @@ Blob 操作:						*blob-functions*
 	|complete_add()|	加入要寻找的匹配
 	|complete_check()|	检查补全是否被中止
 	|complete_info()|	取得当前补全的信息
-	|complete_match()|	取得插入补全的匹配开始列和触发器文本
 	|preinserted()|		检查文本是否插入在光标之后
 	|pumvisible()|		检查弹出菜单是否显示
 	|pum_getpos()|		如果可见，弹出菜单的位置及大小
@@ -1157,7 +1156,7 @@ Vim 服务器:					*server-functions*
 	|assert_notmatch()|	断言模式不与值匹配
 	|assert_false()|	断言表达式为假
 	|assert_true()|		断言表达式为真
-	|assert_exception()|	断言命令抛出例外
+	|assert_exception()|	断言命令抛出异常
 	|assert_beeps()|	断言命令会响铃
 	|assert_nobeep()|	断言命令不会响铃
 	|assert_fails()|	断言命令会失败
@@ -1374,6 +1373,9 @@ Vim 服务器:					*server-functions*
 	|rubyeval()|		计算 |Ruby| 表达式
 
 	|debugbreak()|		中断正在调试的程序
+
+	|redraw_listener_add()|	新增重画监听器回调
+	|redraw_listener_remove()|    删除重画监听器回调
 
 MacVim 专用函数
 	|showdefinition()|	查找和显示给定字符串的定义

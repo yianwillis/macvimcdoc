@@ -1,7 +1,7 @@
-*starting.txt*  适用于 Vim 9.1 版本。  最近更新: 2025年11月
+*starting.txt*	适用于 Vim 9.1 版本。  最近更新: 2025年12月
 
 
-		  VIM 参考手册    by Bram Moolenaar
+		  VIM 参考手册	by Bram Moolenaar
 				译者: Willis
 
 
@@ -76,7 +76,7 @@
 
 							*-q* *-qf*
 -q [errorfile]	快速修复模式。名字为 {errorfile} 的文件被读入并显示第一个错
-		误。 见 |quickfix|。
+		误。见 |quickfix|。
 		如果不给出 [errorfile]，使用 'errorfile' 选项给定的文件名。其
 		缺省值见 'errorfile'。
 
@@ -300,13 +300,6 @@ VMS 上，所有的选项参数假定都是小写的，除非前面有一个正�
 		类似于 -V 并同时设置 'verbosefile' 为 {filename}。结果是，消息
 		不显示，而是写到文件 {filename}。{filename} 不能以数字开始。
 		示例: >
-			vim -V20vimlog foobar
-<
--V[N]{filename}
-		Like -V and set 'verbosefile' to {filename}.  The result is
-		that messages are not displayed but written to the file
-		{filename}.  {filename} must not start with a digit.
-		Example: >
 			vim -V20vimlog foobar
 <
 --log {filename}					*--log*
@@ -545,7 +538,7 @@ VMS 上，所有的选项参数假定都是小写的，除非前面有一个正�
 
 --socketid {id}						*--socketid*
 		只限于 GTK+ GUI Vim。gvim 会试图使用 GtkPlug 机制，这样它就可
-		别的窗口里面运行。 详情见 |gui-gtk-socketid|。
+		别的窗口里面运行。详情见 |gui-gtk-socketid|。
 
 --windowid {id}						*--windowid*
 		只限于 Win32 GUI Vim。gvim 会尝试使用窗口 {id} 作为父窗口，这
@@ -972,7 +965,7 @@ https://specifications.freedesktop.org/basedir-spec/latest/
   `$XDG_DATA_HOME`	$HOME/.local/share	永久数据文件
   `$XDG_STATE_HOME`	$HOME/.local/state	状态数据文件
 
-Vim 只使用 `$XDG_CONFIG_HOME` 目录， (暂时) 不用其他目录来保存各种配置和状态文
+Vim 只使用 `$XDG_CONFIG_HOME` 目录，(暂时) 不用其他目录来保存各种配置和状态文
 件。
 
 							*xdg-vimrc*
@@ -1106,8 +1099,10 @@ $VIM 的值。这可以用于 $VIM 为 "/etc" 而运行时文件在 "/usr/share/
 					*iconize* *iconise* *CTRL-Z* *v_CTRL-Z*
 CTRL-Z			暂停 Vim，和 ":stop" 类似。
 			适用于普通和可视模式。在插入和命令行模式里，CTRL-Z 作
-			为普通的字符插入。在可视模式下，Vim 回到普通模式。
-			注意: 如果 CTRL-Z 撤销改变，见 |mswin.vim|。
+			为普通的字符插入。在可视模式下，Vim 会在暂停前回到普通
+			模式。
+			注意: 如果 CTRL-Z 做的是撤销改变而不是暂停，见
+			|mswin.vim|。
 
 
 :sus[pend][!]	或			*:sus* *:suspend* *:st* *:stop*

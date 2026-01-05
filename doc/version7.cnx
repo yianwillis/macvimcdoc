@@ -1,7 +1,7 @@
-*version7.txt*  适用于 Vim 9.1 版本。  最近更新: 2025年3月
+*version7.txt*	适用于 Vim 9.1 版本。  最近更新: 2025年3月
 
 
-		  VIM 参考手册    by Bram Moolenaar
+		  VIM 参考手册	by Bram Moolenaar
 				译者: Willis
 
 					*vim7* *version-7.0* *version7.0*
@@ -7033,7 +7033,7 @@ Lua 接口					*new-lua*
 Python3 接口					*new-python3*
 -----------------
 
-新增 Python3 接口。 它和 Python 2.x 同时支持，也可以同时使用。见 |python3|
+新增 Python3 接口。它和 Python 2.x 同时支持，也可以同时使用。见 |python3|
 (Roland Puntaier)
 
 
@@ -10008,7 +10008,7 @@ UnicodeDecodeError 的可能性。
 
 现在可以通过 |python-tabpage| 对象来访问 |tabpage|。
 
-新增 Vim 错误和例外到 Python 例外的自动转换。
+新增 Vim 错误和异常到 Python 异常的自动转换。
 
 改变 |python-buffers| 对象的行为: 现在使用缓冲区编号而不是内部缓冲区列表的缓冲
 区序列号作为键。这不应该影响任何现有的程序，因为过去得到该序列号的唯一方法是遍

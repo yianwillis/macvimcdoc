@@ -10,6 +10,7 @@ $HOME-windows	options.cnx	/*$HOME-windows*
 $MYGVIMRC	gui.cnx	/*$MYGVIMRC*
 $MYVIMDIR	starting.cnx	/*$MYVIMDIR*
 $MYVIMRC	starting.cnx	/*$MYVIMRC*
+$NoDefaultCurrentDirectoryInExePath	builtin.cnx	/*$NoDefaultCurrentDirectoryInExePath*
 $VIM	starting.cnx	/*$VIM*
 $VIM-use	version5.cnx	/*$VIM-use*
 $VIMRUNTIME	starting.cnx	/*$VIMRUNTIME*
@@ -385,6 +386,7 @@ $quote	eval.cnx	/*$quote*
 'go-m'	options.cnx	/*'go-m'*
 'go-p'	options.cnx	/*'go-p'*
 'go-r'	options.cnx	/*'go-r'*
+'go-s'	options.cnx	/*'go-s'*
 'go-t'	options.cnx	/*'go-t'*
 'go-v'	options.cnx	/*'go-v'*
 'gp'	options.cnx	/*'gp'*
@@ -458,8 +460,6 @@ $quote	eval.cnx	/*$quote*
 'infercase'	options.cnx	/*'infercase'*
 'insertmode'	options.cnx	/*'insertmode'*
 'is'	options.cnx	/*'is'*
-'ise'	options.cnx	/*'ise'*
-'isexpand'	options.cnx	/*'isexpand'*
 'isf'	options.cnx	/*'isf'*
 'isfname'	options.cnx	/*'isfname'*
 'isi'	options.cnx	/*'isi'*
@@ -1432,6 +1432,7 @@ $quote	eval.cnx	/*$quote*
 +cindent	various.cnx	/*+cindent*
 +clientserver	various.cnx	/*+clientserver*
 +clipboard	various.cnx	/*+clipboard*
++clipboard_provider	various.cnx	/*+clipboard_provider*
 +clipboard_working	various.cnx	/*+clipboard_working*
 +cmd	editing.cnx	/*+cmd*
 +cmdline_compl	various.cnx	/*+cmdline_compl*
@@ -4724,6 +4725,7 @@ E1433	vim9.cnx	/*E1433*
 E1434	vim9.cnx	/*E1434*
 E1435	vim9class.cnx	/*E1435*
 E1436	vim9class.cnx	/*E1436*
+E1437	eval.cnx	/*E1437*
 E144	various.cnx	/*E144*
 E145	starting.cnx	/*E145*
 E146	change.cnx	/*E146*
@@ -4809,6 +4811,8 @@ E1567	remote.cnx	/*E1567*
 E1568	options.cnx	/*E1568*
 E1569	builtin.cnx	/*E1569*
 E157	sign.cnx	/*E157*
+E1570	builtin.cnx	/*E1570*
+E1571	builtin.cnx	/*E1571*
 E158	sign.cnx	/*E158*
 E159	sign.cnx	/*E159*
 E16	cmdline.cnx	/*E16*
@@ -5877,7 +5881,6 @@ Neovim	intro.cnx	/*Neovim*
 NetBSD-backspace	options.cnx	/*NetBSD-backspace*
 NetBeans	netbeans.cnx	/*NetBeans*
 NetUserPass()	pi_netrw.cnx	/*NetUserPass()*
-NoDefaultCurrentDirectoryInExePath	builtin.cnx	/*NoDefaultCurrentDirectoryInExePath*
 None	eval.cnx	/*None*
 Normal	intro.cnx	/*Normal*
 Normal-mode	intro.cnx	/*Normal-mode*
@@ -6796,6 +6799,16 @@ clipboard-autoselectml	options.cnx	/*clipboard-autoselectml*
 clipboard-autoselectplus	options.cnx	/*clipboard-autoselectplus*
 clipboard-exclude	options.cnx	/*clipboard-exclude*
 clipboard-html	options.cnx	/*clipboard-html*
+clipboard-providers	eval.cnx	/*clipboard-providers*
+clipboard-providers-available	eval.cnx	/*clipboard-providers-available*
+clipboard-providers-clipboard	eval.cnx	/*clipboard-providers-clipboard*
+clipboard-providers-clipmethod	eval.cnx	/*clipboard-providers-clipmethod*
+clipboard-providers-copy	eval.cnx	/*clipboard-providers-copy*
+clipboard-providers-define	eval.cnx	/*clipboard-providers-define*
+clipboard-providers-no-clipboard	eval.cnx	/*clipboard-providers-no-clipboard*
+clipboard-providers-paste	eval.cnx	/*clipboard-providers-paste*
+clipboard-providers-plus	eval.cnx	/*clipboard-providers-plus*
+clipboard-providers-textlock	eval.cnx	/*clipboard-providers-textlock*
 clipboard-unnamed	options.cnx	/*clipboard-unnamed*
 clipboard-unnamedplus	options.cnx	/*clipboard-unnamedplus*
 clojure-indent	indent.cnx	/*clojure-indent*
@@ -6846,6 +6859,7 @@ compile-changes-7	version7.cnx	/*compile-changes-7*
 compile-changes-8	version8.cnx	/*compile-changes-8*
 compile-changes-9	version9.cnx	/*compile-changes-9*
 compile-changes-9.2	version9.cnx	/*compile-changes-9.2*
+compiler-biome	quickfix.cnx	/*compiler-biome*
 compiler-compaqada	ft_ada.cnx	/*compiler-compaqada*
 compiler-cppcheck	quickfix.cnx	/*compiler-cppcheck*
 compiler-decada	ft_ada.cnx	/*compiler-decada*
@@ -6863,6 +6877,7 @@ compiler-mypy	quickfix.cnx	/*compiler-mypy*
 compiler-pandoc	quickfix.cnx	/*compiler-pandoc*
 compiler-perl	quickfix.cnx	/*compiler-perl*
 compiler-pylint	quickfix.cnx	/*compiler-pylint*
+compiler-pyright	quickfix.cnx	/*compiler-pyright*
 compiler-pytest	quickfix.cnx	/*compiler-pytest*
 compiler-pyunit	quickfix.cnx	/*compiler-pyunit*
 compiler-ruff	quickfix.cnx	/*compiler-ruff*
@@ -6871,6 +6886,7 @@ compiler-spotbugs	quickfix.cnx	/*compiler-spotbugs*
 compiler-tex	quickfix.cnx	/*compiler-tex*
 compiler-tombi	quickfix.cnx	/*compiler-tombi*
 compiler-tsc	quickfix.cnx	/*compiler-tsc*
+compiler-ty	quickfix.cnx	/*compiler-ty*
 compiler-typst	quickfix.cnx	/*compiler-typst*
 compiler-vaxada	ft_ada.cnx	/*compiler-vaxada*
 compl-current	insert.cnx	/*compl-current*
@@ -6905,7 +6921,6 @@ complete_add()	builtin.cnx	/*complete_add()*
 complete_check()	builtin.cnx	/*complete_check()*
 complete_info()	builtin.cnx	/*complete_info()*
 complete_info_mode	builtin.cnx	/*complete_info_mode*
-complete_match()	builtin.cnx	/*complete_match()*
 completed_item-variable	eval.cnx	/*completed_item-variable*
 completion-functions	usr_41.cnx	/*completion-functions*
 complex-change	change.cnx	/*complex-change*
@@ -6922,6 +6937,7 @@ conversion-server	mbyte.cnx	/*conversion-server*
 convert-to-HTML	syntax.cnx	/*convert-to-HTML*
 convert-to-XHTML	syntax.cnx	/*convert-to-XHTML*
 convert-to-XML	syntax.cnx	/*convert-to-XML*
+convert_:function_to_:def	vim9.cnx	/*convert_:function_to_:def*
 convert_legacy_function_to_vim9	vim9.cnx	/*convert_legacy_function_to_vim9*
 copy()	builtin.cnx	/*copy()*
 copy-diffs	diff.cnx	/*copy-diffs*
@@ -8344,6 +8360,7 @@ gui-vert-scroll	gui.cnx	/*gui-vert-scroll*
 gui-w32	gui_w32.cnx	/*gui-w32*
 gui-w32-cmdargs	gui_w32.cnx	/*gui-w32-cmdargs*
 gui-w32-dialogs	gui_w32.cnx	/*gui-w32-dialogs*
+gui-w32-fullscreen	gui_w32.cnx	/*gui-w32-fullscreen*
 gui-w32-printing	gui_w32.cnx	/*gui-w32-printing*
 gui-w32-start	gui_w32.cnx	/*gui-w32-start*
 gui-w32-title-bar	gui_w32.cnx	/*gui-w32-title-bar*
@@ -8421,7 +8438,6 @@ help	helphelp.cnx	/*help*
 help-TOC	helphelp.cnx	/*help-TOC*
 help-buffer-options	helphelp.cnx	/*help-buffer-options*
 help-context	help.cnx	/*help-context*
-help-curwin	tips.cnx	/*help-curwin*
 help-notation	helphelp.cnx	/*help-notation*
 help-summary	usr_02.cnx	/*help-summary*
 help-toc-install	helphelp.cnx	/*help-toc-install*
@@ -8808,6 +8824,7 @@ instanceof()	builtin.cnx	/*instanceof()*
 intel-itanium	syntax.cnx	/*intel-itanium*
 intellimouse-wheel-problems	gui_w32.cnx	/*intellimouse-wheel-problems*
 interactive-functions	usr_41.cnx	/*interactive-functions*
+interface	vim9class.cnx	/*interface*
 interfaces-5.2	version5.cnx	/*interfaces-5.2*
 internal-error	message.cnx	/*internal-error*
 internal-variables	eval.cnx	/*internal-variables*
@@ -9775,6 +9792,7 @@ os_risc.txt	os_risc.cnx	/*os_risc.txt*
 os_unix.txt	os_unix.cnx	/*os_unix.txt*
 os_vms.txt	os_vms.cnx	/*os_vms.txt*
 os_win32.txt	os_win32.cnx	/*os_win32.txt*
+osc52-install	usr_05.cnx	/*osc52-install*
 other-features	vi_diff.cnx	/*other-features*
 out_buf	channel.cnx	/*out_buf*
 out_cb	channel.cnx	/*out_cb*
@@ -9792,12 +9810,14 @@ package-create	repeat.cnx	/*package-create*
 package-doc	repeat.cnx	/*package-doc*
 package-documentation	repeat.cnx	/*package-documentation*
 package-editorconfig	usr_05.cnx	/*package-editorconfig*
+package-helpcurwin	tips.cnx	/*package-helpcurwin*
 package-helptoc	helphelp.cnx	/*package-helptoc*
 package-hlyank	usr_05.cnx	/*package-hlyank*
 package-justify	usr_25.cnx	/*package-justify*
 package-matchit	usr_05.cnx	/*package-matchit*
 package-nohlsearch	usr_05.cnx	/*package-nohlsearch*
 package-open	eval.cnx	/*package-open*
+package-osc52	usr_05.cnx	/*package-osc52*
 package-termdebug	terminal.cnx	/*package-termdebug*
 package-translate_example	repeat.cnx	/*package-translate_example*
 package-translation	repeat.cnx	/*package-translation*
@@ -10102,6 +10122,7 @@ quake.vim	syntax.cnx	/*quake.vim*
 quickfix	quickfix.cnx	/*quickfix*
 quickfix-6	version6.cnx	/*quickfix-6*
 quickfix-ID	quickfix.cnx	/*quickfix-ID*
+quickfix-biome	quickfix.cnx	/*quickfix-biome*
 quickfix-buffer	quickfix.cnx	/*quickfix-buffer*
 quickfix-changedtick	quickfix.cnx	/*quickfix-changedtick*
 quickfix-context	quickfix.cnx	/*quickfix-context*
@@ -10187,6 +10208,8 @@ recovery	recover.cnx	/*recovery*
 recursive_mapping	map.cnx	/*recursive_mapping*
 redo	undo.cnx	/*redo*
 redo-register	undo.cnx	/*redo-register*
+redraw_listener_add()	builtin.cnx	/*redraw_listener_add()*
+redraw_listener_remove()	builtin.cnx	/*redraw_listener_remove()*
 reduce()	builtin.cnx	/*reduce()*
 ref	intro.cnx	/*ref*
 reference	intro.cnx	/*reference*
@@ -11428,6 +11451,7 @@ v:char	eval.cnx	/*v:char*
 v:charconvert_from	eval.cnx	/*v:charconvert_from*
 v:charconvert_to	eval.cnx	/*v:charconvert_to*
 v:clipmethod	eval.cnx	/*v:clipmethod*
+v:clipproviders	eval.cnx	/*v:clipproviders*
 v:cmdarg	eval.cnx	/*v:cmdarg*
 v:cmdbang	eval.cnx	/*v:cmdbang*
 v:collate	eval.cnx	/*v:collate*
@@ -11769,6 +11793,7 @@ vim9-access-modes	vim9class.cnx	/*vim9-access-modes*
 vim9-autoload	vim9.cnx	/*vim9-autoload*
 vim9-boolean	vim9.cnx	/*vim9-boolean*
 vim9-class	vim9class.cnx	/*vim9-class*
+vim9-class-type	vim9.cnx	/*vim9-class-type*
 vim9-classes	vim9.cnx	/*vim9-classes*
 vim9-const	vim9.cnx	/*vim9-const*
 vim9-curly	vim9.cnx	/*vim9-curly*
@@ -11776,14 +11801,18 @@ vim9-debug	repeat.cnx	/*vim9-debug*
 vim9-declaration	vim9.cnx	/*vim9-declaration*
 vim9-declarations	usr_41.cnx	/*vim9-declarations*
 vim9-differences	vim9.cnx	/*vim9-differences*
+vim9-enum-type	vim9.cnx	/*vim9-enum-type*
+vim9-enumvalue-type	vim9.cnx	/*vim9-enumvalue-type*
 vim9-export	vim9.cnx	/*vim9-export*
 vim9-false-true	vim9.cnx	/*vim9-false-true*
 vim9-final	vim9.cnx	/*vim9-final*
 vim9-func-declaration	vim9.cnx	/*vim9-func-declaration*
+vim9-func-type	vim9.cnx	/*vim9-func-type*
 vim9-function-defined-later	vim9.cnx	/*vim9-function-defined-later*
 vim9-gotchas	vim9.cnx	/*vim9-gotchas*
 vim9-ignored-argument	vim9.cnx	/*vim9-ignored-argument*
 vim9-import	vim9.cnx	/*vim9-import*
+vim9-interface-type	vim9.cnx	/*vim9-interface-type*
 vim9-lambda	vim9.cnx	/*vim9-lambda*
 vim9-lambda-arguments	vim9.cnx	/*vim9-lambda-arguments*
 vim9-line-continuation	vim9.cnx	/*vim9-line-continuation*
@@ -11792,15 +11821,19 @@ vim9-mix	vim9.cnx	/*vim9-mix*
 vim9-namespace	vim9.cnx	/*vim9-namespace*
 vim9-no-dict-function	vim9.cnx	/*vim9-no-dict-function*
 vim9-no-shorten	vim9.cnx	/*vim9-no-shorten*
+vim9-object-type	vim9.cnx	/*vim9-object-type*
+vim9-partial-declaration	vim9.cnx	/*vim9-partial-declaration*
 vim9-rationale	vim9.cnx	/*vim9-rationale*
 vim9-reload	vim9.cnx	/*vim9-reload*
 vim9-s-namespace	vim9.cnx	/*vim9-s-namespace*
 vim9-scopes	vim9.cnx	/*vim9-scopes*
 vim9-string-index	vim9.cnx	/*vim9-string-index*
+vim9-typealias-type	vim9.cnx	/*vim9-typealias-type*
 vim9-types	vim9.cnx	/*vim9-types*
 vim9-unpack-ignore	vim9.cnx	/*vim9-unpack-ignore*
 vim9-user-command	vim9.cnx	/*vim9-user-command*
 vim9-variable-arguments	vim9.cnx	/*vim9-variable-arguments*
+vim9-white-space	vim9.cnx	/*vim9-white-space*
 vim9.txt	vim9.cnx	/*vim9.txt*
 vim9class.txt	vim9class.cnx	/*vim9class.txt*
 vim9script	vim9.cnx	/*vim9script*

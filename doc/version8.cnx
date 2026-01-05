@@ -1,7 +1,7 @@
-*version8.txt*  适用于 Vim 9.1 版本。  最近更新: 2025年9月
+*version8.txt*	适用于 Vim 9.1 版本。  最近更新: 2025年9月
 
 
-		  VIM 参考手册    by Bram Moolenaar
+		  VIM 参考手册	by Bram Moolenaar
 				译者: Willis
 
 				*vim8* *vim-8* *version-8.0* *version8.0*
@@ -228,7 +228,7 @@ Ex 命令修饰符: ~
 
 |arglistid()|		获取参数列表的编号
 |assert_equal()|	断言两个表达式的值相等
-|assert_exception()|	断言命令抛出例外
+|assert_exception()|	断言命令抛出异常
 |assert_fails()|	断言函数调用失败
 |assert_false()|	断言表达式为假
 |assert_inrange()|	断言表达式在范围内
@@ -445,7 +445,7 @@ Vroom 语法、缩进和文件类型插件
 编 译 时 的 改 变					*compile-changes-8*
 
 Vim 版本库从 Google code 转到了 gitub，因为 Google code 停止了服务。可在这里
-找到。 https://github.com/vim/vim。
+找到。https://github.com/vim/vim。
 
 函数现在使用 ANSI-C 声明。需要至少 C-89 兼容的编译器。
 
