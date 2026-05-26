@@ -1,4 +1,4 @@
-*autocmd.txt*	适用于 Vim 9.2 版本。  最近更新: 2025年10月
+*autocmd.txt*	适用于 Vim 9.2 版本。  最近更新: 2026年4月
 
 
 		  VIM 参考手册	by Bram Moolenaar
@@ -7,7 +7,7 @@
 
 自动命令					*autocommand* *autocommands*
 
-一个基本的介绍可以在用户手册的 |40.3| 章节找到。
+基础用法请参考用户手册 |40.3| 一节。
 
 1.  简介			|autocmd-intro|
 2.  定义自动命令		|autocmd-define|
@@ -125,7 +125,7 @@ Vim9 脚本示例: >
 清除之前的命令: >
 
 	augroup vimrc
-	  " 清除 vimcrc 组全部的的自动命令
+	  " 清除 vimrc 组全部的自动命令
 	  autocmd!
 	  au BufNewFile,BufRead *.html so <sfile>:h/html.vim
 	augroup END
@@ -401,6 +401,7 @@ Vim 识别以下事件，事件名忽略大小写 (例如，可用 "BUFread" 或
 |QuickFixCmdPre|	执行快速修复命令前
 |QuickFixCmdPost|	执行快速修复命令后
 
+|SessionLoadPre|	载入会话文件前
 |SessionLoadPost|	载入会话文件后
 
 |SessionWritePost|	用 |:mksession| 命令写入会话文件后
@@ -712,8 +713,8 @@ FileAppendPre			附加到文件前。用 '[ 和 '] 位置标记来定位行范
 				围。
 							*FileChangedRO*
 FileChangedRO			刚开始修改只读文件前。可以用来从源文件控制系统
-				里更新文件。但如果该修改由自动命令产生，该事件
-				不会发生。
+				里更新文件。但如果修改由自动命令产生，该事件不
+				会发生。
 				该事件在缓冲区的第一次修改或者 'readonly' 置位
 				后的第一次修改时触发，就在文本刚刚要被修改前发
 				生。
@@ -735,7 +736,7 @@ FileChangedShell		Vim 注意到文件的修改时间不同于编辑开始的时�
 				置位了 'autoread' 且缓冲区未修改的情况。如果指
 				定了 FileChangedShell 自动命令，不会给出相应的
 				警告消息和提示。
-				激活前 |v:fcs_reason| 变量会被设置，以指示文件
+				触发前 |v:fcs_reason| 变量会被设置，以指示文件
 				修改的原因，而返回时，|v:fcs_choice| 则可用来
 				告知 Vim 下一步该做什么。
 				注意: 当此自动命令执行时，当前缓冲区 "%" 可能
@@ -978,6 +979,8 @@ SafeState			没有任何待定字符，等待用户键入字符时。
 SafeStateAgain			类似于 SafeState，但在处理完任何信息和回调调用
 				后。此事件可能会经常触发，不要做耗时的事情。
 
+							*SessionLoadPre*
+SessionLoadPre			载入 |:mksession| 命令建立的会话文件前。
 							*SessionLoadPost*
 SessionLoadPost			载入 |:mksession| 命令建立的会话文件后。
 							*SessionWritePost*

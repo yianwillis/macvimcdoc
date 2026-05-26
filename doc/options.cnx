@@ -1,4 +1,4 @@
-*options.txt*	适用于 Vim 9.2 版本。  最近更新: 2025年12月
+*options.txt*	适用于 Vim 9.2 版本。  最近更新: 2026年5月
 
 
 		  VIM 参考手册	by Bram Moolenaar
@@ -13,7 +13,7 @@
 
 选项的总览可见 quickref.txt |option-list|。
 
-Vim 有很多内部变量和开关，可以达到特殊的效果。这些称为选项，共有三种形式:
+Vim 有很多内置变量和开关，可以达到特殊的效果。这些称为选项，共有三种形式:
 	布尔型		可以打开或关闭			*boolean* *toggle*
 	数值型		值为数值
 	字符串		值为字符串
@@ -86,12 +86,22 @@ Vim 有很多内部变量和开关，可以达到特殊的效果。这些称为�
 			逗号。
 			选项为标志位列表时，会删除多余的标志位。如果加入已经存
 			在的标志位，选项值不变。
+			当选项支持 "键:值" 格式时，如果 {value} 包含一个或多个
+			逗号分隔的 "键:值" 项，每项会被单独处理:
+			- 对键已存在但值不同的 "键:值" 项，删除旧项，将新项追
+			  加到末尾。
+			- 对完全重复的 "键:值" 项，保持不变。
+			- 对已存在的其他项，保持不变。
+			- 对新的键值项，直接追加到末尾。
 			另见上面的 |:set-args|。
 
 :se[t] {option}^={value}				*:set^=*
 			把 {value} 乘到数值选项上，或者附加到字符串选项之前。
 			选项为逗号分隔的列表时，除非原来的值为空，会先加上一个
 			逗号。
+			当选项支持 "键:值" 格式时，如果 {value} 包含一个或多个
+			逗号分隔的 "键:值" 项，每项会被单独处理。和 |:set+=|
+			的处理方式类似，但新项会添加到开头而非追加到末尾。
 			另见上面的 |:set-args|。
 
 :se[t] {option}-={value}				*:set-=*
@@ -102,6 +112,10 @@ Vim 有很多内部变量和开关，可以达到特殊的效果。这些称为�
 			选项为标志位的列表时，{value} 里标志位的顺序必须和它们
 			在选项里出现的顺序完全相同。可以通过逐个删除标志位来解
 			决这个问题。
+			当选项支持 "键:值" 格式时，如果 {value} 包含一个或多个
+			逗号分隔的 "键:值" 项，每项会被单独处理。对于键已存在
+			的 "键:值" 项，无论新旧值是否相同，都会移除原有项。这
+			也适用于值为空的 "键:" 格式。
 			在逗号分隔的列表或标志位列表里，要自动插入已有的个体
 			值，可用 'wildchar'。见 |complete-set-option|。
 			另见上面的 |:set-args|。
@@ -256,10 +270,10 @@ Vim 基本会依照用户的直觉来使用这些选项值。不幸的是，要�
 如果该缓冲区曾经在当前窗口编辑过，会使用本窗口当时的值。否则会使用该缓冲区上一
 次编辑所在、且最后关闭的窗口所使用的值。
 
-一种类型的缓冲区可能有专门的窗口局部选项。要在同一个窗口里切换编辑的缓冲区时，
-可能会不希望维持这些局部选项。为此，Vim 会维护窗口局部选项的全局值，切换编辑的
-缓冲区时，会使用该全局值。每个窗口都有全局值的独立版本。因而这些值局部于窗口，
-但全局于该窗口里打开的所有缓冲区。因此，可用: >
+":setlocal" 可用于为一种类型的缓冲区设定专门的窗口局部选项。要在同一个窗口里切
+换编辑的缓冲区时，可能不会希望沿用这类局部选项。":set" 也会同时设置窗口局部选
+项的全局值，切换编辑的缓冲区时，会使用该全局值。每个窗口都有全局值的独立版本。
+因而这些值局部于窗口，但全局于该窗口里打开的所有缓冲区。因此，可用: >
 	:e one
 	:set list
 	:e two
@@ -837,9 +851,9 @@ mail 文件类型插件就是这么做的。
 'autowrite' 'aw'	布尔型	(缺省关闭)
 			全局
 	文件已修改时，在 `:next`、`:rewind`、`:last`、`:first`、`:previous`、
-	`:stop`、`:suspend`、`:tag`、`:!`、`:make`、CTRL-] 和 CTRL-^ 命令后，
-	会自动保存文件；用 `:buffer`、CTRL-O、CTRL-I、'{A-Z0-9} 或 `{A-Z0-9}
-	命令切换文件时，也会如此。
+	`:tag`、`:stop`、`:suspend`、`:!`、`:make`、`:terminal`、CTRL-] 和
+	CTRL-^ 命令后，会自动保存文件；用 `:buffer`、CTRL-O、CTRL-I、'{A-Z0-9}
+	或 `{A-Z0-9} 命令切换文件时，也会如此。
 	隐藏的缓冲区不会自动保存，例如 'bufhidden' 设为 "hide" 时执行
 	`:next`。
 	注意 不是所有命令都应用本选项。为此可用 'autowriteall'。
@@ -851,8 +865,8 @@ mail 文件类型插件就是这么做的。
 			 *'autowriteall'* *'awa'* *'noautowriteall'* *'noawa'*
 'autowriteall' 'awa'	布尔型	(缺省关闭)
 			全局
-	和 'autowrite' 类同，但也适用于 ":edit"、":enew"、":quit"、":qall"、
-	":exit"、":xit"、":recover" 命令以及 Vim 窗口关闭时。
+	和 'autowrite' 类同，但也适用于 `:edit`、`:enew`、`:quit`、`:qall`、
+	`:exit`、`:xit`、`:recover` 命令以及 Vim 窗口关闭时。
 	置位本选项等同于同时置位了 'autowrite'。
 
 							*'background'* *'bg'*
@@ -915,7 +929,7 @@ mail 文件类型插件就是这么做的。
 	是逗号分隔的项目列表。每个项目允许一种退格删除的内容:
 	值	效果	~
 	indent	允许在自动缩进上退格
-	eol	允许在换行符上退格 (连接行)
+	eol	允许在换行符上退格 (合并行)
 	start	允许在插入开始位置上退格；CTRL-W 和 CTRL-U 在到达插入开始位置
 		时会停留一次。
 	nostop	类似于 start，但 CTRL-W 和 CTRL-U 不会在插入开始位置停留。
@@ -937,8 +951,8 @@ mail 文件类型插件就是这么做的。
 			全局
 	覆盖文件前先创建备份。成功写入后保留该备份。如果只希望写入期间备份，成
 	功写入后不保留，复位本选项并置位 'writebackup' 选项 (这是缺省行为)。如
-	果完全不需要备份，同时复位两个选项 (如果文件系统差不多满了，这会有用)。
-	更多的解释可见 |backup-table|。
+	果完全不需要备份，同时复位两个选项 (如果文件系统差不多满了，这会有
+	用)。更多的解释可见 |backup-table|。
 	匹配 'backupskip' 模式时，不会建立备份。
 	设置 'patchmode' 时，备份文件会改名，成为文件的最旧版本。
 	注意: 'compatible' 置位时会复位本选项。
@@ -1136,8 +1150,8 @@ mail 文件类型插件就是这么做的。
 
 	要检查是否支持多行气泡: >
 		if has("balloon_multiline")
-<	如果支持，\n" 字符会换行。表达式计算结果为 |List| 时，会把每个列表项转
-	换为字符串，再用 "\n" 连接。
+<	如果支持，"\n" 字符会换行。表达式计算结果为 |List| 时，会把每个列表项
+	转换为字符串，再用 "\n" 合并。
 	注意: 'compatible' 置位时会设置本选项为 ""。
 
 						*'belloff'* *'bo'*
@@ -1153,7 +1167,7 @@ mail 文件类型插件就是这么做的。
 	complete    |i_CTRL-X_CTRL-K| 或 |i_CTRL-X_CTRL-T| 补全时出错。
 	copy	    插入模式下用 |i_CTRL-Y| 或 |i_CTRL-E| 复制字符时失败。
 	ctrlg	    插入模式下不能识别 <C-G> 之后的字符。
-	error	    发生其它错误 (例如试图对末行进行连接) (多用于普通模式或命
+	error	    发生其它错误 (例如试图对末行进行合并) (多用于普通模式或命
 		    令行模式)。
 	esc	    普通模式下按了 <Esc>。
 	ex	    可视模式下按 |Q| 时会报错。
@@ -1348,8 +1362,8 @@ mail 文件类型插件就是这么做的。
 'casemap' 'cmp'		字符串	(缺省: "internal,keepascii")
 			全局
 	指定改变字母大小写的实现细节 |case|。包含以下逗号分隔的单词:
-	internal	使用 Vim 内部的大小写映射函数，此时当前 locale 不会影
-			响大小写映射。仅在 'encoding' 为 Unicode 编码之一、
+	internal	使用 Vim 内置大小写映射函数，此时当前 locale 不会影响
+			大小写映射。仅在 'encoding' 为 Unicode 编码之一、
 			"latin1" 或 "iso-8859-15" 时生效。"internal" 省略时，
 			会使用系统库函数 (如有) towupper() 和 towlower()。
 	keepascii	对 ASCII 字符 (0x00 到 0x7f) 使用美式大小写映射，此时
@@ -1828,6 +1842,8 @@ mail 文件类型插件就是这么做的。
 	个，而来自标签的匹配最多 5 个。其他源无限制。
 	注意: 匹配限制只对正向补全 (CTRL-N) 有效，反向补全 (CTRL-P) 不适用。
 
+	'modelineexpr' 关闭时，不能在 |modeline| 中设置本选项。
+
 						*'completefunc'* *'cfu'*
 'completefunc' 'cfu'	字符串	(缺省: 空)
 			局部于缓冲区
@@ -1842,7 +1858,7 @@ mail 文件类型插件就是这么做的。
 'completefuzzycollect' 'cfc'	字符串	(缺省: 空)
 				全局
 	已废弃: 本选项不再使用。修改本选项值不会有任何影响。'completeopt' 包含
-	"fuzzy" 时，Vim 内部行为等价于本选项被设为:
+	"fuzzy" 时，Vim 内置行为等价于本选项被设为:
 		"keyword,files,whole_line"
 
 	保留以下取值以保持兼容性，同时供可能会读取本选项的脚本使用:
@@ -1870,12 +1886,14 @@ mail 文件类型插件就是这么做的。
 	逗号分隔的控制插入模式补全 |ins-completion| 的选项列表。支持的值有:
 
 	   fuzzy    为补全候选打开 |fuzzy-matching|。这能支持更灵活和直观的匹
-		    配，可以跳过字符，即使键入序列不是完全准确，也能找到匹配。
+		    配，可以跳过字符，即使键入序列不是完全准确，也能找到匹配
+		    (同义词补全 |compl-thesaurus| 不支持)。
 
 	   longest
-		    'autocomplete' 未激活时，只插入匹配的最长公共前缀。如果显
-		    示弹出菜单，可用 CTRL-L 来插入更多的字符。是否忽略大小写取
-		    决于补全的类型。缓冲区文本会使用 'ignorecase' 选项。
+		    'autocomplete' 未激活时，只插入匹配的最长公共前缀 (同义词
+		    补全 |compl-thesaurus| 不支持)。如果显示弹出菜单，可用
+		    CTRL-L 来插入更多的字符。是否忽略大小写取决于补全的类型。
+		    缓冲区文本会使用 'ignorecase' 选项。
 
 		    'autocomplete' 激活且未选中任何补全项目时，在光标后插入匹
 		    配的最长公共前缀。该前缀可来自所有已显示项目，或者仅限当前
@@ -1960,6 +1978,8 @@ mail 文件类型插件就是这么做的。
 		close		显示关闭按钮: "on" (缺省) 或 "off"
 		height		弹出的最大高度
 		highlight	弹出的高亮组 (缺省是 PmenuSel)
+		opacity		不透明度百分比 0-100 (缺省为 100)。
+				小于 100 时，背景内容会透过弹出显示出来。
 		resize		显示缩放柄: "on" (缺省) 或 "off"
 		shadow		显示阴影: "off" (缺省) 或 "on"，此时使用
 				|hl-PmenuShadow| 高亮组
@@ -1968,6 +1988,7 @@ mail 文件类型插件就是这么做的。
 	例如: >
 		:set completepopup=height:10,border:single,highlight:InfoPopup
 		:set completepopup=width:60,border:custom:─;│;─;│;┌;┐;┘;└
+		:set completepopup=border:round,opacity:80
 <
 	"align" 值为 `"item"` 时，弹出位置会靠近选中项目，选择改变时弹出位置也
 	会跟着移动。
@@ -2112,8 +2133,8 @@ mail 文件类型插件就是这么做的。
 								*cpo-C*
 		C	执行时不串接反斜杠开始的行。见 |line-continuation|。
 								*cpo-d*
-		d	'tags' 选项使用的 "./" 表示相对于当前目录的标签文件，
-			而不是相对于当前文件的标签文件。
+		d	包含时，'tags' 选项使用的 "./" 表示使用当前目录中的标
+			签文件。否则，使用当前文件所在目录中的标签文件。
 								*cpo-D*
 		D	带有字符参数的普通模式命令，如 |r|、|f| 和 |t|，不能用
 			CTRL-K 来输入二合字母。
@@ -2143,7 +2164,7 @@ mail 文件类型插件就是这么做的。
 		I	'autoindent' 插入缩进后，如果立即上下移动光标，缩进不
 			会被删除。
 								*cpo-j*
-		j	连接行时，只在 '.' 之后加入两个空格，'!' 或 '?' 之后只
+		j	合并行时，只在 '.' 之后加入两个空格，'!' 或 '?' 之后只
 			加一个。另见 'joinspaces'。
 								*cpo-J*
 		J	必须在 '.'，'!' 或 '?' 有两个空格才算句子 |sentence|。
@@ -2193,7 +2214,7 @@ mail 文件类型插件就是这么做的。
 			|cpo-F| 时，追加到文件的 ":write" 命令会为当前缓冲区设
 			置文件名。
 								*cpo-q*
-		q	连接多行时，光标会留在连接前两行时会在的位置，也就是原
+		q	合并多行时，光标会留在合并前两行时会在的位置，也就是原
 			来首行的行末位置，而不是原来末行的行首位置。
 								*cpo-r*
 		r	重复 ("." 命令) 会使用 |quote/| 模式来重复搜索命令，而
@@ -2376,8 +2397,8 @@ mail 文件类型插件就是这么做的。
 'cscopepathcomp' 'cspc'	数值型	(缺省为 0)
 			全局
 			{仅当编译时加入 |+cscope| 特性才有效}
-	决定标签列表里路径部分的显示数量。例如，1 代表只显示文件名。
-	见 |cscopepathcomp|。
+	决定在标签列表中显示文件路径的层级数。例如，1 代表只显示文件名。见
+	|cscopepathcomp|。
 	注意: 'compatible' 置位时会设置本选项为 0。
 
 						*'cscopeprg'* *'csprg'*
@@ -2573,7 +2594,7 @@ mail 文件类型插件就是这么做的。
 	比较模式的相关设置。由以下几个项目组成。所有项目均可选。项目之间由逗号
 	分隔。
 
-		algorithm:{text} 内部比较引擎使用指定的比较算法。目前支持的算
+		algorithm:{text} 内置比较引擎使用指定的比较算法。目前支持的算
 				法是:
 				myers      缺省算法
 				minimal    花费额外时间来生成最小的可能差异
@@ -2620,7 +2641,7 @@ mail 文件类型插件就是这么做的。
 				标志位。
 
 		indent-heuristic
-				内部比较库使用缩进启发。
+				内置比较库使用缩进启发。
 
 		inline:{text}	高亮改动的行内差异。见 |view-diffs|。支持的值
 				是:
@@ -2629,14 +2650,16 @@ mail 文件类型插件就是这么做的。
 				simple  从第一个不同字符开始，高亮到每行的最后
 					一个不同字符。这是没有设置 `inline:`
 					值时的缺省。
-				char    使用内部 diff，逐字符进行比较，高亮差
+				char    使用内置 diff，逐字符进行比较，高亮差
 					异文本。
-				word    使用内部 diff，逐 |word| 进行比较，高
+				word    使用内置 diff，逐 |word| 进行比较，高
 					亮差异文本。非字母数位的多字节字符，如
 					表情符号、CJK 字符等，被视作单独的单
-					词。
+					词。改动之间由非单词字符组成的短间隙
+					(不超过 5 字节)，会被合并为单个高亮
+					块。
 
-		internal	使用内部比较库。设置 'diffexpr' 时忽略此项
+		internal	使用内置比较库。设置 'diffexpr' 时忽略此项
 				目。 *E960*
 				如果写入缓冲区时内存溢出，或者差异文超过 1GB，
 				在涉及该缓冲区的比较中会忽略此项目。要了解这些
@@ -2670,7 +2693,7 @@ mail 文件类型插件就是这么做的。
 		:set diffopt=internal,filler,context:4
 		:set diffopt=
 		:set diffopt=internal,filler,foldcolumn:3
-		:set diffopt-=internal  " _不_使用内部比较解析器
+		:set diffopt-=internal  " _不_使用内置比较解析器
 <
 				     *'digraph'* *'dg'* *'nodigraph'* *'nodg'*
 'digraph' 'dg'		布尔型	(缺省关闭)
@@ -2847,9 +2870,9 @@ mail 文件类型插件就是这么做的。
 						*'equalprg'* *'ep'*
 'equalprg' 'ep'		字符串	(缺省为 "")
 			全局或局部于缓冲区 |global-local|
-	"=" 命令使用的外部程序。本选项为空时，使用内部的排版函数: 'lisp'、
-	'cindent' 或 'indentexpr'。Vim 编译时未加入内部的排版功能时，会使用外
-	部的 "indent" 程序。
+	"=" 命令使用的外部程序。本选项为空时，使用内置排版函数: 'lisp'、
+	'cindent' 或 'indentexpr'。Vim 编译时未加入内置排版功能时，会使用外部
+	的 "indent" 程序。
 	环境变量被扩展 |:set_env|。|option-backslash| 说明如何包含空格和反斜
 	杠。
 	为了安全原因，本选项不能在 |modeline| 或 |sandbox| 里设置。
@@ -2947,6 +2970,7 @@ mail 文件类型插件就是这么做的。
 		|SafeState|、
 		|SafeStateAgain|、
 		|SessionLoadPost|、
+		|SessionLoadPre|、
 		|SessionWritePost|、
 		|ShellCmdPost|、
 		|SigUSR1|、
@@ -3198,10 +3222,10 @@ mail 文件类型插件就是这么做的。
 	  stl		' '		当前窗口的状态行
 	  stlnc		' '		非当前窗口的状态行
 	  vert		'|'		垂直分割线 |:vsplit|
-	  fold		'-'		填充 'foldtext'
-	  foldopen	'-'		标记折叠开始处
-	  foldclose	'+'		显示关闭的折叠
-	  foldsep	'|'		已打开折叠的中间字符
+	  fold		'-'		填充 'foldtext' 行的剩余空间
+	  foldopen	'-'		折叠栏中标记折叠开始处
+	  foldclose	'+'		折叠栏中标记已关闭折叠
+	  foldsep	'|'		折叠栏中标记已打开折叠的中间字符
 	  foldinner	无		当窄 'foldcolumn' 容不下所有折叠时，用
 					于重复显示以代替数值嵌套级别的字符
 	  diff		'-'		'diff' 选项里的已删除行
@@ -3237,7 +3261,7 @@ mail 文件类型插件就是这么做的。
 'findfunc' 'ffu'	字符串	(缺省为空)
 			全局或局部于缓冲区 |global-local|
 			{仅当编译时加入 |+eval| 特性才有效}
-	|:find| 命令用于获取文件名的函数。本选项为空时，使用内部
+	|:find| 命令用于获取文件名的函数。本选项为空时，使用内置
 	|file-searching| 机制。
 
 	值可为函数名、|lambda| 或 |Funcref|。详见 |option-value-function|。
@@ -3300,7 +3324,7 @@ mail 文件类型插件就是这么做的。
 'foldcolumn' 'fdc'	数值型 (缺省为 0)
 			局部于窗口
 			{仅当编译时加入 |+folding| 特性才有效}
-	非零时，在窗口的一侧显示指定宽度的列，用于指示折叠的打开和关闭。最大值
+	非零时，在窗口的一侧显示指定宽度的列，用于指示折叠的展开和关闭。最大值
 	为 12。
 	见 |folding|。
 
@@ -3317,9 +3341,9 @@ mail 文件类型插件就是这么做的。
 'foldexpr' 'fde'	字符串 (缺省: "0")
 			局部于窗口
 			{仅当编译时加入 |+folding| 和 |+eval| 特性才有效}
-	'foldmethod' 为 "expr" 时使用的表达式。用于为每一行计算折叠级别。上下
-	文设为设置 'foldexpr' 的脚本，这样就能使用局部于脚本的项目。
-	用法见 |fold-expr|。
+	'foldmethod' 为 "expr" 时使用的表达式。用于为每一行计算折叠级别。在设
+	置 'foldexpr' 的脚本上下文里计算，这样就可使用该脚本的局部项目。用法见
+	|fold-expr|。
 
 	模式行中设置时会在沙盘 |sandbox| 里计算此表达式。见 |sandbox-option|。
 	'diff' 打开或 'modelineexpr' 关闭时，不能在 |modeline| 中设置本选项。
@@ -3382,8 +3406,8 @@ mail 文件类型插件就是这么做的。
 	设置屏幕行数，超过该值的折叠将被显示为关闭。也适用于手动关闭的折叠。
 	缺省值 1 代表只关闭占据两行或更多的折叠。
 	设为零时，即使折叠只占一屏幕行也会被关闭。
-	注意 这只影响显示效果。使用 "zc" 关闭少于 'foldminlines' 行的折叠时，
-	会被显示为打开。但后续的 "zc" 可能会进一步关闭包含该折叠的折叠。
+	注意 这只影响显示效果。使用 |zc| 关闭少于 'foldminlines' 行的折叠时，
+	会被显示为打开。但后续的 |zc| 可能会进一步关闭包含该折叠的外层折叠。
 
 						*'foldnestmax'* *'fdn'*
 'foldnestmax' 'fdn'	数值型 (缺省: 20)
@@ -3397,11 +3421,11 @@ mail 文件类型插件就是这么做的。
 						     search,tag,undo")
 			全局
 			{仅当编译时加入 |+folding| 特性才有效}
-	指定命令类型，这些命令在移动光标到已关闭折叠时，会自动打开该折叠。这是
+	指定命令类型，这些命令在移动光标到已关闭折叠时，会自动展开该折叠。这是
 	一个逗号分隔的项目列表。
 	备注: 当命令是映射一部分时，不使用本选项。但在映射中加入 |zv| 命令可以
 	达到相同的效果。
-	(理据: 映射本身可能想要控制折叠的打开与否)
+	(理据: 映射本身可能想要控制折叠的打开状态)
 
 		项目		命令 ~
 		all		任何命令
@@ -3428,9 +3452,9 @@ mail 文件类型插件就是这么做的。
 'foldtext' 'fdt'	字符串 (缺省: "foldtext()")
 			局部于窗口
 			{仅当编译时加入 |+folding| 特性才有效}
-	计算用来替代已关闭折叠的显示文本的表达式。上下文设为设置 'foldexpr'
-	(译者注: 原文如此，应为 'foldtext') 的脚本，这样就能使用局部于脚本的项
-	目。用法见 |fold-foldtext|。
+	计算用来替代已关闭折叠的显示文本的表达式。在设置 'foldexpr' (译者注:
+	原文如此，应为 'foldtext') 的脚本上下文里计算，这样就可访问该脚本的局
+	部项目。用法见 |fold-foldtext|。
 
 	模式行中设置时会在沙盘 |sandbox| 里计算此表达式。见 |sandbox-option|。
 	'modelineexpr' 关闭时，不能在模式行中设置本选项。
@@ -3457,10 +3481,10 @@ mail 文件类型插件就是这么做的。
 	使用不带参数的函数调用更有效率，见 |expr-option-function|。
 
 	设置了 'textwidth' 且新增文本超过此宽度时，也会计算本表达式。触发条件
-	和内部排版机制一致。需要确保排版完成后，光标相对于文本的位置保持不变！
+	和内置排版机制一致。需要确保排版完成后，光标相对于文本的位置保持不变！
 	|mode()| 函数此时应返回 "i" 或 "R"。
 
-	函数返回非零时，Vim 会回到使用内部的排版机制。
+	函数返回非零时，Vim 会回到使用内置排版机制。
 
 	表达式以 s: 或 |<SID>| 开始时，会用脚本 ID (|local-function|) 替代这些
 	前缀。例如: >
@@ -3501,7 +3525,7 @@ mail 文件类型插件就是这么做的。
 	用 |gq| 操作符在选中的行上排版所使用的外部程序名。该程序必须能读取标准
 	输入并在标准输出上返回结果。Unix 程序 "fmt" 就是这样的一个程序。
 	'formatexpr' 选项非空时，会优先使用该选项而非本选项。这两个选项都为空
-	时，会使用内部的排版函数 |C-indenting|。
+	时，会使用内置排版函数 |C-indenting|。
 	环境变量被扩展 |:set_env|。|option-backslash| 说明如何包含空格和反斜
 	杠。
 	为了安全原因，本选项不能在 |modeline| 或 |sandbox| 里设置。
@@ -3897,6 +3921,7 @@ mail 文件类型插件就是这么做的。
 	可以包含换行符。为此，最简单的方法是用 |:let|: >
 		:let &guitabtooltip = "line one\nline two"
 <
+	'modelineexpr' 关闭时，不能在模式行中设置本选项。
 
 						*'helpfile'* *'hf'*
 'helpfile' 'hf'		字符串	(缺省值:
@@ -3953,7 +3978,8 @@ mail 文件类型插件就是这么做的。
 				     l:Search,m:MoreMsg,M:ModeMsg,n:LineNr,
 				     a:LineNrAbove,b:LineNrBelow,
 				     N:CursorLineNr,r:Question,s:StatusLine,
-				     S:StatusLineNC,c:VertSplit,t:Title,
+				     S:StatusLineNC,c:VertSplit,
+				     |:VertSplitNC，t:Title,
 				     v:Visual,V:VisualNOS,w:WarningMsg,
 				     W:WildMenu,f:Folded,F:FoldColumn,
 				     A:DiffAdd,C:DiffChange,D:DiffDelete,
@@ -3970,10 +3996,10 @@ mail 文件类型插件就是这么做的。
 				     z:StatusLineTerm,Z:StatusLineTermNC,
 				     g:MsgArea,h:ComplMatchIns,I:PreInsert")
 			全局
-	本选项可以用来为若干场合设置高亮模式。这是逗号分隔的字符对列表 (译者注:
+	本选项可以用来为若干场景设置高亮模式。这是逗号分隔的字符对列表 (译者注:
 	原文如此，注意第二个字符为 ':" 时后面还要跟高亮组名，见下)。在每对字符
-	中，第一个字符给出适用的场合，第二个字符设定该场合应采用的显示模式。这
-	些场合分别是 (译者注: 下表也列出缺省高亮组，见下面的 ':' 显示模式):
+	中，第一个字符给出适用的场景，第二个字符设定该场景应采用的显示模式。这
+	些场景分别是 (译者注: 下表也列出缺省高亮组，见下面的 ':' 显示模式):
 	|hl-SpecialKey|	 8  ":map" 列出的 Meta 和特殊键
 	|hl-EndOfBuffer|   ~  缓冲区末行之后的行
 	|hl-NonText|	 @  窗口末尾的 '@' 和 'showbreak' 指定的字符
@@ -3996,6 +4022,7 @@ mail 文件类型插件就是这么做的。
 	|hl-StatusLineNC|  S  非当前窗口的状态行
 	|hl-Title|	 t  ":set all"、":autocmd" 等命令的输出标题
 	|hl-VertSplit|	 c  用来分隔垂直分割窗口的列
+	|hl-VertSplitNC|   |  用来分隔非当前垂直分割窗口的列
 	|hl-Visual|	 v  可视模式
 	|hl-VisualNOS|	 V  Vim "不是选择区拥有者" (Not Owning the Selection)
 			    时的可视模式。{仅用于 X11 GUI 的 |gui-x11|、
@@ -4028,6 +4055,9 @@ mail 文件类型插件就是这么做的。
 	|hl-PmenuBorder|   j  弹出菜单边框字符
 	|hl-PmenuShadow|   H  弹出菜单阴影
 	|hl-PreInsert|	 I  'completeopt' 里包含 "preinsert" 时的预插入文本
+	|hl-Normal|	 (  窗口普通字符色彩 (覆盖 'wincolor' 选项)
+
+	注意 缺省值不指定 "(" 高亮。
 
 	显示模式是:
 		r	反转		(termcap 项目 "mr" 和 "me")
@@ -4043,11 +4073,11 @@ mail 文件类型插件就是这么做的。
 		n	没有高亮
 		-	没有高亮
 		:	使用高亮组
-	未列出的场合会使用其缺省值。
+	未列出的场景会使用其缺省值。
 	如果想改变显示模式的实际效果，|dos-colors| 里给出一例。
 	使用 ':' 显示模式时，后面必须跟一个高亮组名。高亮组可用于定义任何类型
 	的高亮效果，包括颜色设置。高亮组的定义方法可见 |:highlight|。缺省为每
-	个场合定义一个不同的高亮组 (译者注: 建议只使用 ':'，也就是通过高亮组来
+	个场景定义一个不同的高亮组 (译者注: 建议只使用 ':'，也就是通过高亮组来
 	指定显示模式，更好的方式是不改动本选项，而定制相应的缺省高亮组)。
 	缺省高亮组可见 |highlight-default|。
 
@@ -4339,8 +4369,8 @@ mail 文件类型插件就是这么做的。
 	用 CTRL-L 可将当前匹配位置之后的一个字符追加到命令行上，如果置位了
 	'ignorecase' 和 'smartcase' 而且命令行上的模式中没有大写字符，加入的字
 	符会被转换为小写。
-	用 CTRL-R CTRL-W 可在当前匹配的末尾插入光标下的单词，并排除已经输入的
-	部分。
+	用 CTRL-R CTRL-W 可在当前匹配的末尾插入光标下的单词，并排除 (从单词开
+	头起算) 已经输入的部分。
 	注意: 'compatible' 置位时会复位本选项。
 
 						*'indentexpr'* *'inde'*
@@ -4535,7 +4565,7 @@ mail 文件类型插件就是这么做的。
 			*'joinspaces'* *'js'* *'nojoinspaces'* *'nojs'*
 'joinspaces' 'js'	布尔型	(缺省打开)
 			全局
-	打开时，连接命令会在 '.'、'?' 和 '!' 之后插入两个空格。'cpoptions' 包
+	打开时，合并命令会在 '.'、'?' 和 '!' 之后插入两个空格。'cpoptions' 包
 	含 'j' 标志位时，只会在 '.' 之后插入空格。
 	关闭时，只插入一个空格。
 	注意: 'compatible' 置位时也会置位本选项。
@@ -4845,7 +4875,7 @@ mail 文件类型插件就是这么做的。
 
 	  tab:xyz	总是使用 'z'，然后在开头使用 'x'，然后在中间多次使用
 			'y' 进行填充。所以 "tab:<->" 会显示:
-				> 
+				>
 				<>
 				<->
 				<-->
@@ -4874,6 +4904,14 @@ mail 文件类型插件就是这么做的。
 			空格显示为:
 				---+---+--XXX ~
 			其中 "XXX" 代表该行上前几个非空白字符。
+							*lcs-leadtab*
+	  leadtab:xy[z]
+			和 |lcs-tab| 类似，但只用于前导制表。省略时，前导制表
+			使用 "tab" 设置。必须先指定 |lcs-tab| 字段，才能使用本
+			设置。				*E1572*
+			和 "tab:" 合并使用的示例: >
+				:set listchars=tab:>-,leadtab:.\ 
+<			将前导制表显示为句号 (.)，而其他制表显示为 ">--"。
 							*lcs-trail*
 	  trail:c	用于显示拖尾空白的字符。省略时，拖尾空白显示为空格。对
 			拖尾的空白，本设置优先于 "space" 和 "multispace" 设
@@ -5057,7 +5095,8 @@ mail 文件类型插件就是这么做的。
 	从而增加内存不足的风险。
 	如果本限制超过 200，还会改变 Ex 命令的最大嵌套层数。见 |E169|。
 	另见 |:function|。
-	也用于回调函数的最大嵌套层数。
+	也用于限制回调函数的最大嵌套层数，以及深层嵌套 JSON 数据在编码与解码时
+	的最大嵌套层数。
 
 						*'maxmapdepth'* *'mmd'* *E223*
 'maxmapdepth' 'mmd'	数值型	(缺省为 1000)
@@ -5188,6 +5227,45 @@ mail 文件类型插件就是这么做的。
 	'modeline' 关闭或者 'modelines' 为零时，不检查任何行。见 |modeline|。
 	注意: 'compatible' 置位时 'modeline' 会设为 Vi 缺省值，而 'compatible'
 	复位时会设为 Vim 缺省值。
+
+		    *'modelinestrict'* *'mlst'* *'nomodelinestrict'* *'nomlst'*
+'modelinestrict' 'mlst'	布尔型 (缺省打开)
+			全局
+	打开时，|modeline| 仅允许选项的安全子集。如下所示:
+		'autoindent'
+		'cindent'
+		'commentstring'
+		'expandtab'
+		'filetype'
+		'foldcolumn'
+		'foldenable'
+		'foldmethod'
+		'modifiable'
+		'readonly'
+		'rightleft'
+		'shiftwidth'
+		'smartindent'
+		'softtabstop'
+		'spell'
+		'spelllang'
+		'tabstop'
+		'textwidth'
+		'varsofttabstop'
+		'vartabstop'
+
+	模式行中设置其他选项会被安静地忽略。
+	为了安全原因，本选项不能在 |modeline| 或 |sandbox| 里设置。
+
+	'modeline'、'modelinestrict' 和 'modelineexpr' 的行为以表格形式总结如
+	下:
+
+	'modeline'| 'modelinestrict'| 'modelineexpr' | 含义
+	----------+-----------------+----------------+--------~
+	   打开   |    关闭         |   打开         | 可设置所有选项
+	   打开   |    打开         |   无关         | 仅可设置白名单中的选项
+	   打开   |    关闭         |   关闭         | 可设置除了表达式选项外
+		  |                 |                | 的其他选项
+	   关闭   |    无关         |   无关         | 不可设置任何选项
 
 				*'modifiable'* *'ma'* *'nomodifiable'* *'noma'*
 				*E21*
@@ -5746,6 +5824,8 @@ mail 文件类型插件就是这么做的。
 	指定 |:hardcopy| 输出生成的页眉格式。
 	见 |pheader-option|。
 
+	'modelineexpr' 关闭时，不能在模式行中设置本选项。
+
 						*'printmbcharset'* *'pmbcs'*
 'printmbcharset' 'pmbcs'  字符串 (缺省为 "")
 			全局
@@ -5779,6 +5859,7 @@ mail 文件类型插件就是这么做的。
 			全局
 	用于定义补全时弹出菜单的边框风格和可选装饰效果。值是逗号分隔的关键字列
 	表。
+	'pumopt' 提供了统一的替代方案。
 
 	边框风格 (最多只能选择一项):
 	"single"	使用窄方框绘制字符
@@ -5813,6 +5894,7 @@ mail 文件类型插件就是这么做的。
 	指定用于插入模式补全时弹出菜单显示的最大项目数。为零时，会使用尽可能多
 	的可用空间。
 	|ins-completion-menu|。
+	'pumopt' 提供了统一的替代方案。
 
 						*'pummaxwidth'* *'pmw'*
 'pummaxwidth' 'pmw'	数值型	(缺省为 0)
@@ -5823,11 +5905,64 @@ mail 文件类型插件就是这么做的。
 
 	本选项的优先级高于 'pumwidth'。
 	|ins-completion-menu|。
+	'pumopt' 提供了统一的替代方案。
+
+						*'pumopt'*
+'pumopt'		字符串	(缺省为 "")
+			全局
+	配置插入模式补全使用的弹出菜单。
+	值为以逗号分隔的 "键:值" 对以及标志位组成的列表。
+
+	带值的键:
+	  border:{style}	设置边框风格 (最多只能选择一项):
+				"single"  窄方框绘制字符
+				"double"  双线方框绘制字符
+				"round"   圆角
+				"ascii"   ASCII 字符 (-、|、+)
+				"custom:X;X;X;X;X;X;X;X"
+					  分号分隔的八个自定义字符，依次对应:
+					  顶、右、底、左、左上、右上、右下、左
+					  下
+	  height:{n}		显示的最大项目数 (缺省为零，代表使用尽可能多的
+				可用空间)
+	  width:{n}		最少宽度 (缺省为 15)
+	  maxwidth:{n}		最大宽度 (缺省为 0，代表没有宽度上限)。
+				优先级高于 width 键。
+				超出部分会在末尾用 'fillchars' 选项里的
+				"trunc" 值标示被截断的文本。
+	  opacity:{n}		不透明度百分比 0-100 (缺省为 100)。
+				小于 100 时，背景内容会透过弹出菜单显示出来。
+				需要 GUI、'termguicolors' 开启或支持 256-色的
+				终端环境。
+
+	标志位 (相当于有键无值):
+	  margin		在左右边框内侧加上一个单元的空间。需要先指定一
+				种边框风格。
+	  shadow		在右侧和底侧边缘绘制阴影。
+
+	仅当 'encoding' 为 "utf-8" 且 'ambiwidth' 为 "single" 时，才可使用由边
+	框绘制字符构成的边框风格 ("single"、"double"、"round")。
+
+	高亮组:
+	|hl-PmenuBorder|	用于边框字符
+	|hl-PmenuShadow|	用于阴影
+
+	注意: 在设置 'pumopt' 时，会先将所有相关参数复位为缺省值，再应用指的定
+	键值设置。未显式给出的键会使用缺省值。
+
+	示例: >
+		:set pumopt=border:single
+		:set pumopt=border:double,margin,shadow
+		:set pumopt=height:10,width:20,opacity:80
+		:set pumopt=border:custom:─;│;─;│;┌;┐;┘;└,shadow
+<
+	另见: |ins-completion-menu|。
 
 						*'pumwidth'* *'pw'*
 'pumwidth' 'pw'		数值型	(缺省为 15)
 			全局
 	指定用于插入模式补全时弹出菜单使用的最小宽度。|ins-completion-menu|。
+	'pumopt' 提供了统一的替代方案。
 
 						*'pythondll'*
 'pythondll'		字符串	(缺省取决于编译设置)
@@ -6199,14 +6334,14 @@ mail 文件类型插件就是这么做的。
 	$XDG_CONFIG_HOME 可见 |xdg-base-dir|。
 
 	多数系统上，缺省值会依次搜索以下五个位置:
-	1. 用户主目录，指定用户个人的偏好设置。
+	1. 用户 $MYVIMDIR 目录，指定用户个人的偏好设置。
 	2. 系统范围的 Vim 目录，指定系统管理员的设置。
 	3. $VIMRUNTIME 目录，指定 Vim 发布的文件。
 							*after-directory*
 	4. 系统范围的 Vim 目录里的 "after" 目录。系统管理员可用于修改或附加到
 	   发布指定的缺省值 (很少用到)。
-	5. 用户主目录里的 "after" 目录。用户可用于修改或附加到发布指定的缺省值
-	   或系统范围设置 (很少用到)。
+	5. 用户 $MYVIMDIR 目录里的 "after" 目录。用户可用于修改或附加到发布指
+	   定的缺省值或系统范围设置 (很少用到)。
 
 	使用 |packages| 时，会自动在本选项里添加更多项目。如果选项值太长，
 	`:set rtp` 会被截短，但 `:echo &rtp` 仍可看到完整的字符串值。
@@ -6270,14 +6405,28 @@ mail 文件类型插件就是这么做的。
 			全局或局部于窗口 |global-local|
 	光标上下两侧需要保留的最少屏幕行数。编辑时，这可以保证总会有一定数量的
 	上下文可见。如果设置本选项为极大值 (比如 999)，光标所在行通常会始终定
-	位在窗口正中间 (除非光标位于文件开始或者结尾，或存在长行回绕的情况)。
+	位在窗口正中间 (除非光标位于文件开始或者结尾 (见 'scrolloffpad')，或存
+	在长行回绕的情况)。
 	使用本选项的局部值后，可用以下两种方法之一来切换回直接使用其全局值: >
 		setlocal scrolloff<
 		setlocal scrolloff=-1
 <	水平滚动的等价选项见 'sidescrolloff'。
 	注意: 'compatible' 置位时会设置本选项为 0。
 
-						*'scrollopt'* *'sbo'*
+						*'scrolloffpad'* *'sop'*
+'scrolloffpad' 'sop'	数值型	(缺省为 0)
+			全局或局部于窗口 |global-local|
+	当 'scrolloff' 和 'scrolloffpad' 大于零时，允许光标在文件末尾时保持垂
+	直居中。通常情况下，'scrolloff' 不会在文件末尾让光标保持居中。
+
+	值为 0 代表禁用此功能，而大于 0 则代表启用。对于窗口局部值，-1 表示使
+	用全局值。小于 -1 的值无效。
+
+	设置局部值后，可使用以下两种方式之一恢复为全局值: >
+		setlocal scrolloffpad<
+		setlocal scrolloffpad=-1
+
+<						*'scrollopt'* *'sbo'*
 'scrollopt' 'sbo'	字符串	(缺省为 "ver,jump")
 			全局
 	逗号分隔的单词列表，指定 'scrollbind' 窗口的行为。'sbo' 代表
@@ -6367,7 +6516,7 @@ mail 文件类型插件就是这么做的。
 	   blank	空窗口
 	   buffers	除了窗口里显示的缓冲区，还包括已隐藏和已卸载的缓冲区
 	   curdir	当前目录
-	   folds	手动建立的折叠、手动打开/关闭的折叠和局部折叠选项
+	   folds	手动创建的折叠、折叠手动展开或关闭状态和局部折叠选项
 	   globals	大写字母开头且包含至少一个小写字母的全局变量。只保存字
 			符串和数值类型。
 	   help		帮助窗口
@@ -6678,6 +6827,9 @@ mail 文件类型插件就是这么做的。
 		搜索计数统计值前加上 "W" (助记符: Wrapped 环绕) 字符。搜索计数
 		的显示上限可通过 'maxsearchcount' 选项设置，另见
 		|searchcount()| 函数。
+	  u	不再显示 "少了 1 行; before #1  1 秒前",		*shm-u*
+		"已位于最旧的改变" 或 "已位于最新的改变" 等与撤销、重做相关的
+		提示信息。
 
 	这样可以避免在缓冲区之间切换时需要按下 <Enter>，同时仍能在可用的空间里
 	显示有用的消息。要得到相当于 'shm' 为空时的完整未截短的消息，可用
@@ -6994,15 +7146,15 @@ mail 文件类型插件就是这么做的。
 	拼写检查使用的方法。用于 |z=| 命令和 |spellsuggest()| 函数。这是逗号分
 	隔的项目列表:
 
-	best		内部方法，对英语最适合。搜寻改动的方式和 "fast" 类似，
+	best		内置方法，对英语最适合。搜寻改动的方式和 "fast" 类似，
 			同时用到少许基于发音相近的计分机制以改进排列的顺序。
 
-	double		内部方法，使用两个不同方法并混合其结果。第一个方法是
+	double		内置方法，使用两个不同方法并混合其结果。第一个方法是
 			"fast"，另一个方法会计算建议单词和坏词的发音相近程度。
 			仅能用于可按发音折叠的语言。速度可能较慢，且结果未必更
 			好。
 
-	fast		内部方法，只检查简单的改动: 字符插入/删除/交换。对简单
+	fast		内置方法，只检查简单的改动: 字符插入/删除/交换。对简单
 			拼写错误的检查效果不错。
 
 	{number}	|z=| 列出的最大建议数目。不用于 |spellsuggest()|。建议
@@ -7017,19 +7169,19 @@ mail 文件类型插件就是这么做的。
 			第一列包含坏词，第二列包含建议的好词。
 			例如:
 				theribal/terrible ~
-			用于内部方法未能在建议列表的顶部列出的常见错误。
+			用于内置方法未能在建议列表的顶部列出的常见错误。
 			不包含斜杠的行会被忽略，这可用于注释。
 			第二列单词必须正确，否则不予使用。如果该单词目前被标记
 			为拼写错误，可先将该单词添加到 ".add" 文件里。
 			此文件将用于所有语言。
 
-	expr:{expr}	计算表达式 {expr}。最好是不带参数的函数调用，见
+	expr:{expr}	计算表达式 {expr}。使用不带参数的函数调用更有效率，见
 			|expr-option-function|。|v:val| 会包含有拼写错误的单
 			词。该表达式必须返回列表的列表，每个列表项包含建议和评
 			分两项。
 			例如:
 				[['the', 33], ['that', 44]] ~
-			设置 'verbose' 并使用 |z=| 时，可以看到内部方法使用的
+			设置 'verbose' 并使用 |z=| 时，可以看到内置方法使用的
 			评分。分数越小越好。
 			函数中，如果从 'spellsuggest' 里临时排除了 "expr:" 部
 			分，也可以调用 |spellsuggest()|。
@@ -7048,7 +7200,7 @@ mail 文件类型插件就是这么做的。
 	打开时，新垂直分割的窗口会位于当前窗口下方而非上方。|:split|
 
 			*'splitkeep'* *'spk'*
-'splitkeep' 'spk'	字符串	(缺省 "cursor")
+'splitkeep' 'spk'	字符串	(缺省为 "cursor")
 			全局
 	本选项值决定横向分割在打开、关闭水平分割或调整大小时的滚动行为。
 
@@ -7192,7 +7344,56 @@ mail 文件类型插件就是这么做的。
 	      带 N 的 %* 或 %0* 可恢复普通高亮。User{N} 和 StatusLine 的区别也
 	      会应用到 StatusLineNC (用于非当前窗口的状态行) 上。
 	      数值 N 必须在 1 到 9 之间。见 |hl-User1..9|
+							*stl-%@*
+	@ -   插入换行符。仅当 'statuslineopt' 的 "maxheight" 值大于 1 时或用
+	      于 |tabpanel| 时生效。
 
+							*stl-%[FuncName]*
+	%[ 用于在状态栏中定义可点击区域。当用户用鼠标点击该区域时，会调用指定
+	的函数。相同语法也可用于 'tabline' 和 'tabpanel'。
+
+	  %[函数名]	开始一个可点击区域。"函数名" 是点击时要调用的 Vim 函数
+			名称。
+	  %[]		结束可点击区域。如果省略，区域会一直延伸到状态栏末尾，
+			或下一个可点击区域的起始位置。
+
+	可以使用 {minwid} 值向回调函数传递一个标识符:
+	  %3[函数名]	创建一个 "minwid" 为 3 的可点击区域。
+
+	函数会接收一个字典参数，包含以下条目:
+	  "minwid"	来自 %N[函数名] 的数值 N (省略时默认为 0)。
+	  "nclicks"	点击次数: 1、2, 或 3。
+	  "button"	鼠标按钮: "l" (左键)、"m" (中键)、"r" (右键).
+	  "mods"	修饰符: "s" (Shift)、"c" (Ctrl)、"a" (Alt) 的组合。无
+			修饰符则为空串。
+	  "winid"	被点击状态栏所属窗口的 |window-ID|，点击 'tabline' 或
+			'tabpanel' 时为 0。
+	  "area"	"statusline"、"tabline" 或 "tabpanel"。标识点击区域所
+			属选项。
+	  "tabnr"	(仅 'tabpanel') 被点击标签的标签页号。
+
+	函数返回非零值时，状态栏会重新绘制。即使定义了点击事件，拖动状态栏调整
+	窗口大小的功能仍然有效。用于 'tabline' 或 'tabpanel' 时，%[函数名] 区
+	域的点击会优先触发回调，而不是默认的标签切换行为。
+
+	示例: >
+	    func! ClickFile(info)
+		if a:info.button ==# 'l' && a:info.nclicks == 2
+		    browse edit
+		endif
+		return 0
+	    endfunc
+	    set statusline=%[ClickFile]%f%[]\ %l:%c
+<	这会让状态栏中的文件名变成可点击区域，双击打开文件浏览器。
+
+	要检测该功能是否可用，可用 `has('statusline_click')`，确保和旧版本兼
+	容: >
+	    if has('statusline_click')
+		set statusline=%[ClickFile]%f%[]\ %l:%c
+	    else
+		set statusline=%f\ %l:%c
+	    endif
+<
 	标志位项目紧跟在普通文本之后时，Vim 在显示时会删除其前导逗号 (如有)。
 	这使得下面示例中使用的标志位显示起来更加美观。
 
@@ -7203,7 +7404,7 @@ mail 文件类型插件就是这么做的。
 <	要小心，每次显示状态行时表达式项目都会重新进行计算。
 				*stl-%{* *g:actual_curbuf* *g:actual_curwin*
 	计算 %{} 时，会临时将当前窗口 (缓冲区) 设为待显示状态行所属的窗口 (缓
-	冲区)，表达式计算时会使用该上下文。
+	冲区)，表达式在该上下文里进行计算。
 	变量 "g:actual_curbuf" 会被设为实际当前缓冲区的 `bufnr()` 号，而
 	"g:actual_curwin" wfc 被设为实际当前窗口的 |window-ID|。这些值均为字符
 	串类型。
@@ -7241,6 +7442,42 @@ mail 文件类型插件就是这么做的。
 	  :function VarExists(var, val)
 	  :    if exists(a:var) | return a:val | else | return '' | endif
 	  :endfunction
+<
+						*'statuslineopt'* *'stlo'*
+'statuslineopt' 'stlo'	字符串	(缺省为 "")
+			全局或局部于窗口 |global-local|
+			{仅当编译时加入 |+statusline| 特性才有效}
+	|status-line| 的可选设置，包含以下内容，所有项都是可选项，项之间必须用
+	逗号分隔。
+
+	    fixedheight     将状态栏高度固定为 "maxheight" 指定的值。省略时，
+			    状态栏高度会根据 'statusline' 里的换行符 |stl-%@|
+			    数量，在 1 到 maxheight 之间自动调整。
+
+	    maxheight:{n}   设置状态栏最大高度为 {n}。{n} 必须大于等于 1。省略
+			    时默认高度为 1。当 {n} ≥ 2 时，可以在 'statusline'
+			    中使用换行符 |stl-%@| 实现多行显示。
+
+			    如果因窗口高度不足或其他限制无法设置为 {n}，会尽力
+			    设置不超过 {n} 的最接近有效值，即使设置失败也不会
+			    显示错误。
+
+			    用作全局值时，应用于所有标签页的所有窗口。用作窗口
+			    局部值时，仅应用于当前窗口。
+			    注意: 当实际生效值与 {n} 不同时，选项会自动更新为
+			    实际生效值。
+			    自动更新选项值的示例: >vim
+				:set statuslineopt=maxheight:999,fixedheight
+				" 实际只能使用 20 行，maxheight 因而会自动更新
+				" 为 20。
+				:set statuslineopt?
+				  statuslineopt=maxheight:20,fixedheight
+<
+	示例: >
+		:set statuslineopt=fixedheight
+		:set stlo=
+		:set stlo=maxheight:2,fixedheight
+		:set stlo-=fixedheight
 <
 						*'suffixes'* *'su'*
 'suffixes' 'su'		字符串	(缺省为 ".bak,~,.o,.h,.info,.swp,.obj")
@@ -7397,13 +7634,13 @@ mail 文件类型插件就是这么做的。
 	'modelineexpr' 关闭时，不能在模式行中设置本选项。
 
 	本选项使用的表达式项目里可用 |g:actual_curtabpage| 变量，它代表当前标
-	签页的标签页号 (译者注: 对每个标签页分别应用本选项，其中的表达式除了
-	"g:actual_curtabpage" 外，还可用 "g:tabpanel_winid" 变量，代表当前标签
-	页的窗口号)。本选项可包含 "\n"，用以强制换行: >
+	签页的标签页号 (译者注: 对每个标签页分别应用本选项，其中的表达式项目除
+	了可以使用 "g:actual_curtabpage" 外，还可用 "g:tabpanel_winid" 变量，
+	代表当前标签页的窗口号)。本选项可包含 "%@" 或 "\n"，来插入新行: >
 
 		set tabpanel=%!TabPanel()
 		function! TabPanel() abort
-		  return printf("(%2d)\n  %%f", g:actual_curtabpage)
+		  return "(" .. g:actual_curtabpage .. ")%@  %f"
 		endfunction
 <
 	结果是:
@@ -7417,29 +7654,26 @@ mail 文件类型插件就是这么做的。
 	|           |
 	|           |
 <
-	注意: "\n" 的用法是实验性功能，将来可能会改变；也许会用某个 %-原代替。
+	注意: "\n" 的用法是实验性功能且已废弃，建议使用 |stl-%@| 原子代替。
 
 					*'tabpanelopt'* *'tplo'*
 'tabpanelopt' 'tplo'	字符串	(缺省为 "")
 			全局
 	用于 |tabpanel| 的可选设置，包含以下以逗号分隔的项目。
 
-		align:{text}	指定标签页面板的位置。目前支持的位置有:
-
-				left	左边
-				right	右边
-
-				(缺省 "left")
-
-		columns:{n}	标签页面板的列宽。
-				如果此值为零或小于 (译者注: 原文如此，应为大
-				于) 'columns'，标签页面板不会显示。
-				(缺省 20)
-
-		vert		打开时，标签页面板使用垂直分割符。使用的垂直分
-				割符来自 'fillchars' 里的 "tpl_vert"。
-				(缺省关闭)
-
+	    align:{text}    指定标签页面板的位置。目前支持的位置有:
+				left	左侧 (缺省)
+				right	右侧
+	    columns:{n}     标签页面板的列宽。(缺省 20)
+			    如果此值为零或小于 (译者注: 原文如此，应为大于)
+			    'columns'，标签页面板不会显示。
+	    scrollbar	    单列滚动条会固定显示在标签页面板的右边缘，不受
+			    "align:" 对齐设置影响。(缺省关闭)。
+			    参见 |tabpanel-scroll|。
+	    vert	    在标签页面板与缓冲区区域的分界处绘制垂直分隔线。
+			    (缺省关闭)
+			    分隔线所用字符取自 'fillchars' 中的 "tpl_vert"
+			    项。
 	示例: >
 		:set tabpanelopt=columns:16,align:right
 		:set tabpanelopt=
@@ -7611,7 +7845,7 @@ mail 文件类型插件就是这么做的。
 	传递输入。
 	为空时，会使用和 'encoding' 选项相同的编码值。这是最常见的情况。
 	'termencoding' 和 'encoding' 的组合并非全都合法。见 |encoding-table|。
-	本选项设置的值必须能被内部转换机制或 iconv() 支持。对于不支持的值，不
+	本选项设置的值必须能被内置转换机制或 iconv() 支持。对于不支持的值，不
 	进行转换，非 ASCII 字符可能因此无法正常处理。
 	示例: locale 设置使用 euc-jp (日本语)，但需要编辑 UTF-8 文件: >
 		:let &termencoding = &encoding
@@ -7642,6 +7876,33 @@ mail 文件类型插件就是这么做的。
 		:hi Normal guibg=NONE
 <
 	注意: 'compatible' 置位时会复位本选项。
+
+						*'termresize'* *'trz'*
+'termresize' 'trz'	字符串	(缺省为 "")
+			全局
+			{仅适用于 Unix，不适用于 GUI}
+	设置用于检测窗口大小调整事件的方法，可选值:
+	    "sigwinch":	    使用 SIGWINCH 信号。
+	    "inband":	    通过转义序列从终端接收调整事件 (终端支持时推荐使用
+			    此方法)。
+	    "":		    根据终端类型自动选择。
+
+	SIGWINCH 处理程序始终可用。如果设置为 "inband" 但终端不支持带内窗口调
+	整事件，则自动降级使用 SIGWINCH。设置为空值 "" 时，Vim 会在检测到终端
+	支持时使用 "inband"，否则使用 "sigwinch"。
+
+						*'termsync'* *'tsy'*
+'termsync' 'tsy'	布尔型	(缺省关闭)
+			全局
+	如果宿主终端支持，将一次重绘周期内的所有屏幕更新缓冲合并，使整屏内容一
+	次性输出到终端显示。这可以避免终端刷新速度快于 Vim 重绘时出现的画面撕
+	裂或闪烁。如果宿主终端不支持该特性，或 Vim 以图形界面运行，则此选项无
+	效果。
+
+	该规范详见:
+	https://github.com/contour-terminal/vt-extensions/blob/master/synchronized-output.md
+
+	使用的终端控制码为 |t_BS| 和 |t_ES|。
 
 						*'termwinkey'* *'twk'*
 'termwinkey' 'twk'	字符串	(缺省 "")
@@ -7699,9 +7960,10 @@ mail 文件类型插件就是这么做的。
 	    "winpty"	强制使用 winpty，如果不支持则失败
 	    "conpty"	强制使用 |ConPTY|，如果不支持则失败
 
-	|ConPTY| 的支持取决于系统。Windows 10 October 2018 更新版是首个支持
-	ConPTY 的版本，但还不够稳定。后续版本可能更稳定。winpty 需要单独安装。
-	如果两者都不可用，则无法打开终端窗口。
+	|ConPTY| 的支持取决于系统版本。Windows 10 2018 年 10 月更新版是首个支
+	持 ConPTY 的版本，但还不够稳定。从 Windows 11 初始版本开始，ConPTY 才
+	趋于稳定。winpty 支持需要单独安装。如果两者都不可用，则无法打开终端窗
+	口。
 
 						*'terse'* *'noterse'*
 'terse'			布尔型	(缺省关闭)
@@ -8206,7 +8468,7 @@ mail 文件类型插件就是这么做的。
 	种会被保存和恢复的设置:
 	   单词		保存和恢复 ~
 	   cursor	文件和窗口的光标位置
-	   folds	手动建立的折叠、打开/关闭的折叠和局部折叠选项
+	   folds	手动创建的折叠、折叠手动展开或关闭状态和局部折叠选项
 	   options	窗口或缓冲区的局部选项和映射 (不包括局部选项的全局值)
 	   localoptions 同 "options"
 	   slash	文件名里的反斜杠会被替换为正斜杠
@@ -8235,6 +8497,12 @@ mail 文件类型插件就是这么做的。
 	!	包含时，保存和恢复大写字母开头且不含小写字母的全局变量。例如，
 		保存 "KEEPTHIS" 和 "K_L_M"，但不保存 "KeepThis" 和 "_K_L_M"。
 		嵌套的列表和字典值无法被正确读取，最终会变成空值。
+
+		恢复 |List|、|Dictionary|、|Tuple| 类型变量时，Vim 会通过表达
+		式解析器，读取并解析其文本形式来还原。因此，启用本标志位读取
+		viminfo 文件时，仅在文件可信的前提下才安全。尤其注意的是，对于
+		从其他用户处获取、通过下载获取，或其他账户可写入的 viminfo 文
+		件，在读取前切勿开启本标志位。另见 |viminfo-security|。
 							*viminfo-quote*
 	"	每个寄存器保存的最大行数。这是 '<' 参数的旧名，但缺点是需要在 "
 		字符前加上反斜杠，不然会被识别为注释的开始！
@@ -8396,7 +8664,7 @@ mail 文件类型插件就是这么做的。
 	例如: >
 		:set ww=<,>,[,]
 <	只允许光标键进行回绕。
-	光标移动键和删除和改变操作符一起使用时，<EOL> 也被看作一个字符。例如，
+	光标移动键和删除和修改操作符一起使用时，<EOL> 也被看作一个字符。例如，
 	当光标跨行时，"3h" 和 "3dh" 效果不同。这也适用于 "x" 和 "X"，因为它们
 	相当于 "dl" 和 "dh"。如果这么用，也可考虑定义映射 ":map <BS> X"，以便
 	退格键删除光标前的字符。
@@ -8520,7 +8788,11 @@ mail 文件类型插件就是这么做的。
 	"lastused"	补全缓冲区名时，按缓冲区最近使用时间排序 (当前缓冲区不
 			参与排序)。只适用于缓冲区名补全。
 	"noselect"	'wildmenu' 打开时，显示菜单但不预选首个匹配项。
-	如果只有一个匹配项，除非指定 "noselect"，会直接使用该匹配项完整补全。
+	"noinsert"	'wildmenu' 打开时，仅显示菜单并预选首个匹配项，但不将
+			其插入到命令行。如果同时给出 "noinsert" 和
+			"noselect"，"noselect" 优先。
+	如果只有一个匹配项，除非指定 "noselect" 或 "noinsert"，会直接使用该匹
+	配项完整补全。
 
 	一些有用的值组合，以冒号分隔:
 	"longest:full"		从最长的公共子串开始，并显示 'wildmenu' (如果
@@ -8599,9 +8871,19 @@ mail 文件类型插件就是这么做的。
 	选择菜单。
 
 						*'wincolor'* *'wcr'*
-'wincolor' 'wcr' 字符串 (缺省为空)
-			局部于窗口
-	在本窗口中，取代 Normal 颜色 |hl-Normal| 的高亮组名。
+'wincolor' 'wcr'	字符串	(缺省为空)
+			局部于窗口  |local-noglobal|
+	已弃用: 尽可能使用 'winhighlight'。本选项内部会通过如下方式设置
+	'winhighlight': >vim
+	    set winhighlight=!(:HighlightGroup
+<	如果已设置此选项，之后再修改 'winhighlight'，不会同步更新本选项的值。
+	例如: 将 'wincolor' 设为 "A"，之后把 'winhighlight' 置空，'wincolor'
+	仍会保持为 "A"。此外，设置本选项时，'winhighlight' 中已有的值会被丢
+	弃。
+
+	本选项用于指定本窗口使用的高亮组名称，以替代默认的 Normal 颜色
+	|hl-Normal|。如需设置其他高亮组 |highlight-groups|，请使用
+	'winhighlight'。注意: 不建议同时设置本选项与 'winhighlight'。
 
 						*'window'* *'wi'*
 'window' 'wi'		数值型  (缺省为屏幕高度 - 1)
@@ -8650,6 +8932,30 @@ mail 文件类型插件就是这么做的。
 <	本选项最小值为 1。
 	调整当前窗口高度的命令并不会改变本值。
 	'winheight' 应用于当前窗口。而 'winminheight' 设置其他窗口的最小高度。
+
+						*'winhighlight'* *'whl'*
+'winhighlight' 'whl'	字符串	(缺省为空)
+			局部于窗口  |local-noglobal|
+	局部于窗口的高亮组映射。这是以逗号分隔的 {原高亮组}:{目标高亮组} 对列
+	表，格式为: "{hl-from}:{hl-to},..."。每个 {hl-from} 是会被覆盖的
+	|highlight-groups| 高亮组，在本窗口中由 {hl-to} 组替代。如果 {hl-from}
+	是 "Normal"，则它始终映射到 'highlight' 中的 "(" (窗口颜色) 值。
+
+	如果高亮组名称以 "!" 开头，则表示映射到 'highlight' 中的场景值。例如，
+	以下设置会覆盖可视模式样式: >vim
+	    set winhighlight=!v:SomeHighlightGroup
+<	而以下设置会将场景 v 映射为场景 l: >vim
+	    set winhighlight=!v:!l
+<
+	垂直分隔线的高亮由分隔线左侧的窗口决定。标签页的 'tabline' 高亮由该标
+	签页最后获得焦点的窗口决定。弹出菜单的高亮由当前窗口决定。消息区域的高
+	亮无法被覆盖。
+
+	在处理高亮组链接时，如果某个高亮组 (也可能是一个链接) 被
+	'winhighlight' 覆盖，则所有链接到它的高亮组都会被一并影响。例如: 若高
+	亮组 C 链接到 B，B 链接到 A，则: >vim
+		set winhighlight=B:SomeHighlightGroup
+<	会让 SomeHighlightGroup 覆盖组 B 和 C，但不会覆盖 A。
 
 						*'winminheight'* *'wmh'*
 'winminheight' 'wmh'	数值型	(缺省为 1)
@@ -8706,8 +9012,9 @@ mail 文件类型插件就是这么做的。
 'wlsteal' 'wst'		布尔型  (缺省关闭)
 			全局
 			{仅当编译时加入 |+wayland_focus_steal| 特性才有效}
+	已废弃: 本选项现已不再使用，修改不会产生效果。
+
 	打开时，Vim 会通过创建临时表面 (surface) 来盗取焦点，以便访问剪贴板。
-	详见 |wayland-focus-steal|。
 
 						*'wltimeoutlen'* *'wtm'*
 'wltimeoutlen' 'wtm'	数值型	(缺省为 500)
@@ -8716,9 +9023,6 @@ mail 文件类型插件就是这么做的。
 	Vim 等待 Wayland 合成器的超时，以毫秒为单位。等待合成器期间，Vim 不响
 	应输入，也不更新屏幕。将该值调低可使 Vim 更快响应。但如果合成器比正常
 	情况需要更多时间来响应，可能导致报错。
-
-	此外，本选项也用于等待表面 (surface) 获取焦点的最大超时，见
-	|wayland-focus-steal|。
 
 						*'wrap'* *'nowrap'*
 'wrap'			布尔型	(缺省打开)

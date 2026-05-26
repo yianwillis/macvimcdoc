@@ -1,0 +1,1312 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8" />
+<!--[if lt IE 9]>
+  <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+<![endif]-->
+<title>VIM 中文帮助: 重复命令，Vim 脚本及调试</title>
+<link rel="stylesheet" href="vim-stylesheet.css" type="text/css" />
+<link rel="canonical" href="https://yianwillis.github.io/vimcdoc/doc/repeat.html" />
+<script type="text/javascript" src="vimcdoc.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+</head>
+<body>
+<nav id=banner>
+<form action=tags.html target="tag_iframe">
+  <input type="text" name="tag" id="tag" placeholder="标签搜索">
+</form>
+<iframe name="tag_iframe" src=""></iframe>
+<a href="help.html">帮助总览</a> &middot;
+<hr/>
+<a href="quickref.html">快速参考</a> &middot;
+<a href="index.html">命令索引</a> &middot;
+<a href="eval.html#functions">函数列表</a> &middot;
+<a href="quickref.html#option-list">选项列表</a> &middot;
+<hr/>
+<a href="usr_toc.html">用户手册</a> &middot;
+<a href="help.html#reference_toc">参考手册</a> &middot;
+</nav>
+
+<header>
+<h2>repeat</h2>
+</header>
+<article id=outer>
+<section class=inner>
+<b class="vimtag"> <a name="repeat.txt">repeat.txt</a> </b>    适用于 Vim 9.2 版本。  最近更新: 2025年11月
+
+
+                  <code class="vim">VIM 参考手册  by Bram Moolenaar</code>
+                                <code class="vim">译者</code>: Willis
+
+
+重复命令，Vim 脚本和调试                                <b class="vimtag"> <a name="repeating">repeating</a> </b>
+
+用户手册第 26 章  <a href="usr_26.html#usr_26.txt">usr_26.txt</a>  介绍了重复命令。
+
+1. 单次重复                      <a href="repeat.html#single-repeat">single-repeat</a> 
+2. 多次重复                      <a href="repeat.html#multi-repeat">multi-repeat</a> 
+3. 重复组合操作                  <a href="repeat.html#complex-repeat">complex-repeat</a> 
+4. 使用 Vim 脚本                 <a href="repeat.html#using-scripts">using-scripts</a> 
+5. 使用 Vim 软件包               <a href="repeat.html#packages">packages</a> 
+6. 创建 Vim 软件包               <a href="repeat.html#package-create">package-create</a> 
+7. 调试脚本                      <a href="repeat.html#debug-scripts">debug-scripts</a> 
+8. 刨视                          <a href="repeat.html#profiling">profiling</a> 
+
+</section><hr class="doubleline" /><section class=inner>
+<h4>1. 单次重复                                             <b class="vimtag"> <a name="single-repeat">single-repeat</a> </b></h4>
+                                                        <b class="vimtag"> <a name=".">.</a> </b>
+.                       重复上次改变，有计数前缀的重复 <code class="special">[count]</code> 次。
+                        如果 <a href="options.html#'cpoptions'">'cpoptions'</a> 包括 'y' 标志，也可以用来重复一个抽出
+                        (yank) 操作。不能重复命令行命令。
+
+简单的改变操作可以用 "." 重复。如果没有数字前缀，使用上次的改变的重复次数。如
+果输入一个重复次数，就用它取代上次的计数。设置 v:count 和 v:count1。
+
+如果上次改变的操作使用数字编号的寄存器，则逐次递增使用寄存器的序号。一个使用的
+示例可以参见  <a href="undo.html#redo-register">redo-register</a> 。
+
+<code class="note">注意</code>，如果重复的命令涉及可视的选择区域，使用相同 <code class="emphasis">大小</code> 的区域。参见
+ <a href="visual.html#visual-repeat">visual-repeat</a> 。
+
+                                                        <b class="vimtag"> <a name="@:">@:</a> </b>
+@:                      重复上次命令行 <code class="special">[count]</code> 次。
+                        <code class="notvi">{仅当编译时加入  <a href="various.html#+cmdline_hist">+cmdline_hist</a>  特性才可用}</code>
+
+
+</section><hr class="doubleline" /><section class=inner>
+<h4>2. 多次重复                                     <b class="vimtag"> <a name="multi-repeat">multi-repeat</a> </b></h4>
+                                                <b class="vimtag"> <a name=":g">:g</a> </b> <b class="vimtag"> <a name=":global">:global</a> </b> <b class="vimtag"> <a name="E148">E148</a> </b>
+:<code class="special">[range]</code>g[lobal]/<code class="special">{pattern}</code>/<code class="special">[cmd]</code>
+                        在 <code class="special">[range]</code> 界定的匹配模式 <code class="special">{pattern}</code> 的文本行上执行
+                        Ex 命令 <code class="special">[cmd]</code> (缺省是 ":p")。
+
+:<code class="special">[range]</code>g[lobal]!/<code class="special">{pattern}</code>/<code class="special">[cmd]</code>
+                        在 <code class="special">[range]</code> 界定的 <code class="emphasis">不</code> 匹配模式 <code class="special">{pattern}</code> 的文本行上执
+                        行 Ex 命令 <code class="special">[cmd]</code> (缺省是 ":p")。
+
+                                                        <b class="vimtag"> <a name=":v">:v</a> </b> <b class="vimtag"> <a name=":vglobal">:vglobal</a> </b>
+:<code class="special">[range]</code>v[global]/<code class="special">{pattern}</code>/<code class="special">[cmd]</code>
+                        同 :g!。
+
+示例:
+<code class="example">        :g/^Obsolete/d _</code>
+ <a href="change.html#:d">:d</a>  之后使用下划线可以避免破坏寄存器或剪贴板。速度也更快。
+
+除了用 '/' 来包围 <code class="special">{pattern}</code> 外，你可以用任何其它单字节字符，但不包括字母、
+'\'、'"'、'|' 或 '!'。这对你想在搜索模式或者替代字符串里包含 '/' 很有用。
+
+模式的定义见  <a href="pattern.html#pattern">pattern</a> 。
+
+<code class="note">注意</code> <code class="special">[cmd]</code> 可能包含范围；示例见 collapse 和 edit-paragraph-join。
+
+global 命令先扫描 <code class="special">[range]</code> 界定的行，然后对每个匹配的行进行标记 (对于一个跨行的
+匹配，则只针对开始的一行)。
+第二次扫描对每个标记的行，就像光标在那行那样，执行指定的 <code class="special">[cmd]</code> 命令。":v" 和
+":g!" 命令针对未标记的行进行。如果一行被删除，其标记也自动消失。
+缺省的 <code class="special">[range]</code> 是整个缓冲区 (1,$)。用 "<code class="keystroke">CTRL-C</code>" 中断该命令。如果某行的执行给
+出错误，该行的执行被中断，但 global 命令仍从下一个被标记或未被标记的行继续。
+                                                                <b class="vimtag"> <a name="E147">E147</a> </b>
+命令递归使用时，只能作用于一行。此时不能给出范围。可用于找到所有匹配某模式，但
+不匹配另一模式的行:
+<code class="example">        :g/found/v/notfound/{cmd}</code>
+这会先找到所有包含 "found" 的行，但只当不匹配 "notfound" 时才执行 <code class="special">{cmd}</code>。
+
+可使用任何 Ex 命令，见  <a href="index.html#ex-cmd-index">ex-cmd-index</a> 。要执行一个普通模式命令，你可以使用
+ <a href="various.html#:normal">:normal</a>  命令:
+        :g/pat/normal <code class="special">{commands}</code>
+要确保 <code class="special">{commands}</code> 以完整的命令结束，不然 Vim 会等待你输入该命令余下的部分，对
+每次匹配都将如此。由于屏幕此时还未更新，你恐怕会因此不知所措。参见  <a href="various.html#:normal">:normal</a> 。
+
+撤销/重做命令将会针对整个 global 命令。换而言之，前次上下文标记只有在命令开头
+会设一次 (用 "''" 可以回到 global 之前的光标位置)。
+
+global 命令也设置最近使用的搜索模式和最近使用的替换模式 (后者是 vi 兼容的)，以
+便于全局替换一个字符串:
+<code class="example">        :g/pat/s//PAT/g</code>
+该命令替换所有的 "pat" 为 "PAT"。同样的功能也可以用:
+<code class="example">        :%s/pat/PAT/g</code>
+实现。这样省下了两个字符！
+
+Ex 模式下执行 "global" 时，使用 ":visual" 命令是特例。该命令移动到匹配行，进入
+普通模式并在该模式下执行命令，直到你用  <a href="intro.html#Q">Q</a>  回到 Ex 模式为止。对每个匹配行重复
+此操作。此时不能再用 ":global"。要中止，按 <code class="keystroke">CTRL-C</code> 两次。
+
+</section><hr class="doubleline" /><section class=inner>
+<h4>3. 重复组合操作                                 <b class="vimtag"> <a name="complex-repeat">complex-repeat</a> </b></h4>
+                                                        <b class="vimtag"> <a name="q">q</a> </b> <b class="vimtag"> <a name="recording">recording</a> </b>
+q{0-9a-zA-Z"}           在寄存器 {0-9a-zA-Z"} 里记录键入的字符 (大写名字的寄存
+                        器表示附加键入的内容)。'q' 命令不能在执行寄存器时使
+                        用。同样，在映射和  <a href="various.html#:normal">:normal</a>  里也不能。
+
+                        <code class="note">注意</code>: 如果用作记录的寄存器用于 y 和 p，其结果多数不如
+                        你的预想，因为 p 会粘贴记录的宏，而 y 会覆盖记录的宏。
+
+                        <code class="note">注意</code>: 记录在你键入时发生，寄存器的重放就像按键来自映射
+                        一样。这种区别体现在某些地方，比如只有在命令输入时才会
+                        进行撤销的同步。
+
+q                       停止记录。(<code class="note">注意</code> 实现细节: 停止记录的 'q' 不会被保存在
+                        寄存器里，除非它是映射的结果)
+
+                                                        <b class="vimtag"> <a name="@">@</a> </b>
+@{0-9a-z".=*+}          执行寄存器 {0-9a-z".=*+} 的内容 <code class="special">[count]</code> 次。<code class="note">注意</code> 不能
+                        用寄存器 '%' (当前文件名) 和 '#' (轮换文件名)。
+                        寄存器的执行方式与映射类同，也就是说，<a href="options.html#'wildchar'">'wildchar'</a> 和
+                        <a href="options.html#'wildcharm'">'wildcharm'</a> 的差异适用此处，而撤销的同步可能有所不同。
+                        "@=" 则会提示你输入一个表达式。这个表达式的结果会被执
+                        行。
+                        参见  <a href="repeat.html#@:">@:</a> 。
+
+                                                        <b class="vimtag"> <a name="@@">@@</a> </b> <b class="vimtag"> <a name="E748">E748</a> </b>
+@@                      执行上次执行的 @{0-9a-z":*} <code class="special">[count]</code> 次。
+
+                                                        <b class="vimtag"> <a name=":@">:@</a> </b>
+:<code class="special">[addr]</code>@{0-9a-z".=*+}   把寄存器 {0-9a-z".=*+} 里的内容看成一个 Ex 命令执行。
+                        首先，把光标放在 <code class="special">[addr]</code> 行 (缺省是当前行) 上。如果
+                        <a href="options.html#'cpoptions'">'cpoptions'</a> 设定了 'e' 标志位而寄存器的内容最后一行没
+                        有 <code class="special">&lt;CR&gt;</code>，会自动加上。
+                        ":@=" 使用最近使用的表达式。表达式执行的结果被当作 Ex
+                        命令执行。
+                        这些命令里，不识别映射。
+                        面向行的寄存器中的一行行首如果出现  <a href="repeat.html#line-continuation">line-continuation</a> 
+                        字符 (\)，此行会和前行合并。这可用于抽取和执行 Vim 脚
+                        本片段。
+                        将来: 会对地址范围里每一行执行寄存器的命令。
+
+:<code class="special">[addr]</code>*{0-9a-z".=+}                                    <b class="vimtag"> <a name=":star-compatible">:star-compatible</a> </b>
+                        <a href="options.html#'cpoptions'">'cpoptions'</a> 设置 '*' 标志位  <a href="options.html#cpo-star">cpo-star</a>  时，":*" 命令和
+                        ":@" 相同。如果用 <a href="options.html#'nocompatible'">'nocompatible'</a>，这 <code class="emphasis">并</code> 非缺省。
+                        <a href="options.html#'cpoptions'">'cpoptions'</a> 没有 '*" 标志位时，":*" 相当于 ":'&lt;,'&gt;"，
+                        选择可视区域  <a href="cmdline.html#:star">:star</a> 。
+
+                                                        <b class="vimtag"> <a name=":@:">:@:</a> </b>
+:<code class="special">[addr]</code>@:               先把光标放在 <code class="special">[addr]</code> 行 (缺省是当前行) 上，然后重复上次
+                        的命令行。
+
+:<code class="special">[addr]</code>@                                                <b class="vimtag"> <a name=":@@">:@@</a> </b>
+:<code class="special">[addr]</code>@@               先把光标放在 <code class="special">[addr]</code> 行 (缺省是当前行) 上，然后重复上次
+                        的 :@<code class="special">{register}</code>。
+
+</section><hr class="doubleline" /><section class=inner>
+<h4>4. 使用 Vim 脚本                                        <b class="vimtag"> <a name="using-scripts">using-scripts</a> </b></h4>
+参阅用户手册第 41 章  <a href="usr_41.html#usr_41.txt">usr_41.txt</a>  了解如何写 Vim 脚本。
+
+                                        <b class="vimtag"> <a name=":so">:so</a> </b> <b class="vimtag"> <a name=":source">:source</a> </b> <b class="vimtag"> <a name="load-vim-script">load-vim-script</a> </b>
+:so[urce] <code class="special">{file}</code>        从 <code class="special">{file}</code> 里读取 Ex 命令，即 ":" 开头的命令，并执行。
+                        激活  <a href="autocmd.html#SourcePre">SourcePre</a>  自动命令。
+                                                        <b class="vimtag"> <a name=":source-range">:source-range</a> </b>
+:<code class="special">[range]</code>so[urce] [++clear]
+                        从当前缓冲区的行 <code class="special">[range]</code> 里读取 Ex 命令。省略 <code class="special">[range]</code>
+                        时读取所有行。
+
+                        从当前缓冲区执行命令时，使用相同的脚本 ID  <a href="map.html#%3CSID%3E">&lt;SID&gt;</a> ，即
+                        使多次执行缓冲区也是如此。如果执行缓冲区多于一次，缓冲
+                        区里的函数被再次定义。
+
+                        要在 Vim9 脚本上下文下执行不以  <a href="repeat.html#:vim9script">:vim9script</a>  命令开始
+                        的行范围，可用  <a href="vim9.html#:vim9cmd">:vim9cmd</a>  修饰符。如果使用可视选择然后
+                        按 ":"，形如 "'&lt;,'&gt;" 的范围会在冒号之前出现:
+<code class="example">                                :'&lt;,'&gt;vim9cmd source</code>
+                        否则范围应出现在修饰符之后，和所有 Vim9 范围一样，必须
+                        用冒号前缀:
+<code class="example">                                :vim9cmd :5,9source</code>
+<code class="example"></code>
+                        在 Vim9 脚本上下文下，执行缓冲区的一段行范围时，不清除
+                        之前定义的局部于脚本的变量和函数。这相当于用
+                        ":vim9script noclear" 命令来引导该范围。"++clear" 参数
+                        可用于执行脚本前清除局部于脚本的变量和函数。这相当于用
+                        不带 "noclear" 参数的  <a href="repeat.html#:vim9script">:vim9script</a>  命令来引导该范围。
+                        详见  <a href="vim9.html#vim9-reload">vim9-reload</a> 。
+                        例如:
+<code class="example">                                :4,5source</code>
+<code class="example">                                :10,18source ++clear</code>
+<code class="example"></code>
+                        实现细节: 执行的行 <code class="special">[range]</code> 如果在折叠区域内部，且仅当
+                        该范围使用了两行限定符时，范围被调整为折叠的开始和结束
+                        处。
+
+                                                        <b class="vimtag"> <a name=":source!">:source!</a> </b>
+:so[urce]! <code class="special">{file}</code>       从 <code class="special">{file}</code> 里读取 Vim 命令，就像你在普通模式下键入的命
+                        令一样。
+                        如果要执行的命令在  <a href="repeat.html#:global">:global</a> 、 <a href="editing.html#:argdo">:argdo</a> 、 <a href="windows.html#:windo">:windo</a>  或
+                         <a href="windows.html#:bufdo">:bufdo</a>  之后、在循环体内、或者有另外一个命令紧跟其
+                        后，那么执行时不会更新屏幕显示。
+                        不能用于  <a href="eval.html#sandbox">sandbox</a> 。
+
+                                                        <b class="vimtag"> <a name=":ru">:ru</a> </b> <b class="vimtag"> <a name=":runtime">:runtime</a> </b>
+:ru[ntime][!] <code class="special">[where]</code> <code class="special">{file}</code> ..
+                        从 <a href="options.html#'runtimepath'">'runtimepath'</a> 和/或 <a href="options.html#'packpath'">'packpath'</a> 指定的目录里查找
+                        <code class="special">{file}</code>。从匹配的文件里读取 Ex 命令。如果没有匹配的文
+                        件，不报错。
+
+                        例如:
+<code class="example">                                :runtime syntax/c.vim</code>
+<code class="example"></code>
+                        可以指定多个以空格分隔的 <code class="special">{file}</code> 参数。每个 <code class="special">{file}</code> 都从
+                        <a href="options.html#'runtimepath'">'runtimepath'</a> 指定的第一个目录开始查找，然后是第二个、
+                        第三个，等等。<code class="special">{file}</code> 里可以通过加反斜杠来包含空格 (不
+                        过，为了避免麻烦，最好不要在文件名里使用空格)。
+
+                        如果使用了 [!]，所有找到的文件都被执行。否则，只执行第
+                        一个找到的文件。
+
+                        如果 <code class="special">[where]</code> 省略，只使用 <a href="options.html#'runtimepath'">'runtimepath'</a>。其它可用值是:
+                                START   搜索 <a href="options.html#'packpath'">'packpath'</a> 里的 "start"
+                                OPT     搜索 <a href="options.html#'packpath'">'packpath'</a> 里的 "opt"
+                                PACK    搜索 <a href="options.html#'packpath'">'packpath'</a> 里的 "start" 和 "opt"
+                                ALL     先用 <a href="options.html#'runtimepath'">'runtimepath'</a>，然后搜索
+                                        <a href="options.html#'packpath'">'packpath'</a> 里的 "start" 和 "opt"
+
+                        如果 <code class="special">{file}</code> 包含通配符，它被扩展为所有的匹配文件名。例
+                        如:
+<code class="example">                                :runtime! plugin/**/*.vim</code>
+                        这是 Vim 启动的时候启动插件所使用的命令。类似的:
+<code class="example">                                :runtime plugin/**/*.vim</code>
+                        只会执行其中的第一个文件。
+
+                        当 <a href="options.html#'verbose'">'verbose'</a> 至少为一时，如果没有文件找到，会显示信
+                        息。
+                        当 <a href="options.html#'verbose'">'verbose'</a> 至少为二时，对每个搜索到的文件都会提示信
+                        息。
+
+                                                        <b class="vimtag"> <a name=":pa">:pa</a> </b> <b class="vimtag"> <a name=":packadd">:packadd</a> </b> <b class="vimtag"> <a name="E919">E919</a> </b>
+:pa[ckadd][!] <code class="special">{name}</code>    在 <a href="options.html#'packpath'">'packpath'</a> 里搜索可选的插件目录，然后执行找到的插件
+                        文件。目录必须匹配:
+<code class="section">                                pack/*/opt/<code class="special">{name}</code> </code>
+                        如果目录还不在 <a href="options.html#'runtimepath'">'runtimepath'</a>，加入之。
+                        如果目录 pack/*/opt/<code class="special">{name}</code>/after 存在，在
+                        <a href="options.html#'runtimepath'">'runtimepath'</a> 的尾部加入之。
+
+                        如果之前跳过 "pack/*/start" 的软件包载入，则先搜索此目
+                        录:
+<code class="section">                                pack/*/start/<code class="special">{name}</code> </code>
+
+                        <code class="note">注意</code> <code class="special">{name}</code> 是目录名，而不是 .vim 文件名。所有匹配模式
+                        的
+<code class="section">                                pack/*/opt/<code class="special">{name}</code>/plugin/**/*.vim </code>
+                        文件都被执行。这样可以允许 "plugin" 下使用子目录，就像
+                        <a href="options.html#'runtimepath'">'runtimepath'</a> 里的插件一样。
+
+                        如果还未打开文件类型检测 (这通常是在 .vimrc 里的
+                        "syntax enable" 或 "filetype on" 命令完成的)，也会寻找
+                        "<code class="special">{name}</code>/ftdetect/*.vim" 这样的文件。
+
+                        如果加入可选的 !，不载入插件文件或 ftdetect 脚本，只把
+                        匹配的目录加入 <a href="options.html#'runtimepath'">'runtimepath'</a>。这可用于 .vimrc。插件会
+                        随后在初始化时才载入，见  <a href="starting.html#load-plugins">load-plugins</a>  (<code class="note">注意</code> 载入顺序
+                        会倒转，因为每个目录会在其他目录前插入)。
+                        <code class="note">注意</code> 要载入 ftdetect 脚本，需要在所有的  <code class="badlink">packadd!</code>  命
+                        令 <code class="emphasis">之后</code> 才能写 `filetype plugin indent on`。
+
+                        要在启动时通过编程决定是否需要使用 !，可检查
+                         <a href="eval.html#v:vim_did_init">v:vim_did_init</a> : 为 0 时使用  <a href="change.html#!">!</a>  (以避免重复执行
+                         <a href="starting.html#load-plugins">load-plugins</a>  步骤)，否则不使用  <a href="change.html#!">!</a>  (强制加载插件文件，
+                        否则它们不会被自动加载)。
+
+                        另见  <a href="repeat.html#pack-add">pack-add</a> 。
+                        <code class="notvi">{仅当编译时加入  <a href="various.html#+eval">+eval</a>  特性才有功能}</code>
+
+                                                <b class="vimtag"> <a name=":packl">:packl</a> </b> <b class="vimtag"> <a name=":packloadall">:packloadall</a> </b>
+:packl[oadall][!]       载入 <a href="options.html#'packpath'">'packpath'</a> 每个项目的 "start" 目录的所有软件包。
+
+                        首先把所有找到的目录加入 <a href="options.html#'runtimepath'">'runtimepath'</a>，然后执行所有目
+                        录里找到的插件。这允许一个插件依赖于另一个插件的某个部
+                        分，例如 "autoload" 目录。 <a href="repeat.html#packload-two-steps">packload-two-steps</a>  说明此
+                        顺序所起的作用。
+
+                        通常在启动时在载入 .vimrc 文件后自动完成此步骤。直接用
+                        本命令，可以在更早时执行这一步。
+
+                        软件包只载入一次。再次使用  <a href="repeat.html#:packloadall">:packloadall</a>  没有效果。但
+                        如果加入可选的 !，此命令会再次载入已经载入过的软件包。
+
+                        <code class="note">注意</code> 在  <a href="starting.html#vimrc">vimrc</a>  文件中使用  <a href="repeat.html#:packloadall">:packloadall</a>  时，刷新
+                        <a href="options.html#'runtimepath'">'runtimepath'</a> 选项，之后会载入 <a href="options.html#'runtimepath'">'runtimepath'</a> 中所有的
+                        插件，这意味着它们会被再次载入。插件应能对此正确处理。
+
+                        执行脚本发生错误时终止错误发生的脚本，继续载入后续的插
+                        件。见  <a href="repeat.html#packages">packages</a> 。
+                        <code class="notvi">{仅当编译时加入  <a href="various.html#+eval">+eval</a>  特性才有功能}</code>
+
+:scripte[ncoding] <code class="special">[encoding]</code>            <b class="vimtag"> <a name=":scripte">:scripte</a> </b> <b class="vimtag"> <a name=":scriptencoding">:scriptencoding</a> </b> <b class="vimtag"> <a name="E167">E167</a> </b>
+                        指定脚本使用的字符编码。后续以 <code class="special">[encoding]</code> 编码的脚本行
+                        会被转换成 <a href="options.html#'encoding'">'encoding'</a> 选项所指定的编码，如果两者不同的
+                        话。如:
+<code class="example">                                scriptencoding iso-8859-5</code>
+<code class="example">                                scriptencoding cp932</code>
+
+                        如果 <code class="special">[encoding]</code> 为空，则不作任何转换。这可以用来避免对
+                        一些行进行转换:
+<code class="example">                                scriptencoding euc-jp</code>
+<code class="example">                                ... 被转换的行 ...</code>
+<code class="example">                                scriptencoding</code>
+<code class="example">                                ... 不被转换的行 ...</code>
+<code class="example"></code>
+                        如果系统不支持所需的转换，不会有错误信息，但转换也不会
+                        发生。如果不能转换某一行，不报错，保留原来的行。
+
+                        不要用 "ucs-2" 或者 "ucs-4"。Vim 不能用这些编码的脚本
+                        (因为其中会有 NUL 字节)。如果一个待执行的脚本以一个
+                        BOM (Byte Order Mark 字节顺序标记) 开头，Vim 会识别其
+                        为 utf-8 编码，从而无须指定 ":scriptencoding utf-8"。
+
+                        如果在  <a href="starting.html#.vimrc">.vimrc</a>  里设置 <a href="options.html#'encoding'">'encoding'</a> 选项，
+                         <a href="repeat.html#:scriptencoding">:scriptencoding</a>  必须在放在它后面。例如:
+<code class="example">                                set encoding=utf-8</code>
+<code class="example">                                scriptencoding utf-8</code>
+
+
+:scriptv[ersion] <code class="special">{version}</code>              <b class="vimtag"> <a name=":scriptv">:scriptv</a> </b> <b class="vimtag"> <a name=":scriptversion">:scriptversion</a> </b>
+                                                        <b class="vimtag"> <a name="E999">E999</a> </b> <b class="vimtag"> <a name="E984">E984</a> </b> <b class="vimtag"> <a name="E1040">E1040</a> </b>
+                        指定同一文件中其后的行所使用的 Vim 版本。只适用于被执
+                        行脚本的顶层，不适用于函数体内。
+
+                        如果 <code class="special">{version}</code> 高于当前 Vim 版本所能支持的，给出 E999
+                        错误。你可能要重写脚本以支持旧版本的 Vim 或更新 Vim 版
+                        本。版本间的变化见  <a href="eval.html#vimscript-version">vimscript-version</a> 。
+
+:vim9s[cript] <code class="special">[noclear]</code>                         <b class="vimtag"> <a name=":vim9s">:vim9s</a> </b> <b class="vimtag"> <a name=":vim9script">:vim9script</a> </b>
+                        标记本脚本文件包含  <a href="vim9.html#Vim9-script">Vim9-script</a>  命令。另见
+                         <a href="vim9.html#vim9-namespace">vim9-namespace</a> 。 <b class="vimtag"> <a name="E1038">E1038</a> </b>
+                        必须为文件的首个命令。 <b class="vimtag"> <a name="E1039">E1039</a> </b>
+                        关于 <code class="special">[noclear]</code> 见  <a href="vim9.html#vim9-reload">vim9-reload</a> 。
+                        不带  <a href="various.html#+eval">+eval</a>  特性时，这会改变一些命令的语法。
+                         <a href="vim9.html#:vim9cmd">:vim9cmd</a>  可用于执行使用 Vim9 语法和语义的单个命令。
+
+                                                <b class="vimtag"> <a name=":scr">:scr</a> </b> <b class="vimtag"> <a name=":scriptnames">:scriptnames</a> </b>
+:scr[iptnames]          列出所有执行过的脚本名字，以它们初次遇到之顺序排列。排
+                        列的次序号码被用作相应的脚本 ID  <a href="map.html#%3CSID%3E">&lt;SID&gt;</a> 。
+                        被 `import autoload` 但还未执行的脚本会在脚本 ID 后显
+                        示 "A"。
+                        引用时使用一个名字，但在解析符号链接后以另一个名字执行
+                        的新脚本名出现在 "-&gt;" 之后。例如，"20-&gt;22" 意味着脚本
+                        20 的执行时识别为脚本 22。
+                        另见  <a href="builtin.html#getscriptinfo()">getscriptinfo()</a> 。
+                        <code class="notvi">{仅当编译时加入  <a href="various.html#+eval">+eval</a>  特性才有此功能}</code>
+
+:scr[iptnames][!] <code class="special">{scriptId}</code>                    <b class="vimtag"> <a name=":script">:script</a> </b>
+                        编辑脚本 <code class="special">{scriptId}</code>。尽管 ":scriptnames name" 也可以，
+                        建议使用 ":script name"。
+                        如果当前缓冲区不能被  <a href="editing.html#abandon">abandon</a>  且 ! 不给出，本命令失
+                        败。
+
+                                                <b class="vimtag"> <a name=":fini">:fini</a> </b> <b class="vimtag"> <a name=":finish">:finish</a> </b> <b class="vimtag"> <a name="E168">E168</a> </b>
+:fini[sh]               停止执行脚本。只能用在 Vim 脚本中，来快速跳过脚本的其
+                        余内容。如果出现在  <a href="eval.html#:try">:try</a>  之后但在相应的  <a href="eval.html#:finally">:finally</a> 
+                        (如果存在的话) 之前，":finally" 到  <a href="eval.html#:endtry">:endtry</a>  的内容还
+                        会执行。执行完所有嵌套的 ":try" 层的 ":finally" 代码
+                        后，最外层的 ":endtry" 才会最终真正停止脚本的执行。
+
+所有的命令和命令序列可以通过把它们放在命名的寄存器里执行来重复调用。有两个方法
+可以把命令放在寄存器里:
+- 用记录命令 "q"。可以键入一串命令，在执行的同时它们被存入一个寄存器里。这很简
+  明，因为你能看见你所做的事情。如果你敲错了，用 "p" 把寄存器的内容 "放置" 在
+  一个文件里，然后编辑这个命令序列，把它们再次放回到 (比如，用删除命令) 寄存器
+  里。你也可以用大写名字的寄存器名来附加命令，从而继续上次的纪录。
+- 删除 (delete) 或者抽出 (yank) 命令序列到寄存器。
+
+常用的命令序列可以用 ":map" 命令映射到一个功能键上。
+
+另外一个办法则是把命令写到一个文件里，用 ":source!" 命令执行之。这对很长的命令
+序列有用。你甚至可以把它和 ':map' 命令混合使用，从而用一个功能键来储存复杂的功
+能。
+
+':source' 命令从文件或缓冲区里逐行读取 Ex 命令。如果其间需要键盘输入，你需要自
+己键入。'source!' 命令从脚本里逐字读取命令，就像你自己敲入每一个字符一样。
+
+示例: 如果你给出一个 ':!ls' 命令，你得到一个  <a href="message.html#hit-enter">hit-enter</a>  提示。如果你用
+':source' 执行包含 '!ls' 一行的文件，你必须按一个回车。不过如果你用 ':source!'
+来执行包含 ':!ls' 的文件，其后的字符会依次读入，直到遇到一个 <code class="special">&lt;CR&gt;</code> 为止。你不需
+要通过键盘键入这个 <code class="special">&lt;CR&gt;</code>，除非 ":!ls" 是文件的最后一行。
+
+在脚本里当然也可以有 ':source[!]' 命令，从而可以建立一个自顶而下的脚本调用树。
+':source' 命令允许的嵌套深度由同时打开的最大的文件数目决定 (大概 15 个左右)，
+':source!' 命令许可的嵌套深度则最多为 15 层。
+
+在被执行的文件里，你可以在需要文件名的地方用 "<code class="special">&lt;sfile&gt;</code>" 字符串 (直接的文本，不
+是一个特殊的键)。它会被被执行的文件的名字来代替。例如，如果你在 ".vimrc" 文件
+相同的目录里有一个 "other.vimrc" 文件，你可以在 ".vimrc" 里如此调用它:
+<code class="example">        :source &lt;sfile&gt;:h/other.vimrc</code>
+<code class="example"></code>
+在脚本文件里，依赖于终端的键码由不依赖于终端的两个字符码代表。这样，他们就能在
+不同的终端里代表相同的意义。这里，第一个字符码是 0x80 或者 128，屏幕上显示
+为 "~@"。第二个字符可以在  <a href="intro.html#key-notation">key-notation</a>  列表里找到。这些编码也可以用 <code class="keystroke">CTRL-V</code>
+加上一个三位数字的十进制码来键入。这个方法 <code class="emphasis">不</code> 适用于 <code class="special">&lt;t_xx&gt;</code> termcap 代码，它们
+只能用在映射里。
+
+                                                        <b class="vimtag"> <a name=":source_crnl">:source_crnl</a> </b> <b class="vimtag"> <a name="W15">W15</a> </b>
+Win32: 用 ":source" 执行的文件通常每行以 <code class="special">&lt;CR&gt;</code><code class="special">&lt;NL&gt;</code> 结尾。这没有问题。在
+<a href="options.html#'fileformats'">'fileformats'</a> 非空并且第一行不以 <code class="special">&lt;CR&gt;</code> 结尾的时候，用 <code class="special">&lt;NL&gt;</code> 的行结尾 (比如，Unix
+编写的文件) 会被识别。不过，如果第一行里有 ":map <code class="special">&lt;F1&gt;</code> :help^M" 这样的内容 (其
+中 ^M 是一个 <code class="special">&lt;CR&gt;</code>)，这个机制会失败。如果第一行以 <code class="special">&lt;CR&gt;</code> 结尾，但其后的行不是，那
+你会得到错误信息，因为第一行里的 <code class="special">&lt;CR&gt;</code> 会丢失。
+
+Mac Classic: 用 ":source" 执行的文件通常每行以 <code class="special">&lt;CR&gt;</code> 结尾。这没有问题。在
+<a href="options.html#'fileformats'">'fileformats'</a> 非空并且第一行不以 <code class="special">&lt;CR&gt;</code> 结尾的时候，用 <code class="special">&lt;NL&gt;</code> 的行结尾 (比如，Unix
+编写的文件) 会被识别。如果用 <code class="special">&lt;NL&gt;</code> 行结尾的时候，要小心第一行不要有 <code class="special">&lt;CR&gt;</code>。
+
+在别的系统上，Vim 期待 ":source" 执行的文件以 <code class="special">&lt;NL&gt;</code> 行结尾。这没有问题。如果你
+的文件用 <code class="special">&lt;CR&gt;</code><code class="special">&lt;NL&gt;</code> 结束行 (比如，MS-Windows 编写的文件)，所有的行都会有一个附尾
+的 <code class="special">&lt;CR&gt;</code>。有些命令 (比如映射命令) 会因此有问题。这里不使用自动换行符识别机制，
+因为第一行出现以 <code class="special">&lt;CR&gt;</code> 结尾的映射命令很常见，自动机制这时容易出错。
+
+                                                        <b class="vimtag"> <a name="line-continuation">line-continuation</a> </b>
+":source" 执行的 Ex 命令脚本里的长行可以用通过在下一行的开始插入续行符 "\" (反
+斜杠) 来分开。反斜杠之前可以出现空格，它们将被忽略。
+
+示例: 如下几行
+<code class="example">        :set comments=sr:/*,mb:*,el:*/,</code>
+<code class="example">                     \://,</code>
+<code class="example">                     \b:#,</code>
+<code class="example">                     \:%,</code>
+<code class="example">                     \n:&gt;,</code>
+<code class="example">                     \fb:-</code>
+会被解读为一行:
+<code class="example">        :set comments=sr:/*,mb:*,el:*/,://,b:#,:%,n:&gt;,fb:-</code>
+<code class="example"></code>
+每行反斜杠之前的所有引导空白字符会被忽略。<code class="note">注意</code>: 在此之前的一行的行尾的空格可能
+不能随便添加；这由命令分开的位置决定，那里也许可以也许不可以有额外的空格。
+
+需要空格时最好放在反斜杠之后。行尾的空格很难<code class="note">注意</code>到，很可能会被意外删除掉。
+<code class="example">        :syn match Comment</code>
+<code class="example">                \ "very long regexp"</code>
+<code class="example">                \ keepend</code>
+<code class="example"></code>
+ <a href="vim9.html#Vim9">Vim9</a>  脚本常可省略反斜杠，但不总是可以。见  <a href="vim9.html#vim9-line-continuation">vim9-line-continuation</a> 。
+
+在用 ":append" 和 ":insert" 命令时，有一个问题:
+<code class="example">   :1append</code>
+<code class="example">   \asdf</code>
+<code class="example">   .</code>
+反斜杠被看作续行符，所以这等价于以下命令:
+<code class="example">   :1appendasdf</code>
+<code class="example">   .</code>
+要避免这一点，在 <a href="options.html#'cpoptions'">'cpoptions'</a> 选项里加上 'C' 标志位:
+<code class="example">   :set cpo+=C</code>
+<code class="example">   :1append</code>
+<code class="example">   \asdf</code>
+<code class="example">   .</code>
+<code class="example">   :set cpo-=C</code>
+<code class="example"></code>
+要 <code class="note">注意</code> 在函数里的命令里用到这些命令时，你需要在定义函数的时候加上 'C' 标志
+位，而不是执行函数时。
+<code class="example">   :set cpo+=C</code>
+<code class="example">   :function Foo()</code>
+<code class="example">   :1append</code>
+<code class="example">   \asdf</code>
+<code class="example">   .</code>
+<code class="example">   :endfunction</code>
+<code class="example">   :set cpo-=C</code>
+
+                                        <b class="vimtag"> <a name="line-continuation-comment">line-continuation-comment</a> </b>
+要在行与行间加入注释，以 '"\ ' 开头。留心反斜杠之后的空格。例如:
+<code class="example">        let array = [</code>
+<code class="example">                "\ first entry comment</code>
+<code class="example">                \ 'first',</code>
+<code class="example">                "\ second entry comment</code>
+<code class="example">                \ 'second',</code>
+<code class="example">                \ ]</code>
+<code class="example"></code>
+原理:
+        许多程序用行尾的反斜杠来指示行要继续。如果这样，Vim 会和 Vi 不兼容。例
+        如下面的 Vi 映射:
+<code class="example">                :map xx  asdf\</code>
+        因此，只能用特殊形式的出现在行首的反斜杠。
+
+        以注释开始某续行会使得所有其它的续行都成为注释的一部分。这样的行为已经
+        很长时间了，虽然可能在续行序列半中间加入注释，但过去不能使用 \"，因为
+        这不是合法的续行。'"\ ' 是最接近的，虽然看来有点古怪。在反斜杠后需要空
+        格，是因为这样就很难和正常的注释行混淆。
+
+</section><hr class="doubleline" /><section class=inner>
+<h4>5. 使用 Vim 软件包                                      <b class="vimtag"> <a name="packages">packages</a> </b></h4>
+Vim 软件包是包含一个或多个插件的目录。和普通插件相比，它的优点是:
+- 软件包可作为归档下载，并可解压到单独的目录。这样文件就不会和其它插件的文件混
+  杂。这样方便更新和删除。
+- 软件包可以用 git、mercurial 等版本库。这样更新尤其方便。
+- 软件包可包含相互依赖的多个插件。
+- 软件包可包含启动时自动载入的插件和通过 :packadd 加入仅当需要时才载入的插件。
+
+<code class="section">使用软件包并自动载入 </code>
+
+让我们假定，你的 Vim 文件在 "~/.vim" 目录里，而你想加入来自 zip 归档
+"/tmp/foopack.zip" 的软件包:
+<code class="example">        % mkdir -p ~/.vim/pack/foo</code>
+<code class="example">        % cd ~/.vim/pack/foo</code>
+<code class="example">        % unzip /tmp/foopack.zip</code>
+<code class="example"></code>
+目录名 "foo" 是任意的，可以选任何名字。
+
+现在在 ~/.vim 里就有这些文件:
+        pack/foo/README.txt
+        pack/foo/start/foobar/plugin/foo.vim
+        pack/foo/start/foobar/syntax/some.vim
+        pack/foo/opt/foodebug/plugin/debugger.vim
+
+Vim 启动时，处理完 .vimrc 后，扫描 <a href="options.html#'packpath'">'packpath'</a> 里的所有目录，在其中寻找
+"pack/*/start" 目录里的插件。首先把这些目录加入 <a href="options.html#'runtimepath'">'runtimepath'</a>，然后载入所有
+插件。 <a href="repeat.html#packload-two-steps">packload-two-steps</a>  说明此顺序所起的作用。
+
+为了在解析 .vimrc 时能够调用包里的功能， <a href="syntax.html#:colorscheme">:colorscheme</a>  和  <a href="userfunc.html#autoload">autoload</a>  会在
+<a href="options.html#'runtimepath'">'runtimepath'</a> 以外，也在 <a href="options.html#'packpath'">'packpath'</a> 下自动搜索。详见每项的对应文档。
+
+此例中，Vim 会找到 "pack/foo/start/foobar/plugin/foo.vim" 并把
+"~/.vim/pack/foo/start/foobar" 加入 <a href="options.html#'runtimepath'">'runtimepath'</a>。
+
+如果 "foobar" 插件把 <a href="options.html#'filetype'">'filetype'</a> 设为 "some"，Vim 会找到 syntax/some.vim
+文件，因为此目录在 <a href="options.html#'runtimepath'">'runtimepath'</a> 里。
+
+如果有的话，Vim 也会载入 ftdetect 文件。
+
+<code class="note">注意</code> 不自动载入 "pack/foo/opt" 里的文件，只载入 "pack/foo/start" 里的。下面的
+ <a href="repeat.html#pack-add">pack-add</a>  说明 "opt" 目录的用法。
+
+如果关闭了插件的载入，不会自动载入软件包，见  <a href="starting.html#load-plugins">load-plugins</a> 。
+
+要再早些载入软件包，以便更新 <a href="options.html#'runtimepath'">'runtimepath'</a>:
+<code class="example">        :packloadall</code>
+这里即使关闭了插件载入也可以。自动载入只会发生一次。
+
+如果软件包有 "after" 目录，此目录加入 <a href="options.html#'runtimepath'">'runtimepath'</a> 的尾部，这样那里的内容会较
+后载入。
+
+
+<code class="section">使用单个插件并自动载入 </code>
+
+如果没有软件包但有单个插件，需要建立额外的目录结构:
+<code class="example">        % mkdir -p ~/.vim/pack/foo/start/foobar</code>
+<code class="example">        % cd ~/.vim/pack/foo/start/foobar</code>
+<code class="example">        % unzip /tmp/someplugin.zip</code>
+<code class="example"></code>
+现在有这些文件:
+        pack/foo/start/foobar/plugin/foo.vim
+        pack/foo/start/foobar/syntax/some.vim
+
+此后，工作方式就和上面一样。
+
+
+<code class="section">可选插件 </code>
+                                                        <b class="vimtag"> <a name="pack-add">pack-add</a> </b>
+要从软件包里载入可选插件，用  <a href="repeat.html#:packadd">:packadd</a>  命令:
+<code class="example">        :packadd foodebug</code>
+从 <a href="options.html#'packpath'">'packpath'</a> 里搜索 "pack/*/opt/foodebug"，找到
+~/.vim/pack/foo/opt/foodebug/plugin/debugger.vim 并执行之。
+
+可以只在满足某些条件时才这样做。例如，取决于 Vim 是否支持某特性或缺少某依赖关
+系。
+
+也可以在启动时载入可选插件，在  <a href="starting.html#.vimrc">.vimrc</a>  里放上:
+<code class="example">        :packadd! foodebug</code>
+额外的 "!" 确保 Vim 以  <a href="starting.html#--noplugin">--noplugin</a>  启动时不载入插件。
+
+软件包只包含 "opt" 目录的文件是完全正常的。每个插件只有在需要用的时候才载入。
+
+
+<code class="section">什么放在哪里 </code>
+
+因为通过  <a href="syntax.html#:colorscheme">:colorscheme</a>  载入的色彩方案可在 "pack/*/start" 和 "pack/*/opt" 下找
+到，你可以把它们放在任何地方。我们建议你放在 "pack/*/opt" 底下，例如
+".vim/pack/mycolors/opt/dark/colors/very_dark.vim"。
+
+文件类型插件应该在 "pack/*/start" 下，这样总能找到它们。除非某个文件类型有多于
+一个插件，而你想用  <a href="repeat.html#:packadd">:packadd</a>  选择载入哪个。例如，取决于编译器版本:
+<code class="example">        if foo_compiler_version &gt; 34</code>
+<code class="example">          packadd foo_new</code>
+<code class="example">        else</code>
+<code class="example">          packadd foo_old</code>
+<code class="example">        endif</code>
+<code class="example"></code>
+软件包内最没用的是 "after" 目录。但不禁止。
+
+</section><hr class="doubleline" /><section class=inner>
+<h4>6. 建立 Vim 软件包                                      <b class="vimtag"> <a name="package-create">package-create</a> </b></h4>
+这里假定你在编写一个或多个插件，并想以软件包形式分发。
+
+两个无关的插件要用两个软件包，这样 Vim 用户可以选择要装什么。也可以决定用带可
+选插件的软件包，然后告知用户用  <a href="repeat.html#:packadd">:packadd</a>  加入他们想要的。
+
+你要决定你如何分发软件包。可以建立一个归档或使用版本库。归档可以被更多的用户使
+用，但更新版本要困难一些。版本库可以方便的保持更新，但需要 "git" 之类的程序。
+也可以两者都用，github 可以自动为发布版建立归档。
+
+目录布局应该是这样:
+   start/foobar/plugin/foo.vim          " 总是载入，定义命令
+   start/foobar/plugin/bar.vim          " 总是载入，定义命令
+   start/foobar/autoload/foo.vim        " 使用 foo 命令时载入
+   start/foobar/doc/foo.txt             " foo.vim 的帮助
+   start/foobar/doc/tags                " 帮助标签
+   start/foobar/lang/<code class="special">&lt;lang_id&gt;</code>/LC_MESSAGES/foobar.mo
+                                        " 插件消息的 <code class="special">&lt;lang_id&gt;</code> 语言版本。文件
+                                        " 可选。
+   opt/fooextra/plugin/extra.vim        " 可选插件，定义命令
+   opt/fooextra/autoload/extra.vim      " 使用 extra 命令时载入
+   opt/fooextra/doc/extra.txt           " extra.vim 的帮助
+   opt/fooextra/doc/tags                " 帮助标签
+
+这样用户就可以:
+<code class="example">        mkdir ~/.vim/pack</code>
+<code class="example">        cd ~/.vim/pack</code>
+<code class="example">        git clone https://github.com/you/foobar.git myfoobar</code>
+
+这里 "myfoobar" 是用户可选的名字，唯一的条件是和其它软件包的名字不同。
+
+在你的文档里，你要解释插件的用途，并告知用户如何载入可选插件:
+<code class="example">        :packadd! fooextra</code>
+
+可以在你提供的插件之一加入此 packadd 命令，在需要可选插件时执行。
+
+                                        <b class="vimtag"> <a name="package-doc">package-doc</a> </b> <b class="vimtag"> <a name="package-documentation">package-documentation</a> </b>
+运行  <a href="helphelp.html#:helptags">:helptags</a>  命令生成文档/标签文件。把此生成文件包含在软件包内，用户就可以
+把软件包放在自己的 pack 目录里，立即可以使用 help 命令。不要忘记改变插件帮助后
+重新运行此命令:
+<code class="example">        :helptags path/start/foobar/doc</code>
+<code class="example">        :helptags path/opt/fooextra/doc</code>
+
+                                                        <b class="vimtag"> <a name="package-translation">package-translation</a> </b>
+要使得插件显示经过翻译的消息，需要几个步骤。
+插件作者如果要翻译消息，必须用  <a href="builtin.html#bindtextdomain()">bindtextdomain()</a>  函数定义包名和翻译所在的目录
+位置:
+<code class="example">        :call bindtextdomain("foobar",</code>
+<code class="example">        \ fnamemodify(expand("&lt;script&gt;"), ':p:h') .. '/../lang/')</code>
+
+这里:
+  "foobar"      是  <a href="builtin.html#gettext()">gettext()</a>  函数使用的唯一包标识符，用于以后查找此插件的翻
+                译字符串。
+  "lang/"       翻译文件所在的目录结构的相对或绝对路径。
+
+消息翻译文件所在的目录结构是 (从包的顶层目录开始):
+"lang/<code class="special">&lt;lang_id&gt;</code>/LC_MESSAGES"。<code class="special">&lt;lang_id&gt;</code> 的格式见  <a href="mlang.html#multi-lang">multi-lang</a> 。
+此函数需要在插件初始化调用一次且仅仅一次。
+一旦完成， <a href="builtin.html#gettext()">gettext()</a>  函数就可用来提取经过翻译的消息:
+<code class="example">        :echo gettext("Hello", "foobar")</code>
+
+这里:
+  "Hello"       待翻译的消息 "Hello"，使用用户的语言  <a href="mlang.html#:lang">:lang</a> 
+  "foobar"      包标识符，由早先的  <a href="builtin.html#bindtextdomain()">bindtextdomain()</a>  函数定义。
+
+然后你需要创建用于翻译的模板文件 - POT-文件。为此，执行以下命令 (在 Vim 库下运
+行):
+<code class="example">        cd ~/forkvim/src/po</code>
+<code class="example">        make -f Makefile "PLUGPACKAGE={package}" \</code>
+<code class="example">        "PO_PLUG_INPUTLIST={path/to/scripts-that-need-translations.vim}" \</code>
+<code class="example">        ["POT_PLUGPACKAGE_PATH={path/where/to/write/{package}.pot}" \]</code>
+<code class="example">        ["VIMPROG={path/to/vim} \]</code>
+<code class="example">        {package}.pot</code>
+
+这里:
+PLUGPACKAGE             包含  <a href="builtin.html#bindtextdomain()">bindtextdomain()</a>  和  <a href="builtin.html#gettext()">gettext()</a>  函数指定的包名
+                        的变量，例如 "foobar"。
+PO_PLUG_INPUTLIST       包含那些有字符串要翻译的脚本，也就是指定了  <a href="builtin.html#gettext()">gettext()</a> 
+                        函数的脚本。脚本用绝对或相对路径指定。如:
+                        start/foobar/plugin/bar.vim
+                        脚本间用空白分隔。
+POT_PLUGPACKAGE_PATH    包含要保存准备好的 POT 文件的目录。此变量非必需，如果
+                        不指定，POT 文件会被存在 "src/po" 目录下。
+VIMPROG                 包含可用的 Vim 的目录。如果 Vim 编辑器已经被编译和安装
+                        好且在 $PATH 环境变量里，只要指定 vim 可执行文件的名字
+                        就好。
+<code class="special">{package}</code>.pot           目标名。应是包名，如 "foobar"，加上 .pot 扩展名。
+一旦建立好 POT 文件，其内容被分别复制到每个要准备翻译的语言对应的 PO 文件。
+
+翻译完成后，需要和 PO 文件转换为二进制 MO 文件格式，把这些 MO 文件放在我们之前
+建立的目录结构 "lang/" 目录里。
+为此，运行下述命令:
+
+<code class="example">        cd ~/forkvim/src/po</code>
+<code class="example">        make -f Makefile "PLUGPACKAGE={package}" \</code>
+<code class="example">        "PO_PLUGPACKAGE={path/to/{lang}.po}" \</code>
+<code class="example">        ["MO_PLUGPACKAGE_PATH={path/to/lang/&lt;lang_id&gt;/LC_MESSAGES}" \]</code>
+<code class="example">        {package}.mo</code>
+
+这里:
+PLUGPACKAGE             包含  <a href="builtin.html#bindtextdomain()">bindtextdomain()</a>  和  <a href="builtin.html#gettext()">gettext()</a>  函数指定的包名
+                        的变量，例如 "foobar"。
+PO_PLUGPACKAGE          包含 PO 文件的变量。文件用绝对或相对路径指定。如，
+                        "~/myproject/translate/en.po"
+MO_PLUGPACKAGE_PATH     包含 "lang/" 目录结构的变量，翻译好的文件会放在这里，
+                        如 "foobar.mo"。此变量非必需，如果不指定，MO 文件会被
+                        存在 "src/po" 目录下。
+<code class="special">{package}</code>.mo            目标名。应是包名，如 "foobar"，加上 .mo 扩展名。
+
+                                                <b class="vimtag"> <a name="package-translate_example">package-translate_example</a> </b>
+让我们用具体的例子来展示整个过程，把 "ftplugin/aap.vim" 文件翻译成俄语和德语。
+
+首先，准备一下 "aap.vim" 文件，在里面指定  <a href="builtin.html#bindtextdomain()">bindtextdomain()</a>  和  <a href="builtin.html#gettext()">gettext()</a>  函
+数调用。
+
+<code class="example"> " Only do this when not done yet for this buffer</code>
+<code class="example"> if exists("b:did_ftplugin")</code>
+<code class="example">     finish</code>
+<code class="example"> endif</code>
+<code class="example"></code>
+<code class="example"> " Don't load another plugin for this buffer</code>
+<code class="example"> let b:did_ftplugin = 1</code>
+<code class="example"> call bindtextdomain("aap", fnamemodify(expand("&lt;script&gt;"), ':p:h') .. '/../lang/')</code>
+<code class="example"></code>
+<code class="example"> " Reset 'formatoptions', 'comments', 'commentstring' and 'expandtab' to undo</code>
+<code class="example"> " this plugin.</code>
+<code class="example"> let b:undo_ftplugin = "setl fo&lt; com&lt; cms&lt; et&lt;"</code>
+<code class="example"></code>
+<code class="example"> " Set 'formatoptions' to break comment lines but not other lines,</code>
+<code class="example"> " and insert the comment leader when hitting &lt;CR&gt; or using "o".</code>
+<code class="example"> setlocal fo-=t fo+=croql</code>
+<code class="example"></code>
+<code class="example"> " Set 'comments' to format dashed lists in comments.</code>
+<code class="example"> setlocal comments=s:#\ -,m:#\ \ ,e:#,n:#,fb:-</code>
+<code class="example"> setlocal commentstring=#\ %s</code>
+<code class="example"></code>
+<code class="example"> " Expand tabs to spaces to avoid trouble.</code>
+<code class="example"> setlocal expandtab</code>
+<code class="example"></code>
+<code class="example"> if (has("gui_win32") || has("gui_gtk")) &amp;&amp; !exists("b:browsefilter")</code>
+<code class="example"> let b:browsefilter = gettext("Aap Recipe Files (*.aap)\t*.aap\n", "aap")</code>
+<code class="example"> if has("win32")</code>
+<code class="example">     let b:browsefilter ..= gettext("All Files (*.*)\t*\n", "aap")</code>
+<code class="example"> else</code>
+<code class="example">     let b:browsefilter ..= gettext("All Files (*)\t*\n", "aap")</code>
+<code class="example"> endif</code>
+<code class="example"> let b:undo_ftplugin ..= " | unlet! b:browsefilter"</code>
+<code class="example"> endif</code>
+
+现在为此创建 POT 文件 (示例使用 Windows 路径):
+
+<code class="example">        cd /d f:\forkvim\src\po</code>
+<code class="example"> (下面命令必须在一行输入，这里为示例起见用多行显示)</code>
+<code class="example">        nmake.exe -f Make_mvc.mak "PLUGPACKAGE=aap"</code>
+<code class="example">                    "PO_PLUG_INPUTLIST=d:\Programs\vim\vim91\ftplugin\aap.vim"</code>
+<code class="example">                    "POT_PLUGPACKAGE_PATH=e:\project\translate\plugins"</code>
+<code class="example">                    "VIMPROG=d:\Programs\vim\vim91\vim.exe"</code>
+<code class="example">                    aap.pot</code>
+
+创建完我们的包的 POT 文件后，转到保存它的目录，然后开始翻译。
+
+<code class="example">        cd /d e:\project\translate\plugins</code>
+<code class="example">        copy aap.pot ru.po</code>
+<code class="example">        copy aap.pot de.po</code>
+
+这里提供了翻译成俄语的 PO 文件:
+<code class="section">    # Test plugins translate </code>
+<code class="section">    # </code>
+<code class="section">    msgid "" </code>
+<code class="section">    msgstr "" </code>
+<code class="section">    "Project-Id-Version: aap\n" </code>
+<code class="section">    "Report-Msgid-Bugs-To: \n" </code>
+<code class="section">    "POT-Creation-Date: 2024-06-23 14:58+0300\n" </code>
+<code class="section">    "PO-Revision-Date: 2024-06-23 14:58+0300\n" </code>
+<code class="section">    "Last-Translator: Restorer\n" </code>
+<code class="section">    "Language-Team: RuVim\n" </code>
+<code class="section">    "Language: ru\n" </code>
+<code class="section">    "MIME-Version: 1.0\n" </code>
+<code class="section">    "Content-Type: text/plain; charset=UTF-8\n" </code>
+<code class="section">    "Content-Transfer-Encoding: 8bit\n" </code>
+
+<code class="section">    #: ../../runtime/ftplugin/aap.vim:32 </code>
+<code class="section">    msgid "Aap Recipe Files (*.aap)\t*.aap\n" </code>
+<code class="section">    msgstr "Файлы инструкций Aap (*.aap)\t*.aap\n" </code>
+
+<code class="section">    #: ../../runtime/ftplugin/aap.vim:34 </code>
+<code class="section">    msgid "All Files (*.*)\t*\n" </code>
+<code class="section">    msgstr "Все файлы (*.*)\t*\n" </code>
+
+<code class="section">    #: ../../runtime/ftplugin/aap.vim:36 </code>
+<code class="section">    msgid "All Files (*)\t*\n" </code>
+<code class="section">    msgstr "Все файлы (*)\t*\n" </code>
+
+翻译成德语的 PO 文件:
+<code class="section">    # Test plugins translate</code>
+<code class="section">    #</code>
+<code class="section">    msgid ""</code>
+<code class="section">    msgstr ""</code>
+<code class="section">    "Project-Id-Version: aap\n"</code>
+<code class="section">    "Report-Msgid-Bugs-To: \n"</code>
+<code class="section">    "POT-Creation-Date: 2024-06-23 14:58+0300\n"</code>
+<code class="section">    "PO-Revision-Date: 2024-06-24 13:11+0300\n"</code>
+<code class="section">    "Last-Translator: Restorer\n"</code>
+<code class="section">    "Language-Team: German\n"</code>
+<code class="section">    "Language: de\n"</code>
+<code class="section">    "MIME-Version: 1.0\n"</code>
+<code class="section">    "Content-Type: text/plain; charset=UTF-8\n"</code>
+<code class="section">    "Content-Transfer-Encoding: 8bit\n"</code>
+
+<code class="section">    #: ../../runtime/ftplugin/aap.vim:32</code>
+<code class="section">    msgid "Aap Recipe Files (*.aap)\t*.aap\n"</code>
+<code class="section">    msgstr "Aap-Rezeptdateien (*.aap)\t*.aap\n"</code>
+
+<code class="section">    #: ../../runtime/ftplugin/aap.vim:34</code>
+<code class="section">    msgid "All Files (*.*)\t*\n"</code>
+<code class="section">    msgstr "Alle Dateien (*.*)\t*.*\n"</code>
+
+<code class="section">    #: ../../runtime/ftplugin/aap.vim:36</code>
+<code class="section">    msgid "All Files (*)\t*\n"</code>
+<code class="section">    msgstr "Alle Dateien (*)\t*\n"</code>
+
+现在把它们转换为 MO 文件，以便  <a href="builtin.html#gettext()">gettext()</a>  显示经过翻译的消息。
+<code class="note">注意</code> 这不是专用的插件包，所以我们把 MO 文件放在 Vim 编辑器的 "lang/" 目录下。
+键入以下命令:
+
+<code class="example">        cd /d f:\forkvim\src\po</code>
+  (下面命令必须在一行输入，这里为示例起见用多行显示)
+ 对 Russian:
+<code class="example">        nmake.exe -f Make_mvc.mak "PLUGPACKAGE=aap"</code>
+<code class="example">        "PO_PLUGPACKAGE=e:\project\translate\plugins\ru.po"</code>
+<code class="example">        "MO_PLUGPACKAGE_PATH=d:\Programs\vim\vim91\lang\ru\LC_MESSAGES"</code>
+<code class="example">        aap.mo</code>
+对 German:
+<code class="example">        nmake.exe -f Make_mvc.mak "PLUGPACKAGE=aap"</code>
+<code class="example">        "PO_PLUGPACKAGE=e:\project\translate\plugins\de.po"</code>
+<code class="example">        "MO_PLUGPACKAGE_PATH=d:\Programs\vim\vim91\lang\de\LC_MESSAGES"</code>
+<code class="example">        aap.mo</code>
+
+翻译就这样做完了，现在你可以用自己的语言看到插件的消息。
+
+我们再试试翻译比如包里有几个包含要翻译的字符串的脚本的插件包。例如，要把
+"netrw" 包翻成日语。此例中我们只翻译包里的几行。先准备一下要翻译消息字符串的脚
+本。
+
+文件 "autoload\netrw.vim":
+
+<code class="example"> " Load Once:</code>
+<code class="example"> if &amp;cp || exists("g:loaded_netrw")</code>
+<code class="example">   finish</code>
+<code class="example"> endif</code>
+<code class="example"> call bindtextdomain("netrw", fnamemodify(expand("&lt;script&gt;"), ':p:h') .. '/../lang/')</code>
+<code class="example"></code>
+<code class="example"> " Check that vim has patches that netrw requires.</code>
+<code class="example"> " Patches needed for v7.4: 1557, and 213.</code>
+<code class="example"> " (netrw will benefit from vim's having patch#656, too)</code>
+<code class="example"> let s:needspatches=[1557,213]</code>
+<code class="example"> if exists("s:needspatches")</code>
+<code class="example">  for ptch in s:needspatches</code>
+<code class="example">   if v:version &lt; 704 || (v:version == 704 &amp;&amp; !has("patch".ptch))</code>
+<code class="example">    if !exists("s:needpatch{ptch}")</code>
+<code class="example">     unsilent echomsg gettext("***sorry*** this version of netrw requires vim v7.4 with patch#", "netrw") .. ptch</code>
+<code class="example">    endif</code>
+<code class="example">    let s:needpatch{ptch}= 1</code>
+<code class="example">    finish</code>
+<code class="example">   endif</code>
+<code class="example">  endfor</code>
+<code class="example"> endif</code>
+
+文件 "autoload\netrwSettings.vim":
+
+<code class="example"> " Load Once:</code>
+<code class="example"> if exists("g:loaded_netrwSettings") || &amp;cp</code>
+<code class="example">   finish</code>
+<code class="example"> endif</code>
+<code class="example"> call bindtextdomain("netrw", fnamemodify(expand("&lt;script&gt;"), ':p:h') .. '/../lang/')</code>
+<code class="example"> let g:loaded_netrwSettings = "v18"</code>
+<code class="example"> if v:version &lt; 700</code>
+<code class="example">  echohl WarningMsg</code>
+<code class="example">  echo gettext("***warning*** this version of netrwSettings needs vim 7.0", "netrw")</code>
+<code class="example">  echohl Normal</code>
+<code class="example">  finish</code>
+<code class="example"> endif</code>
+
+现在为将来的消息翻译准备一下 POT 文件。执行以下命令:
+
+<code class="example">        cd ~/forkvim/src/po</code>
+<code class="example">        make -f Makefile "VIMPROG=/usr/local/bin/vim" "PLUGPACKAGE=netrw" \</code>
+<code class="example">        "POT_PLUGPACKAGE_PATH=~/project/translate/plugins" \</code>
+<code class="example">        "PO_PLUG_INPUTLIST=../../runtime/autoload/netrw.vim</code>
+<code class="example">        ../../runtime/autoload/netrwSettings.vim" \</code>
+<code class="example">        netrw.pot</code>
+
+转到 POT 文件所在的目录，开始翻译:
+
+<code class="example">        cd ~/project/translate/plugins</code>
+<code class="example">        cp ./netrw.pot ja.po</code>
+
+翻译完成时，"ja.po" 文件会是这样:
+<code class="section">    # Test plugins translate </code>
+<code class="section">    # </code>
+<code class="section">    msgid "" </code>
+<code class="section">    msgstr "" </code>
+<code class="section">    "Project-Id-Version: netrw\n" </code>
+<code class="section">    "Report-Msgid-Bugs-To: \n" </code>
+<code class="section">    "POT-Creation-Date: 2024-06-23 17:14+0300\n" </code>
+<code class="section">    "PO-Revision-Date: 2024-06-23 17:14+0300\n" </code>
+<code class="section">    "Last-Translator: Restorer\n" </code>
+<code class="section">    "Language-Team: Japanese\n" </code>
+<code class="section">    "Language: ja\n" </code>
+<code class="section">    "MIME-Version: 1.0\n" </code>
+<code class="section">    "Content-Type: text/plain; charset=UTF-8\n" </code>
+<code class="section">    "Content-Transfer-Encoding: 8bit\n" </code>
+
+<code class="section">    #: ../../runtime/autoload/netrw.vim:51 </code>
+<code class="section">    msgid "***sorry*** this version of netrw requires vim v7.4 with patch#" </code>
+<code class="section">    msgstr "" </code>
+<code class="section">    "***申し訳ありません***このバージョンのnetrwには、パッチ付きのvim v7.4が必要です#" </code>
+
+<code class="section">    #: ../../runtime/autoload/netrwSettings.vim:28 </code>
+<code class="section">    msgid "***warning*** this version of netrwSettings needs vim 7.0" </code>
+<code class="section">    msgstr "***<code class="note">警告</code>***このバージョンのnetrwSettingsにはvim7.0が必要です" </code>
+
+把 ja.po 转换成 MO 文件:
+
+<code class="example">        cd ~/forkvim/src/po</code>
+<code class="example">        make -f Makefile "PLUGPACKAGE=netrw" \</code>
+<code class="example">        "PO_PLUGPACKAGE=~/project/translate/plugins/ja.po" \</code>
+<code class="example">        "MO_PLUGPACKAGE_PATH=/usr/local/share/vim/vim91/lang/ja/LC_MESSAGES" \</code>
+<code class="example">        netrw.mo</code>
+
+执行完这些步骤就可以让你得到任何第三方插件包的翻译版本了。
+
+<code class="section">插件间的依赖关系 </code>
+                                                        <b class="vimtag"> <a name="packload-two-steps">packload-two-steps</a> </b>
+假定你有两个插件，它们都依赖于同一个功能。可以把公共的功能放在 autoload 目录
+里，以便自动找到。你的软件包里有以下文件:
+
+        pack/foo/start/one/plugin/one.vim 
+<code class="example">                call foolib#getit()</code>
+        pack/foo/start/two/plugin/two.vim
+<code class="example">                call foolib#getit()</code>
+        pack/foo/start/lib/autoload/foolib.vim
+<code class="example">                func foolib#getit()</code>
+<code class="example"></code>
+这样可行，因为软件包在载入时先把所有找到的目录加入 <a href="options.html#'runtimepath'">'runtimepath'</a>，然后再执行这
+些插件。
+
+</section><hr class="doubleline" /><section class=inner>
+<h4>7. 调试脚本                                             <b class="vimtag"> <a name="debug-scripts">debug-scripts</a> </b></h4>
+除了在自己的脚本里提示明显的消息，Vim 提供了调试模式来让你了解自己的代码在做什
+么。你可以单步执行脚本文件和函数和设置断点。
+
+请 <code class="note">注意</code>: 调试模式远未完善。调试程序会对 Vim 的工作产生副作用。你不能用它调试一
+切细节。例如，调试信息会弄乱屏幕的显示。
+
+另外一个办法是设置 <a href="options.html#'verbose'">'verbose'</a> 选项。设置一个比较大的数字，你会得到 Vim 在做什么
+的更详尽的信息。
+
+
+启 动 调 试 模 式                                               <b class="vimtag"> <a name="debug-mode">debug-mode</a> </b>
+
+以下方法可以进入调试模式:
+1. 用  <a href="starting.html#-D">-D</a>  参数启动 Vim:
+<code class="example">        vim -D file.txt</code>
+   调试会在执行第一个 vimrc 文件的时候开始。这有助于了解 Vim 启动的时候干了些
+   什么。一个副作用是 Vim 会在初始化完成之前切换终端模式，这会有意想不到的后
+   果。
+   对只用 GUI 的版本 (Windows、Macintosh) 调试会在 GUI 窗口打开的一刻开始。要
+   提早进入调试，在 vimrc 文件里加上 ":gui" 命令。
+                                                                <b class="vimtag"> <a name=":debug">:debug</a> </b>
+2. 执行命令前加上 ":debug" 前缀。这样，调试只对这个命令进行。这对调试某一个特
+   定的脚本和用户函数，或者 autocommands 用到的脚本和函数有用。例如:
+<code class="example">        :debug edit test.txt.gz</code>
+<code class="example"></code>
+3. 在一个执行的文件和用户函数里设置断点。你可以在命令行里这么做:
+<code class="example">        vim -c "breakadd file */explorer.vim" .</code>
+   这会启动 Vim 并在 "explorer.vim" 脚本的第一行停下。进入调试模式后也可以设置
+   断点。
+
+在调试模式里，每个命令都会在执行前被显示。注释行、空行和其他不执行的行会被跳
+过。如果一行里有两个 "|" 分隔的命令，它们被分别显示。
+
+
+调 试 模 式
+
+进入调试模式以后，可以使用通常的 Ex 命令。比如，要检查某变量的值:
+<code class="example">        echo idx</code>
+在一个用户函数里，这会显示局域变量 "idx" 的值。在变量前加上 "g:" 可以得到全局
+变量的值:
+<code class="example">        echo g:idx</code>
+所有的命令都在当前函数或脚本的上下文下执行。你可以设置选项，比如设置或者重设
+<a href="options.html#'verbose'">'verbose'</a> 来显示当前发生的事情，但是你需要在执行你感兴趣的行之前设置它们:
+<code class="example">        :set verbose=20</code>
+<code class="example"></code>
+要避免更新屏幕的命令，因为直到退出调试模式之前，无法看到它们的效果。例如，帮助
+命令:
+<code class="example">        :help</code>
+不会很有帮助。
+
+调试模式有自己的命令行历史。
+
+<code class="note">注意</code>: Vim9 脚本里在脚本层写的命令如在下行继续，但不像以前那样，用反斜杠来续行
+的话，在调试提示之前只显示首行。
+
+函数行的行号是相对于函数开始的地方的。如果你要知道你在哪里，在另外一个 Vim 里
+编辑包含这个函数的文件，先找到函数的开始处，然后用 "99j"，其中的 "99" 用实际的
+行号代替。
+
+另外，可以使用如下的命令:
+                                                        <b class="vimtag"> <a name="%3Econt">&gt;cont</a> </b>
+        cont            继续执行到下一个断点。
+                                                        <b class="vimtag"> <a name="%3Equit">&gt;quit</a> </b>
+        quit            终止执行。这和 <code class="keystroke">CTRL-C</code> 类似，但是还是有要执行的东西，并
+                        不是所有的都中止。在遇到断点时还是会停下来。
+                                                        <b class="vimtag"> <a name="%3Enext">&gt;next</a> </b>
+        next            执行一个命令，并在它结束时返回调试模式。步过用户函数
+                        调用和被执行的脚本。
+                                                        <b class="vimtag"> <a name="%3Estep">&gt;step</a> </b>
+        step            执行一个命令，并在它结束时返回调试模式。步入用户函数
+                        调用和被执行的脚本。
+                                                        <b class="vimtag"> <a name="%3Einterrupt">&gt;interrupt</a> </b>
+        interrupt       类似于 <code class="keystroke">CTRL-C</code>，但不同于 "&gt;quit"，这会在执行下个命令前
+                        返回到调试模式。它有助于测试  <a href="eval.html#:finally">:finally</a>  和  <a href="eval.html#:catch">:catch</a> 
+                        对中断异常的处理。
+                                                        <b class="vimtag"> <a name="%3Efinish">&gt;finish</a> </b>
+        finish          结束当前的脚本或者用户函数，并在调用该脚本或函数的行的
+                        下一行之前返回到调试模式。
+                                                        <b class="vimtag"> <a name="%3Ebt">&gt;bt</a> </b>
+                                                        <b class="vimtag"> <a name="%3Ebacktrace">&gt;backtrace</a> </b>
+                                                        <b class="vimtag"> <a name="%3Ewhere">&gt;where</a> </b>
+        backtrace       显示当前调试会话的调用堆栈回溯。
+        bt
+        where
+                                                        <b class="vimtag"> <a name="%3Eframe">&gt;frame</a> </b>
+        frame N         转到 N 层堆栈回溯。+ 和 - 标记进行相对移动。例如，
+                        ":frame +3" 往上三层堆栈。
+                                                        <b class="vimtag"> <a name="%3Eup">&gt;up</a> </b>
+        up              向上一层调用堆栈回溯。
+                                                        <b class="vimtag"> <a name="%3Edown">&gt;down</a> </b>
+        down            向下一层调用堆栈回溯。
+
+关于调试模式下的附加命令:
+- 没有它们的命令行自动补全。补全只对一般的 Ex 命令有效。
+- 除非有多于一个命令以相同字母开始，可以用一个字符来简写。"f" 代表 "finish"，
+  "fr" 代表 "frame"。
+- 按 <code class="special">&lt;CR&gt;</code> 会重复上一个调试命令。在执行另一个命令之后，这个功能会被关掉 (因为不
+  知道你要重复什么)。
+- 如果你想调用相同的名字的 Ex 命令，在前面附加一个冒号: ":cont"、":next"、
+  ":finish" (或者它们的缩写)。
+                                                        <b class="vimtag"> <a name="vim9-debug">vim9-debug</a> </b>
+调试编译过的 :def 函数时，"step" 会在每个执行的行而不是每个单独的指令前停下。
+这和不经编译的函数的工作方式基本相同。但局部变量的访问有限制，可用:
+<code class="example">        echo varname</code>
+但大概没有别的什么了。
+执行不对应特定的字节码指令而像普通的 Ex 命令那样执行的命令时，"step" 会在经编
+译的上下文里停止一次，以便检视局部变量，然后在刚刚要执行命令之前再停一次。
+
+:def 函数里，不能检试尚未声明的变量。可以检试已经声明的变量，即使声明所在的块
+已经结束了也是如此。命令里做不到这点，这有点误导 (但确实有用)。
+
+堆栈回溯显示函数调用的层级，例如:
+<code class="section">        &gt;bt </code>
+<code class="section">          3 function One[3] </code>
+<code class="section">          2 Two[3] </code>
+<code class="section">        -&gt;1 Three[3] </code>
+<code class="section">          0 Four </code>
+<code class="section">        line 1: let four = 4 </code>
+
+"-&gt;" 指向当前堆栈。用 "up"、"down" 和 "frame N" 可选择另一层堆栈。
+
+在当前栈中可以计算本地函数变量。还没有办法看到当前行所在的命令。
+
+
+定 义 断 点
+                                                        <b class="vimtag"> <a name=":breaka">:breaka</a> </b> <b class="vimtag"> <a name=":breakadd">:breakadd</a> </b>
+:breaka[dd] func <code class="special">[lnum]</code> <code class="special">{name}</code>
+                在函数上设置断点。例如:
+<code class="example">                        :breakadd func Explore</code>
+                它不会检查函数名的合法性。这样，断点可以在函数定义之前设置。
+
+:breaka[dd] file <code class="special">[lnum]</code> <code class="special">{name}</code>
+                在一个脚本文件上设置断点。例如:
+<code class="example">                        :breakadd file 43 .vimrc</code>
+<code class="example"></code>
+:breaka[dd] here
+                在当前文件的当前行上设置断点。类似于:
+<code class="example">                        :breakadd file &lt;cursor-line&gt; &lt;current-file&gt;</code>
+                <code class="note">注意</code> 只能用于执行此文件时会执行的命令，不适用于该文件此处定义
+                的函数。
+
+:breaka[dd] expr <code class="special">{expression}</code>
+                设置断点，任何时候 <code class="special">{expression}</code> 的计算值发生改变时中断。如:
+<code class="example">                        :breakadd expr g:lnum</code>
+                会在任何时候全局变量 lnum 改变时中断。
+
+                不显示计算中的可能错误，可使用还不存在的变量名。这意味着你不会
+                <code class="note">注意</code>到表达式可能的错误。
+
+                <code class="note">注意</code> 如果观察  <a href="eval.html#script-variable">script-variable</a> ，则脚本切换时会发生中断，因为
+                脚本变量只在其定义所在的脚本里有效。如果其它脚本调用此脚本，则
+                任何该变量变成可见或不可见的时候，中断都会发生。
+
+其中 <code class="special">[lnum]</code> 是断点所在的行号。Vim 会在它或它之后的行上停止。如果省略，就用行号
+1。
+
+                                                        <b class="vimtag"> <a name=":debug-name">:debug-name</a> </b>
+<code class="special">{name}</code> 是用来匹配文件名或者函数名的模式。这和 autocommands 所有的模式类似。它
+必须是一个完整匹配 (如同它以 "^" 开头和 "$" 结尾一样)。"*" 匹配任何字符序列。
+它不用 <a href="options.html#'ignorecase'">'ignorecase'</a> 选项，但是模式里可以用 "\c" 来忽略大小写  <a href="pattern.html#%2F\c">/\c</a> 。不要给函数
+名加上 ()！
+
+对脚本文件的匹配给予它的完整文件名。例如:
+<code class="example">        breakadd file explorer</code>
+不会匹配。因为没有给出路径。
+<code class="example">        breakadd file *explorer.vim</code>
+匹配 ".../plugin/explorer.vim" 和 ".../plugin/iexplorer.vim"。
+<code class="example">        breakadd file */explorer.vim</code>
+只匹配 ".../plugin/explorer.vim"。
+
+匹配所用的函数名可参见 ":function" 的输出结果。不过，对于局部函数，会忽略形如
+"<code class="special">&lt;SNR&gt;</code>99_" 的脚本特定前缀，以便在不知脚本 ID 时可以查找局部于脚本的函数。
+
+<code class="note">注意</code>函数先被载入然后再执行。载入时，检查 "file" 断点，而执行时检查 "func" 断
+点。
+
+
+删 除 断 点
+                                                <b class="vimtag"> <a name=":breakd">:breakd</a> </b> <b class="vimtag"> <a name=":breakdel">:breakdel</a> </b> <b class="vimtag"> <a name="E161">E161</a> </b>
+:breakd[el] <code class="special">{nr}</code>
+                删除断点 <code class="special">{nr}</code>。用  <a href="repeat.html#:breaklist">:breaklist</a>  可以看到每个断点的编号 <code class="special">{nr}</code>。
+
+:breakd[el] *
+                删除所有断点。
+
+:breakd[el] func <code class="special">[lnum]</code> <code class="special">{name}</code>
+                删除函数断点。
+
+:breakd[el] file <code class="special">[lnum]</code> <code class="special">{name}</code>
+                删除脚本断点。
+
+:breakd[el] here
+                删除当前文件的当前行上的断点。
+
+如果 <code class="special">[lnum]</code> 省略，删除该函数或者文件的第一个断点。
+<code class="special">{name}</code> 必须和 ":breakadd" 所匹配的名字完全相同。"explorer"、"*explorer.vim" 和
+"*explorer*" 是不一样的。
+
+
+列 出 断 点
+                                                        <b class="vimtag"> <a name=":breakl">:breakl</a> </b> <b class="vimtag"> <a name=":breaklist">:breaklist</a> </b>
+:breakl[ist]
+                列出所有的断点。
+
+
+不 常 用 的
+
+                                                <b class="vimtag"> <a name=":debugg">:debugg</a> </b> <b class="vimtag"> <a name=":debuggreedy">:debuggreedy</a> </b>
+:debugg[reedy]
+                从正常的输入流而不是直接从用户输入里读取调试模式命令。这只对测
+                试脚本有用。例如:
+<code class="example">                  echo 'q^Mq' | vim -e -s -c debuggreedy -c 'breakadd file script.vim' -S script.vim</code>
+<code class="example"></code>
+:0debugg[reedy]
+                撤销 ":debuggreedy": 从用户那里直接读取调试模式命令，而不为调
+                试命令预读取。
+
+</section><hr class="doubleline" /><section class=inner>
+<h4>8. 刨视                                                 <b class="vimtag"> <a name="profile">profile</a> </b> <b class="vimtag"> <a name="profiling">profiling</a> </b></h4>
+刨视功能会使 Vim 测量执行函数和/或脚本时使用的时间。为此，需要  <a href="various.html#+profile">+profile</a>  特
+性。Vim 编译中使用 "huge" (巨大) 特性包时会包含此特性。
+
+你也可以用  <a href="builtin.html#reltime()">reltime()</a>  函数来测量时间。这只需要  <a href="various.html#+reltime">+reltime</a>  特性，它在更多特性
+包中出现。
+
+关于语法高亮的刨视可见  <a href="syntax.html#:syntime">:syntime</a> 。
+
+例如，要刨视 one_script.vim 脚本文件:
+<code class="example">        :profile start /tmp/one_script_profile</code>
+<code class="example">        :profile file one_script.vim</code>
+<code class="example">        :source one_script.vim</code>
+<code class="example">        :exit</code>
+<code class="example"></code>
+<code class="example"></code>
+:prof[ile] start <code class="special">{fname}</code>                        <b class="vimtag"> <a name=":prof">:prof</a> </b> <b class="vimtag"> <a name=":profile">:profile</a> </b> <b class="vimtag"> <a name="E750">E750</a> </b>
+                启动刨视，退出时或执行 `:profile stop` 或 `:profile dump` 命令
+                时把结果写到 <code class="special">{fname}</code> 文件。
+                扩展 <code class="special">{fname}</code> 中的 "~/" 和环境变量。
+                如果 <code class="special">{fname}</code> 已存在，安静地覆盖它。
+                变量  <a href="eval.html#v:profiling">v:profiling</a>  设为一。
+
+:prof[ile] stop
+                写入收集到的刨视信息到日志文件，并停止刨视。可用
+                `:profile start` 命令来清除刨视统计信息并重新开始刨视。
+
+:prof[ile] pause
+                直到下个 `:profile continue` 为止，停止刨视。可用来执行一些不
+                需计算的操作 (例如，执行外部命令)。不能嵌套。
+
+:prof[ile] continue
+                在 `:profile pause` 之后出现，恢复刨视。
+
+:prof[ile] func <code class="special">{pattern}</code>
+                刨视匹配模式 <code class="special">{pattern}</code> 的函数。
+                 <a href="repeat.html#:debug-name">:debug-name</a>  说明如何使用 <code class="special">{pattern}</code>。
+
+:prof[ile][!] file <code class="special">{pattern}</code>
+                刨视匹配模式 <code class="special">{pattern}</code> 的脚本。
+                 <a href="repeat.html#:debug-name">:debug-name</a>  说明如何使用 <code class="special">{pattern}</code>。
+                只刨视脚本自身，不包括其中定义的函数。
+                如果加入 [!]，同时刨视脚本里定义的所有函数。
+                <code class="note">注意</code> 只有在此命令后载入脚本完成时才会开始刨视。脚本自身不可以
+                启动 :profile 命令。
+
+:prof[ile] dump
+                立即写入刨视的当前状态到日志文件。执行此命令后，Vim 继续收集刨
+                视统计信息。
+
+:profd[el] ...                                          <b class="vimtag"> <a name=":profd">:profd</a> </b> <b class="vimtag"> <a name=":profdel">:profdel</a> </b>
+                停止对指定参数的刨视， <a href="repeat.html#:breakdel">:breakdel</a>  说明其中的参数。例如:
+<code class="example">                        profdel func MyFunc</code>
+<code class="example">                        profdel file MyScript.vim</code>
+<code class="example">                        profdel here</code>
+<code class="example"></code>
+刨视总是用 ":profile start fname" 开始。Vim 退出时写入结果文件。例如，要刨视一
+个特定函数:
+<code class="example">        profile start /tmp/vimprofile</code>
+<code class="example">        profile func MyFunc</code>
+<code class="example"></code>
+这里是输出的示例，加上行号是为了方便解释:
+
+<code class="section">  1 FUNCTION  Test2() </code>
+<code class="section">  2 Called 1 time </code>
+<code class="section">  3 Total time:   0.155251 </code>
+<code class="section">  4  Self time:   0.002006 </code>
+<code class="section">  5  </code>
+<code class="section">  6 count  total (s)   self (s) </code>
+<code class="section">  7     9              0.000096   for i in range(8) </code>
+<code class="section">  8     8   0.153655   0.000410     call Test3() </code>
+<code class="section">  9     8              0.000070   endfor </code>
+<code class="section"> 10                               " Ask a question </code>
+<code class="section"> 11     1              0.001341   echo input("give me an answer: ") </code>
+
+头部 (行号 1-4) 给出整个函数的时间。"Total" 时间是函数执行时使用的时间。
+"Self" 时间是 "Total" 时间减去用于下面事项的时间:
+- 其它用户定义的函数
+- 执行脚本
+- 执行自动命令
+- 外部 (外壳) 命令
+
+行号 7-11 显示每个执行行花费的时间。不计算不执行的行。所以注释行从不参与计算。
+
+Count 列显示每行执行的次数。<code class="note">注意</code> 到第 7 行的 "for" 命令执行次数比后面的行要多
+一。这是因为该行也被用来检测循环结束。
+
+Vim 花费在等待用户输入的时间完全不参与计算。所以 input() 提示后你的响应时间不
+相关。
+
+刨视给出关于时间花费在哪里的很好的指示，但要记住很多因素会影响输出结果:
+
+- 测量时间的准确度取决于 gettimeofday() 或如有的话 clock_gettime() 系统函数。
+  精确度从 1/100 秒到纳秒级。显示的时间如果用 clock_gettime() 时以纳秒计，否则
+  以微秒计。具体可查看  <code class="badlink">has("prof_nsec")</code> 。
+
+- 测量的是实际流逝的时间。如果其它进程繁忙，可能造成的延迟无法预测。你可能需要
+  多次运行刨视，并使用时间最少的结果。
+
+- 如果一行内执行多个命令，你只会得到一个时间。要看到个别命令的时间，把行分开。
+
+- 各行时间的加总几乎总会比整个函数的时间要少。中间有少许开销。
+
+- Vim 退出前删除的函数不会产生刨视信息。如果需要，你可以检查  <a href="eval.html#v:profiling">v:profiling</a>  变
+  量:
+<code class="example">        :if !v:profiling</code>
+<code class="example">        :   delfunc MyFunc</code>
+<code class="example">        :endif</code>
+
+- 在多处理器系统中，因为睡眠模式或者为省电而减低处理器频率等因素影响，刨视结果
+  可能不正常。
+
+- "self" 时间对递归调用的函数是不正确的。
+
+
+ vim:tw=78:ts=8:noet:ft=help:norl:
+</section>
+</article>
+<footer>
+Generated by vim2html
+</footer>
+</body>
+</html>

@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8" />
+<!--[if lt IE 9]>
+  <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+<![endif]-->
+<title>VIM 中文帮助: Hare 文件类型插件</title>
+<link rel="stylesheet" href="vim-stylesheet.css" type="text/css" />
+<link rel="canonical" href="https://yianwillis.github.io/vimcdoc/doc/ft_hare.html" />
+<script type="text/javascript" src="vimcdoc.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+</head>
+<body>
+<nav id=banner>
+<form action=tags.html target="tag_iframe">
+  <input type="text" name="tag" id="tag" placeholder="标签搜索">
+</form>
+<iframe name="tag_iframe" src=""></iframe>
+<a href="help.html">帮助总览</a> &middot;
+<hr/>
+<a href="quickref.html">快速参考</a> &middot;
+<a href="index.html">命令索引</a> &middot;
+<a href="eval.html#functions">函数列表</a> &middot;
+<a href="quickref.html#option-list">选项列表</a> &middot;
+<hr/>
+<a href="usr_toc.html">用户手册</a> &middot;
+<a href="help.html#reference_toc">参考手册</a> &middot;
+</nav>
+
+<header>
+<h2>ft_hare</h2>
+</header>
+<article id=outer>
+<section class=inner>
+<b class="vimtag"> <a name="ft_hare.txt">ft_hare.txt</a> </b>   Hare 程序语言的支持
+
+</section><hr class="doubleline" /><section class=inner>
+<h4>内 容                                                   <b class="vimtag"> <a name="hare">hare</a> </b> <b class="vimtag"> <a name="hare.vim">hare.vim</a> </b></h4>
+1. 介绍                          <a href="ft_hare.html#ft-hare-intro">ft-hare-intro</a> 
+2. 文件类型插件                  <a href="ft_hare.html#ft-hare-plugin">ft-hare-plugin</a> 
+3. Haredoc 文件类型              <a href="ft_hare.html#ft-haredoc-plugin">ft-haredoc-plugin</a> 
+4. 缩进设置                      <a href="ft_hare.html#ft-hare-indent">ft-hare-indent</a> 
+5. 编译器支持                    <a href="ft_hare.html#compiler-hare">compiler-hare</a> 
+
+</section><hr class="doubleline" /><section class=inner>
+<h4>介 绍                                                   <b class="vimtag"> <a name="ft-hare-intro">ft-hare-intro</a> </b></h4>
+此插件提供 Hare 编程语言的语法高亮、缩进和其他支持功能。
+
+文 件 类 型 插 件                                       <b class="vimtag"> <a name="ft-hare-plugin">ft-hare-plugin</a> </b>
+
+此插件提供可在  <a href="starting.html#vimrc">vimrc</a>  里定义的若干变量，以调节插件行为。
+
+                                                        <b class="vimtag"> <a name="hare-folding">hare-folding</a> </b>
+此插件提供折叠 { } 块的支持。要打开折叠，在  <a href="options.html#after-directory">after-directory</a>  里某个文件 (如
+~/.vim/after/ftplugin/hare.vim) 里加入:
+<code class="example"></code>
+<code class="example">        setlocal foldmethod=syntax</code>
+<code class="example"></code>
+因为基于语法的折叠往往会创建许多小折叠，建议根据需要调整 <a href="options.html#'foldminlines'">'foldminlines'</a> 和
+<a href="options.html#'foldnestmax'">'foldnestmax'</a> 等若干选项。
+
+                                                <b class="vimtag"> <a name="hare-symbol-operators">hare-symbol-operators</a> </b>
+绝大多数的符号操作符缺省不高亮 ("!"、"?" 和 "::" 是仅有的例外)。要打开所有操作
+符的高亮，可在  <a href="starting.html#vimrc">vimrc</a>  里将它们链接到用户偏好的高亮组。例如:
+<code class="example"></code>
+<code class="example">        hi def link hareCast hareSymbolOperator</code>
+<code class="example">        hi def link hareSymbolOperator hareOperator</code>
+
+                                                <b class="vimtag"> <a name="g:hare_recommended_style">g:hare_recommended_style</a> </b>
+根据官方 Hare 风格指导，缺省会设置以下选项:
+<code class="example">        setlocal noexpandtab</code>
+<code class="example">        setlocal shiftwidth=8</code>
+<code class="example">        setlocal softtabstop=0</code>
+<code class="example">        setlocal tabstop=8</code>
+<code class="example">        setlocal textwidth=80</code>
+
+要关闭这些建议风格，在  <a href="starting.html#vimrc">vimrc</a>  里加入:
+<code class="example">        let g:hare_recommended_style = 0</code>
+
+                                                        <b class="vimtag"> <a name="g:hare_space_error">g:hare_space_error</a> </b>
+缺省，<code class="special">&lt;Tab&gt;</code> 字符之后的拖尾空白和制表符会被高亮为错误。在插入模式下，此高亮会自
+动关闭。如果要完全关闭此高亮，可在  <a href="starting.html#vimrc">vimrc</a>  里加入:
+<code class="example"></code>
+<code class="example">        let g:hare_space_error = 0</code>
+<code class="example"></code>
+<code class="example"></code>
+HAREDOC 文 件 类 型                                     <b class="vimtag"> <a name="ft-haredoc-plugin">ft-haredoc-plugin</a> </b>
+
+此插件能够通过递归的目录搜索，来自动检测 Hare 模块里的 README 文件，并将其文件
+类型设为 "haredoc"。因为这是个常见的文件名，此插件缺省只搜索 Hare 源代码所在的
+目录下的 README 文件。
+
+                                                        <b class="vimtag"> <a name="g:filetype_haredoc">g:filetype_haredoc</a> </b>
+ <a href="ft_hare.html#g:filetype_haredoc">g:filetype_haredoc</a>  变量可用于调节此搜索的深度，甚至可以完全跳过 Hare 文档文
+件的检测:
+
+<code class="section">        值              效果</code>
+        0               不自动检测
+        1               仅搜索当前目录 (这是缺省)
+        2               搜索一层子目录
+
+最大搜索深度可为任意整数，但在绝大多数情况下，超过 2 的值并无明显收益，且会影
+响性能。
+
+
+缩 进 设 置                                             <b class="vimtag"> <a name="ft-hare-indent">ft-hare-indent</a> </b>
+
+和其它设置不同，缩进设置可以为每个缓冲区单独设置，从而覆盖全局设置 (如有)。为
+此，使用  <a href="eval.html#b:">b:</a>  变量前缀而不是  <a href="eval.html#g:">g:</a>  即可。
+
+                <b class="vimtag"> <a name="g:hare_indent_match_switch">g:hare_indent_match_switch</a> </b> <b class="vimtag"> <a name="b:hare_indent_match_switch">b:hare_indent_match_switch</a> </b>
+缺省，"match" 和 "switch" 条件的续行只缩进一层: &gt;hare
+
+        const file = match (os::create(path, 0o644,
+                flag::WRONLY | flag::TRUNC)) {
+        case let file: io::file =&gt;
+                yield file;
+        // ...
+
+如果要缩进两层，使其在视觉上更接近 "if" 和 "for" 条件，可在  <a href="starting.html#vimrc">vimrc</a>  里加入:
+<code class="example"></code>
+<code class="example">        let g:hare_indent_match_switch = 2</code>
+
+                                <b class="vimtag"> <a name="g:hare_indent_case">g:hare_indent_case</a> </b> <b class="vimtag"> <a name="b:hare_indent_case">b:hare_indent_case</a> </b>
+缺省，"match" 和 "switch" 分支 (case) 子句的续行缩进两层，以和 case 本体在视觉
+上有所区分: &gt;hare
+
+        case ltok::I8, ltok::I16, ltok::I32,
+                        ltok::I64, ltok::INT =&gt;
+                // ...
+
+如果要使用其他缩进层次，可调整  <a href="ft_hare.html#g:hare_indent_case">g:hare_indent_case</a> 。合法值为  <a href="motion.html#0">0</a> 、 <code class="badlink">1</code>  和
+ <code class="badlink">2</code> 。
+
+
+编 译 器 支 持                                          <b class="vimtag"> <a name="compiler-hare">compiler-hare</a> </b>
+
+如果在当前目录下检测到 Makefile 文件，此插件会假定当前使用 "make" 构造系统，并
+不修改 <a href="options.html#'makeprg'">'makeprg'</a>。否则，会使用 `hare build`。
+
+                                                <b class="vimtag"> <a name="g:hare_makeprg_params">g:hare_makeprg_params</a> </b>
+使用 `hare build` 时，可通过  <a href="ft_hare.html#g:hare_makeprg_params">g:hare_makeprg_params</a>  向 <a href="options.html#'makeprg'">'makeprg'</a> 追加额外的编
+译器选项。缺省值是 "-q"，以确保编译时不在标准输出上显示。
+
+</section><hr class="doubleline" /><section class=inner>
+<h4> vim:tw=78:ts=8:noet:ft=help:norl:</h4></section>
+</article>
+<footer>
+Generated by vim2html
+</footer>
+</body>
+</html>

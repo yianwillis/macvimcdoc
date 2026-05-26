@@ -1,4 +1,4 @@
-*terminal.txt*	适用于 Vim 9.2 版本。  最近更新: 2026年2月
+*terminal.txt*	适用于 Vim 9.2 版本。  最近更新: 2026年5月
 
 
 		  VIM 参考手册	by Bram Moolenaar
@@ -99,7 +99,7 @@ CTRL-W 可用来在窗口间切换和执行其它 CTRL-W 命令，如:
 							*t_CTRL-\_CTRL-N*
 特殊键组合 CTRL-\ CTRL-N 可用于切换到普通模式，其它模式下也都如此。
 							*t_CTRL-W_CTRL-C*
-CTRL-W CTRL-C 可可用强制结束作业。MS-Windows 上 CTRL-Break 也会杀掉作业。
+可用 CTRL-W CTRL-C 来强制结束作业。MS-Windows 上 CTRL-Break 也会杀掉作业。
 
 直接按 CTRL-C 的效果取决于 pty 的相应配置。简单命令会导致 SIGINT 发送给作业，
 结果是中止作业。其它命令可能会忽略 SIGINT 或自行处理 CTRL-C (Vim 就是如此)。
@@ -403,10 +403,10 @@ MS-Windows 上使用 winpty 来运行所有类型的命令。显然，必须是�
 winpty64.dll 来对应 Vim 编译时的用法。
 
 							*ConPTY* *E982*
-在更新的 MS-Windows 10 版本 (从 "October 2018 Update" 开始)，不再需要 winpty。
-在这些版本中，|:terminal| 会使用 Windows 的内建终端应用寄主支持，"ConPTY"。
-使用 ConPTY 时，可能有二义性宽度字符渲染的痕迹。如果这方面遇到问题，安装
-"winpty"。除非 ConPTY 的问题修正为止，还是建议 "winpty"。
+在更新的 MS-Windows 10 版本 (从 "2018 年十月更新版" 开始)，不再需要 winpty。在
+这些版本中，|:terminal| 会使用 Windows 的内建终端应用寄主支持，"ConPTY"。使用
+ConPTY 时，可能有二义性宽度字符渲染的痕迹。如果这方面遇到问题，安装 "winpty"。
+从 Windows 11 初始版本开始，ConPTY 已趋于稳定。
 
 可用环境变量为运行的作业传递信息:
     VIM_SERVERNAME	v:servername
@@ -492,7 +492,7 @@ term_dumpwrite({buf}, {filename} [, {options}])
 		也可用作 |method|，基用于文件名: >
 			GetFilename()->term_dumpwrite(bufnr)
 <
-		返回类型: |Number|
+		返回类型: 无
 
 
 term_getaltscreen({buf})				*term_getaltscreen()*
@@ -696,7 +696,7 @@ term_sendkeys({buf}, {keys})				*term_sendkeys()*
 		也可用作 |method|: >
 			GetBufnr()->term_sendkeys(keys)
 <
-		返回类型: |Number|
+		返回类型: 无
 
 
 term_setansicolors({buf}, {colors})			*term_setansicolors()*
@@ -730,7 +730,7 @@ term_setansicolors({buf}, {colors})			*term_setansicolors()*
 		也可用作 |method|: >
 			GetBufnr()->term_setansicolors(colors)
 <
-		返回类型: |Number|
+		返回类型: 无
 
 		{仅当编译时打开 GUI 和/或 |+termguicolors| 特性时才有效}
 
@@ -747,7 +747,7 @@ term_setapi({buf}, {expr})				*term_setapi()*
 		也可用作 |method|，基用于 {buf}: >
 			GetBufnr()->term_setapi({expr})
 <
-		返回类型: |Number|
+		返回类型: 无
 
 
 term_setkill({buf}, {how})				*term_setkill()*
@@ -761,7 +761,7 @@ term_setkill({buf}, {how})				*term_setkill()*
 		也可用作 |method|: >
 			GetBufnr()->term_setkill(how)
 <
-		返回类型: |Number|
+		返回类型: 无
 
 
 term_setrestore({buf}, {command})			*term_setrestore()*
@@ -776,7 +776,7 @@ term_setrestore({buf}, {command})			*term_setrestore()*
 		也可用作 |method|: >
 			GetBufnr()->term_setrestore(command)
 <
-		返回类型: |Number|
+		返回类型: 无
 
 
 term_setsize({buf}, {rows}, {cols})		*term_setsize()* *E955*
@@ -789,7 +789,7 @@ term_setsize({buf}, {rows}, {cols})		*term_setsize()* *E955*
 		也可用作 |method|: >
 			GetBufnr()->term_setsize(rows, cols)
 <
-		返回类型: |Number|
+		返回类型: 无
 
 
 term_start({cmd} [, {options}])			*term_start()*
@@ -811,9 +811,32 @@ term_start({cmd} [, {options}])			*term_start()*
 		   "in_io"、"in_top"、"in_bot"、"in_name"、"in_buf"
 		   "out_io"、"out_name"、"out_buf"、"out_modifiable"、"out_msg"
 		   "err_io"、"err_name"、"err_buf"、"err_modifiable"、"err_msg"
-		不过，至少 stdin、stdout 或 stderr 其中之一必须连接到终端上。
-		I/O 和终端连接时，该部分的回调函数将不会被使用。
+		在 Unix 上:
+		stdin、stdout、stderr 缺省都连接到一个伪终端 (pty)，因为需要与
+		终端进行双向通信。设置 "out_cb" 不会将 stdout 从伪终端切换到管
+		道。只有设置 "err_cb" 才会将 stderr 切换为管道。
+		注意: 设置 "err_cb" 时，由于伪终端使用行缓冲，而管道使用块缓
+		冲，stdout 与 stderr 的输出顺序可能无法保证。反之 ，如果不设置
+		"err_cb"，stderr 会与 stdout 共享同一个 pty，因此输出顺序可以
+		保证，但无法区分 stdout 和 stderr 的内容。
 
+		在 Windows 上使用 |ConPTY| 时:
+		无论回调如何设置，stdin、stdout、stderr 始终通过管道连接到伪控
+		制台。由于 stdout 和 stderr 共享同一管道，"err_cb" 无法将它们
+		分开。原因是 CreatePseudoConsole() API 只接受一个输入句柄和一
+		个输出句柄，没有为 stderr 单独提供句柄。
+
+		注意: 本函数在回调中始终使用 RAW 模式。"out_cb" 和 "err_cb" 接
+		收到的是从操作系统读取的原始数据块。一次回调调用中可能包含多行
+		数据 (以 NL 分隔)，并且 (对于通过 pty 获取的 stdout) 每一行末
+		尾可能带有由行规处理 (ONLCR) 产生的 CR。如果需要按行处理数据，
+		回调函数必须自行按 NL 分割 "msg"，并去除行尾的 CR。示例如下: >
+			func Handle(ch, msg)
+			  for line in split(a:msg, "\n")
+			    echom substitute(line, '\r$', '', '')
+			  endfor
+			endfunc
+<
 		以下还有一些额外的选项:
 		   "term_name"	     使用的缓冲区名，缺省是命令名。
 		   "term_rows"	     终端使用的垂直尺寸，缺省是
@@ -865,7 +888,7 @@ term_wait({buf} [, {time}])					*term_wait()*
 		也可用作 |method|: >
 			GetBufnr()->term_wait()
 <
-		返回类型: |Number|
+		返回类型: 无
 
 ==============================================================================
 3. 终端通信					 *terminal-communication*
@@ -1226,11 +1249,24 @@ gdb 窗口上可以输入更高级的命令。例如，输入: >
  `:Arguments` {args}  设置下次 `:Run` 使用的参数
 
  *:Break*	在光标位置设置断点
- :Break {position}
+ :Break [{position}] [thread {nr}] [if {expr}]
 		在指定位置设置断点
+		省略 {position} 时，默认使用当前文件和当前行
+		thread {nr} 会将断点限制在指定的单个线程上
+		if {expr} 设置条件断点 (条件成立时才触发)
+		示例: >
+			:Break if argc == 1
+			:Break 42 thread 3 if x > 10
+			:Break main
+<
  *:Tbreak*	在光标位置设置临时断点
- :Tbreak {position}
-		在指定位置设置临时断点
+ :Tbreak [{position}] [thread {nr}] [if {expr}]
+		和 `:Break` 类似，但断点在触发一次后会自动删除
+		示例: >
+			:Tbreak if argc == 1
+			:Tbreak 42 thread 3 if x > 10
+			:Tbreak main
+<
  *:Clear*	删除光标位置所在的断点
  *:ToggleBreak*	在光标位置设置断点或删除光标位置上的所有断点
 

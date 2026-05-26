@@ -1,4 +1,4 @@
-*syntax.txt*	适用于 Vim 9.2 版本。  最近更新: 2026年2月
+*syntax.txt*	适用于 Vim 9.2 版本。  最近更新: 2026年5月
 
 
 		  VIM 参考手册    by Bram Moolenaar
@@ -709,7 +709,7 @@ TOhtml 缺省对所有 Unicode/UCS 编码使用 UTF-8。要用 UTF-16 和 UTF-32
 								 *g:html_font*
 缺省: "monospace"
 用 g:html_font 可以指定转换后的文档使用的字体或字体集。如果本选项设为字符串，
-以单引号括起该值。如果本选项设为列表，以单引号括起每个列表项目，然后以逗号连接
+以单引号括起该值。如果本选项设为列表，以单引号括起每个列表项目，然后以逗号合并
 列表。不管哪种方式，加入 "monospace" 作为后备的通用字体族名，然后把整个结果用
 作 font family (用 CSS 时) 或 font face (不用 CSS 时)。例如: >
 
@@ -746,14 +746,27 @@ ABEL 高亮设置提供一些用户定义的选项。要打开这些选项，给
 可用 ":unlet" 关闭。例如: >
 	:unlet abel_obsolete_ok
 
-变量				高亮 ~
-abel_obsolete_ok		废弃的关键字接受为 statement，而非 error
-abel_cpp_comments_illegal	不把 '//' 解释为行内注释的引导符
+变量				高亮效果 ~
+abel_obsolete_ok		已废弃的关键字被视为 statement，而非 error
+abel_cpp_comments_illegal	不把 '//' 解释为行内注释引导符
 
 
 ADA
 
 见 |ft-ada-syntax|
+
+
+ALGOL 68					*algol68* *ft-algol68-syntax*
+
+该语法文件目前主要面向 Algol 68 Genie 项目，使用默认的 UPPER stropping 规则。
+在其他同样采用 UPPER stropping 的环境中也可以使用，但支持可能不够完整。
+
+可以通过以下变量进一步配置语法高亮。
+
+变量				高亮效果 ~
+*algol68_no_preludes*		不高亮预置环境 (prelude) 中的标识符、过程或加
+				粗关键字运算符
+*algol68_symbolic_operators*	高亮所有预置环境中的符号运算符
 
 
 ANT						*ant.vim* *ft-ant-syntax*
@@ -1983,11 +1996,11 @@ Java 平台的显著变动会以 JDK 增强提案 (JDK Enhancement Proposals，J
 逐步推出，可在发布时实现，作为功能预览提供。可能需要若干 JEP 和几个发布周期才
 会使这样的功能被整合到平台里，或者被撤消。要迎合早期尝鲜者，Vim 提供了已实现的
 语法相关的预览功能的可选支持。可以指定预览功能号的列表来请求支持，如下: >
-	:let g:java_syntax_previews = [507]
+	:let g:java_syntax_previews = [530]
 
 下表给出支持的 JEP 号:
 	`430`: 字符串模板 [JDK 21]
-	`507`: 模式、instanceof 和 switch 里的原始类型
+	`530`: 模式、instanceof 和 switch 里的原始类型
 
 注意 一旦特定的预览功能被整合进 Java 平台，项目会从此表中删除，相关功能不再可
 选。
@@ -2149,8 +2162,8 @@ Vim 高亮 email 的所有标准元素 (信头、签名、引用文本和 URL / 
 合标准的习惯，签名应该以 "--" 开头，跟随可选的若干空格并以回车结束的一行开始。
 
 Vim 把 ']'、'}'、'|'、'>' 或者有 '>' 跟随的单词开始的行高亮为引用文本。不过，
-只有在引用文本用 '>' 的方式引用 (后面可跟一个可选的空格)，Vim 才把把该文本里的
-信头和签名高亮为引用文本。
+只有在引用文本用 '>' 的方式引用 (后面可跟一个可选的空格) 时，Vim 才会把该文本
+里的信头和签名高亮为引用文本。
 
 mail.vim 缺省从第一个显示行之前的 100 行开始同步语法。如果你的机器很慢，而且通
 常处理的 email 的信头不长，你可以把它设为较小的值: >
@@ -4403,7 +4416,7 @@ e-{nr}	模式匹配部分的结束位置向左 {nr} 个字符
 区域项目跳过模式    -	 是   -    -	-    -	  是
 区域项目结束模式    -	 是   -    是	-    是   是
 
-位移可用 ',' 连接。例如: >
+位移间可用 ',' 连接。例如: >
   :syn match String  /"[^"]*"/hs=s+1,he=e-1
 <
     一些 "字符串" 文本
@@ -4572,9 +4585,9 @@ e-{nr}	模式匹配部分的结束位置向左 {nr} 个字符
    :syntax region perlPOD start="^=head" end="^=cut" contains=@Pod
 <
 	  如果 {file-name} 是绝对路径 (以 "/"、"c:"、"$VAR" 或者 "<sfile>" 开
-	  始)，则载入该文件。如果它是是相对路径 (例如，"syntax/pod.vim")，则先
-	  在 'runtimepath' 里搜索该文件，然后载入所有匹配的文件。建议使用相对
-	  路径，因为它允许用户用自己的版本替代被包含的文件，而不用修改使用
+	  始)，则载入该文件。如果它是相对路径 (例如，"syntax/pod.vim")，则先在
+	  'runtimepath' 里搜索该文件，然后载入所有匹配的文件。建议使用相对路
+	  径，因为它允许用户用自己的版本替代被包含的文件，而不用修改使用
 	  ":syn include" 命令的文件。
 
 						*E847*
@@ -4722,7 +4735,7 @@ Vim 如果发现显示开始的行出现在 C 风格注释的内部，就使用�
     :syntax sync linecont {pattern}
 
 	如果 {pattern} 在行内匹配，本行被认为会在下一行继续。这意味着同步点的
-	搜索会把这些行当作连接在一起的一行处理。
+	搜索会把这些行当作合并在一起的一行处理。
 
 如果同时给出 "maxlines={N}" 参数，寻找匹配的搜索行数限于 N 行之内。可以用于同
 步项目很少且机器速度较慢的场合。例如: >
@@ -5172,7 +5185,22 @@ EndOfBuffer	缓冲区的末行之后的填充行 (~)。缺省用 |hl-NonText| �
 							*hl-ErrorMsg*
 ErrorMsg	命令行上的错误信息。
 							*hl-VertSplit*
-VertSplit	分离垂直分割窗口的列。
+VertSplit	用于分隔当前窗口与其相邻垂直分割窗口的分隔栏。在每一屏幕行中，
+		该分隔栏使用的单元字符和高亮取决于分隔线两侧对应位置的内容:
+		- 在当前窗口的状态行上: 使用 |hl-StatusLine| 高亮以空格形式绘
+		  制该单元格，从而在视觉上与当前窗口的状态行融为一体。
+		- 在其他所有行上 (包括仅为相邻非当前窗口状态行、而非当前窗口状
+		  态行的情况): 使用 'fillchars' 中的 "vert" 字符，并应用
+		  VertSplit 高亮绘制该单元格。
+							*hl-VertSplitNC*
+VertSplitNC	用于分隔垂直分割的两个非当前窗口之间的分隔栏。在每一屏幕行中，
+		该分隔栏使用的单元字符和高亮取决于分隔线两侧对应位置的内容:
+		- 在任一相邻 (非当前) 窗口的状态行上: 使用 |hl-StatusLineNC|
+		  高亮以空格形式绘制该单元格，从而在视觉上与该窗口的状态行融为
+		  一体。
+		- 在其他所有行上: 该单元格会使用 'fillchars' 中的 "vert" 字
+		  符，并应用 VertSplitNC 高亮。
+		缺省与 |hl-VertSplit| 高亮一致。
 							*hl-Folded*
 Folded		用于关闭的折叠的行。
 							*hl-FoldColumn*
@@ -5182,7 +5210,7 @@ SignColumn	显示 |signs| 的列。
 							*hl-IncSearch*
 IncSearch	'incsearch' 高亮；也用于被 ":s///c" 替换的文本。
 							*hl-LineNr*
-LineNr		":number" 和 ":#" 命令与置位 'number' 或 'relativenumber' 选项
+LineNr		`:number` 和 `:#` 命令与置位 'number' 或 'relativenumber' 选项
 		时的行号。
 							*hl-LineNrAbove*
 LineNrAbove	置位 'relativenumber' 选项时，光标上方的行号。
@@ -5245,8 +5273,7 @@ PreInsert	'completeopt' 里包含 "preinsert" 时的预插入文本。
 							*hl-PopupSelected*
 PopupSelected	|popup_menu()| 创建的弹出窗口。缺省链接到 |hl-PmenuSel|。
 							*hl-PopupNotification*
-PopupNotification
-		|popup_notification()| 创建的弹出窗口。缺省链接到
+PopupNotification	|popup_notification()| 创建的弹出窗口。缺省链接到
 		|hl-WarningMsg|。
 							*hl-Question*
 Question	|hit-enter| 提示和 yes/no 问题。
@@ -5259,7 +5286,7 @@ Search		最近搜索模式的高亮 (见 'hlsearch')。
 CurSearch	最近搜索模式的当前匹配 (见 'hlsearch')。
 		备注: 只在刚搜索后才正确，内容作了修改或屏幕重画后可能会过时。
 							*hl-SpecialKey*
-SpecialKey	":map" 列出的 Meta 和特殊键，也包括文本里不可显示字符的显示和
+SpecialKey	`:map` 列出的 Meta 和特殊键，也包括文本里不可显示字符的显示和
 		'listchars'。
 		一般的: 和实际内容显示上有差异的文本。
 							*hl-SpellBad*
@@ -5276,10 +5303,13 @@ SpellRare	拼写检查器能识别但很少使用的单词。|spell|
 		它会和本来应该使用的高亮进行组合。
 							*hl-StatusLine*
 StatusLine	当前窗口的状态行。
+		也用于紧邻当前窗口状态行的垂直分隔栏单元格。
 							*hl-StatusLineNC*
-StatusLineNC	非当前窗口的状态行
-		注意: 如果等于 "StatusLine"，Vim 会使用 "^^^" 指示当前窗口的状
-		态行。
+StatusLineNC	非当前窗口的状态行。
+		也用于紧邻非当前窗口状态行的垂直分隔栏单元格。见
+		|hl-VertSplitNC|。
+		注意: 如果本高亮和 "StatusLine" 一样，Vim 会使用 "^^^" 指示当
+		前窗口的状态行。
 							*hl-StatusLineTerm*
 StatusLineTerm	|terminal| 窗口为当前窗口时的状态行。
 							*hl-StatusLineTermNC*
@@ -5314,7 +5344,8 @@ TitleBarNC	用于 gui 的非激活窗口的标题栏。
 Visual		可视模式的选择区。
 							*hl-VisualNOS*
 VisualNOS	Vim 是 "选择区的非拥有者" 时，可视模式的选择区。只有 X11 GUI
-		的 |gui-x11| 和 |xterm-clipboard| 才提供此支持。
+		的 |gui-x11|、|xterm-clipboard| 和 |wayland-selections| 提供此
+		支持。
 							*hl-WarningMsg*
 WarningMsg	警告消息。
 							*hl-WildMenu*

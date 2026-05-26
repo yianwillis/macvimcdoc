@@ -1,4 +1,4 @@
-*builtin.txt*	适用于 Vim 9.2 版本。  最近更新: 2026年2月
+*builtin.txt*	适用于 Vim 9.2 版本。  最近更新: 2026年5月
 
 		  VIM 参考手册	by Bram Moolenaar
 				译者: Willis
@@ -81,7 +81,7 @@ browsedir({title}, {initdir})	字符串	启动目录请求窗口，指定标题�
 bufadd({name})			数值	在缓冲区列表中加入缓冲区 {name}
 bufexists({buf})		数值	缓冲区 {buf} 存在则为 |TRUE|
 buflisted({buf})		数值	缓冲区 {buf} 在缓冲区列表中则为 |TRUE|
-bufload({buf})			数值	尚未加载时载入缓冲区 {buf}
+bufload({buf})			无	尚未加载时载入缓冲区 {buf}
 bufloaded({buf})		数值	缓冲区 {buf} 已加载则为 |TRUE|
 bufname([{buf}])		字符串	缓冲区 {buf} 的名字
 bufnr([{buf} [, {create}]])	数值	缓冲区 {buf} 的编号
@@ -95,31 +95,33 @@ byteidxcomp({expr}, {nr} [, {utf16}])
 call({func}, {arglist} [, {dict}])
 				可变	调用函数 {func}，使用参数 {arglist}
 ceil({expr})			浮点	{expr} 向上取整
-ch_canread({handle})		数值	检查 {handle} 是否有可读的内容
-ch_close({handle})		无	关闭 {handle}
-ch_close_in({handle})		无	关闭 {handle} 的 in 部分
+ch_canread({handle})		数值	检查通道 {handle} 是否有可读的内容
+ch_close({handle})		无	关闭通道 {handle}
+ch_close_in({handle})		无	关闭通道 {handle} 的 in 流
 ch_evalexpr({handle}, {expr} [, {options}])
 				可变	在 JSON {handle} 上执行 {expr}
 ch_evalraw({handle}, {string} [, {options}])
-				可变	在原始 {handle} 上执行 {string}
-ch_getbufnr({handle}, {what})	数值	获取 {handle} 用于 {what} 的缓冲区号
-ch_getjob({channel})		作业	获取 {channel} 的相关作业
-ch_info({handle})		字符串	通道 {handle} 的相关信息
+				可变	在 RAW {handle} 上执行 {string}
+ch_getbufnr({handle}, {what})	数值	通道 {handle} 用于 {what} 的缓冲区号
+ch_getjob({channel})		作业	通道 {channel} 的关联作业
+ch_info({handle})		字典	通道 {handle} 的相关信息
+ch_listen({address} [, {options}])
+				通道	在指定环回端口或 UNIX 域套接字上监听
 ch_log({msg} [, {handle}])	无	在通道日志文件中写入 {msg}
 ch_logfile({fname} [, {mode}])	无	启动通道日志，使用文件 {fname}
 ch_open({address} [, {options}])
 				通道	打开到 {address} 的通道
-ch_read({handle} [, {options}])	字符串	从 {handle} 读取
+ch_read({handle} [, {options}])	字符串	从通道 {handle} 读取
 ch_readblob({handle} [, {options}])
-				blob	从 {handle} 读取 blob
+				blob	从通道 {handle} 读取 blob
 ch_readraw({handle} [, {options}])
-				字符串	从 {handle} 读取原始格式数据
+				字符串	从通道 {handle} 读取原始格式数据
 ch_sendexpr({handle}, {expr} [, {options}])
-				可变	在 JSON {handle} 上发送 {expr}
+				可变	在 JSON 通道 {handle} 上发送 {expr}
 ch_sendraw({handle}, {expr} [, {options}])
-				可变	在原始 {handle} 上发送 {expr}
+				无	在 RAW 通道 {handle} 上发送 {expr}
 ch_setoptions({handle}, {options})
-				无	设置 {handle} 的选项
+				无	设置通道 {handle} 的选项
 ch_status({handle} [, {options}])
 				字符串	通道 {handle} 的状态
 changenr()			数值	当前改变号
@@ -186,7 +188,7 @@ extend({expr1}, {expr2} [, {expr3}])
 extendnew({expr1}, {expr2} [, {expr3}])
 				列表/字典
 					和 |extend()| 类同，但建立新列表或字典
-feedkeys({string} [, {mode}])	数值	将键序列 {string} 加入预输入缓冲区
+feedkeys({string} [, {mode}])	无	将键序列 {string} 加入预输入缓冲区
 filecopy({from}, {to})		数值	复制文件 {from} 到 {to}，返回成功与否
 filereadable({file})		数值	{file} 为可读文件则为 |TRUE|
 filewritable({file})		数值	{file} 为可写文件则为 |TRUE|
@@ -212,7 +214,7 @@ foldtext()			字符串	获取折叠关闭时会显示的行
 foldtextresult({lnum})		字符串	{lnum} 所在的已关闭折叠的显示文本
 foreach({expr1}, {expr2})	列表/元组/字典/blob/字符串
 					对 {expr1} 里的每个项目计算 {expr2}
-foreground()			数值	把 Vim 窗口带到前台
+foreground()			无	把 Vim 窗口带到前台
 fullcommand({name} [, {vim9}])	字符串	获取命令缩写 {name} 的完整命令名
 funcref({name} [, {arglist}] [, {dict}])
 				函数引用
@@ -336,7 +338,7 @@ inputsecret({prompt} [, {text}])
 				字符串	和 input() 类同，但隐藏文本
 insert({object}, {item} [, {idx}])
 				列表	在 {object} 里插入 {item} [{idx} 之前]
-instanceof({object}, {class})	数值	{object} 为 {class} 的实例则为 |TRUE|
+instanceof({object}, {class})	布尔型	{object} 为 {class} 的实例则为 |TRUE|
 interrupt()			无	中断脚本执行
 invert({expr})			数值	按位取反
 isabsolutepath({path})		数值	{directory} 是绝对路径则为 |TRUE|
@@ -345,15 +347,15 @@ islocked({expr})		数值	{expr} 被锁住则为 |TRUE|
 isinf({expr})			数值	{expr} 为无限大 (正或负) 则为 |TRUE|
 isnan({expr})			数值	{expr} 为 NaN 则为 |TRUE|
 items({expr})			列表	{expr} 里所有的键/索引-值组对
-job_getchannel({job})		通道	获取 {job} 的通道句柄
-job_info([{job}])		字典	获取 {job} 的信息
+job_getchannel({job})		通道	作业 {job} 的通道句柄
+job_info([{job}])		字典	作业 {job} 的信息
 job_setoptions({job}, {options})
-				无	设置 {job} 选项
+				无	设置作业 {job} 选项
 job_start({command} [, {options}])
 				作业	启动作业，执行 {command}
-job_status({job})		字符串	获取 {job} 的状态
-job_stop({job} [, {how}])	数值	停止 {job}
-join({expr} [, {sep}])		字符串	将 {expr} 的所有项目连接成一个字符串
+job_status({job})		字符串	作业 {job} 的状态
+job_stop({job} [, {how}])	数值	停止作业 {job}
+join({expr} [, {sep}])		字符串	将 {expr} 的所有项目合并成一个字符串
 js_decode({string})		可变	对 {string} 进行 JS 风格的 JSON 解码
 js_encode({expr})		字符串	对 {expr} 进行 JS 风格的 JSON 编码
 json_decode({string})		可变	对 {string} 进行 JSON 解码
@@ -372,7 +374,7 @@ list2tuple({list})		元组	用 {list} 里的项目创建新元组
 listener_add({callback} [, {buf} [, {unbuffered}]])
 				数值	新增改动监听器回调
 listener_flush([{buf}])		无	激活监听器回调
-listener_remove({id})		无	删除监听器回调
+listener_remove({id})		数值	删除监听器回调
 localtime()			数值	当前时间
 log({expr})			浮点	{expr} 的自然对数 (以 e 为底)
 log10({expr})			浮点	{expr} 以 10 为底的对数
@@ -433,8 +435,8 @@ popup_clear()			无	关闭所有弹出窗口
 popup_close({id} [, {result}])	无	关闭弹出窗口 {id}
 popup_create({what}, {options})	数值	创建弹出窗口
 popup_dialog({what}, {options})	数值	创建弹出窗口用作对话框
-popup_filter_menu({id}, {key})	数值	菜单弹出窗口的过滤
-popup_filter_yesno({id}, {key})	数值	对话框弹出窗口的过滤
+popup_filter_menu({id}, {key})	布尔型	菜单弹出窗口的过滤
+popup_filter_yesno({id}, {key})	布尔型	对话框弹出窗口的过滤
 popup_findecho()		数值	获取 `:echowin` 的弹出窗口 ID
 popup_findinfo()		数值	获取信息弹出窗口的窗口 ID
 popup_findpreview()		数值	获取预览弹出窗口的窗口 ID
@@ -463,7 +465,7 @@ prompt_setinterrupt({buf}, {text})
 				无	设置缓冲区 {buf} 的提示中断函数
 prompt_setprompt({buf}, {text})	无	设置缓冲区 {buf} 的提示文本为 {text}
 prop_add({lnum}, {col}, {props})
-				无	新增一项文本属性
+				数值	新增一项文本属性
 prop_add_list({props}, [[{lnum}, {col}, {end-lnum}, {end-col}], ...])
 				无	新增多项文本属性
 prop_clear({lnum} [, {lnum-end} [, {props}]])
@@ -498,7 +500,7 @@ readdirex({dir} [, {expr} [, {dict}]])
 readfile({fname} [, {type} [, {max}]])
 				列表	从文件 {fname} 读取文本行列表
 redraw_listener_add({opts})	数值	新增重画监听器回调
-redraw_listener_remove({id})	无	删除重画监听器回调
+redraw_listener_remove({id})	数值	删除重画监听器回调
 reduce({object}, {func} [, {initial}])
 				可变	用 {func} 来缩减 {object}
 reg_executing()			字符串	获取执行中的寄存器名
@@ -508,7 +510,7 @@ reltimefloat({time})		浮点数	将时间值 {time} 转化为浮点数
 reltimestr({time})		字符串	将时间值 {time} 转化为字符串
 remote_expr({server}, {string} [, {idvar} [, {timeout}]])
 				字符串	发送表达式 {string} 到 {server}
-remote_foreground({server})	数值	把名为 {server} 的 Vim 服务器带到前台
+remote_foreground({server})	无	把名为 {server} 的 Vim 服务器带到前台
 remote_peek({serverid} [, {retvar}])
 				数值	检查来自 {serverid} 的应答字符串
 remote_read({serverid} [, {timeout}])
@@ -557,7 +559,7 @@ setbufvar({buf}, {varname}, {val})
 				无	设置缓冲区 {buf} 的 {varname} 为 {val}
 setcellwidths({list})		无	设置字符的屏幕单元宽度覆盖
 setcharpos({expr}, {list})	数值	设置光标和位置标记的字符位置为 {list}
-setcharsearch({dict})		字典	用 {dict} 设置字符搜索的相关选项
+setcharsearch({dict})		无	用 {dict} 设置字符搜索的相关选项
 setcmdline({str} [, {pos}])	数值	设置命令行为 {str}，并设置光标位置
 setcmdpos({pos})		数值	设置命令行上的光标字节位置
 setcursorcharpos({list})	数值	移动光标到 {list} 指定的字符位置
@@ -618,7 +620,7 @@ sound_playfile({path} [, {callback}])
 				数值	播放声音文件 {path}
 sound_stop({id})		无	停止播放声音 {id}
 soundfold({word})		字符串	按发音折叠 {word}
-spellbadword()			字符串	光标所在的有拼写错误的单词
+spellbadword()			列表	光标所在的有拼写错误的单词
 spellsuggest({word} [, {max} [, {capital}]])
 				列表	替代 {word} 的拼写建议
 split({expr} [, {pat} [, {keepempty}]])
@@ -673,6 +675,8 @@ tabpagebuflist([{arg}])		列表	标签页里所有缓冲区号的列表
 tabpagenr([{arg}])		数值	当前或最后标签页的编号
 tabpagewinnr({tabarg} [, {arg}])
 				数值	标签页里当前窗口的编号
+tabpanel_getinfo()		字典	标签页面板当前状态
+tabpanel_scroll({n} [, {opts}])	布尔型	滚动标签页面板
 tagfiles()			列表	使用的标签文件
 taglist({expr} [, {filename}])	列表	匹配 {expr} 的标签列表
 tan({expr})			浮点	{expr} 的正切值
@@ -683,31 +687,31 @@ term_dumpdiff({filename}, {filename} [, {options}])
 term_dumpload({filename} [, {options}])
 				数值	显示一份屏幕截图
 term_dumpwrite({buf}, {filename} [, {options}])
-				无	对终端窗口的内容进行截图
-term_getaltscreen({buf})	数值	取得终端是否使用备用屏幕的标志位
-term_getansicolors({buf})	列表	取得 GUI 色彩模式使用的 ANSI 调色板
-term_getattr({attr}, {what})	数值	取得属性里的 {what} 值
-term_getcursor({buf})		列表	取得终端光标位置
-term_getjob({buf})		作业	取得终端关联的作业
-term_getline({buf}, {row})	字符串	从终端取得一行文本行
-term_getscrolled({buf})		数值	取得终端的滚动行数
-term_getsize({buf})		列表	取得终端的大小
-term_getstatus({buf})		字符串	取得终端的状态
-term_gettitle({buf})		字符串	取得终端的标题
-term_gettty({buf}, [{input}])	字符串	取得终端的 tty 名
-term_list()			列表	取得所有终端缓冲区组成的列表
-term_scrape({buf}, {row})	列表	取得终端屏幕的某行
-term_sendkeys({buf}, {keys})	无	给终端发送键击序列
+				无	对终端 {buf} 窗口内容进行截图
+term_getaltscreen({buf})	数值	终端 {buf} 是否使用备用屏幕的标志位
+term_getansicolors({buf})	列表	终端 {buf} GUI 模式使用的 ANSI 调色板
+term_getattr({attr}, {what})	数值	终端屏幕单元格属性 {attr} 中 {what} 值
+term_getcursor({buf})		列表	终端 {buf} 的光标位置
+term_getjob({buf})		作业	终端 {buf} 关联的作业
+term_getline({buf}, {row})	字符串	从终端 {buf} 获取第 {row} 行文本
+term_getscrolled({buf})		数值	终端 {buf} 的滚动行数
+term_getsize({buf})		列表	终端 {buf} 的大小
+term_getstatus({buf})		字符串	终端 {buf} 的状态
+term_gettitle({buf})		字符串	终端 {buf} 的标题
+term_gettty({buf}, [{input}])	字符串	终端 {buf} 的 tty 名
+term_list()			列表	所有终端缓冲区组成的列表
+term_scrape({buf}, {row})	列表	终端 {buf} 第 {row} 行屏幕的内容
+term_sendkeys({buf}, {keys})	无	向终端 {buf} 发送键击序列 {keys}
 term_setansicolors({buf}, {colors})
 				无	设置 GUI 色彩模式使用的 ANSI 调色板
-term_setapi({buf}, {expr})	无	设置 |terminal-api| 函数名前缀
-term_setkill({buf}, {how})	无	设置停止终端中的作业的信号值
+term_setapi({buf}, {expr})	无	设置终端中 |terminal-api| 函数名前缀
+term_setkill({buf}, {how})	无	设置停止终端 {buf} 中的作业的信号值
 term_setrestore({buf}, {command})
-				无	设置恢复终端的命令
+				无	设置恢复终端 {buf} 的命令
 term_setsize({buf}, {rows}, {cols})
-				无	设置终端的大小
-term_start({cmd} [, {options}])	数值	打开终端窗口并执行作业
-term_wait({buf} [, {time}])	数值	等待屏幕刷新
+				无	设置终端 {buf} 大小为 {rows} x {cols}
+term_start({cmd} [, {options}])	数值	打开终端窗口并执行作业 {cmd}
+term_wait({buf} [, {time}])	无	等待终端 {buf} 屏幕刷新 {time} 毫秒
 terminalprops()			字典	终端属性
 test_alloc_fail({id}, {countdown}, {repeat})
 				无	使内存分配失败
@@ -715,7 +719,7 @@ test_autochdir()		无	系统启动中打开 'autochdir'
 test_feedinput({string})	无	给输入缓冲区添加键序列
 test_garbagecollect_now()	无	用于测试，立即释放内存
 test_garbagecollect_soon()	无	用于测试，尽快释放内存
-test_getvalue({string})		可变	获取内部变量的值
+test_getvalue({string})		数值	获取内部变量的值
 test_gui_event({event}, {args})	布尔型	用于测试，生成 GUI 事件
 test_ignore_error({expr})	无	忽略特定的错误
 test_mswin_event({event}, {args})
@@ -738,7 +742,7 @@ test_setmouse({row}, {col})	无	用于测试，设置鼠标位置
 test_settime({expr})		无	用作测试的当前时间
 test_srand_seed([{seed}])	无	为 srand() 测试用，设置种子
 test_unknown()			可变	用作测试的未知值
-test_void()			可变	且作测试的无值 (void)
+test_void()			无	且作测试的无值 (void)
 timer_info([{id}])		列表	定时器信息
 timer_pause({id}, {pause})	无	暂停或恢复定时器
 timer_start({time}, {callback} [, {options}])
@@ -755,7 +759,7 @@ tuple2list({tuple})		列表	将元素的 {tuple} 转化为元素的列表
 type({expr})			数值	值 {expr} 的类型值
 typename({expr})		字符串	{expr} 的类型描述
 undofile({name})		字符串	对应 {name} 的撤销文件名
-undotree([{buf}])		列表	缓冲区 {buf} 的撤销树
+undotree([{buf}])		字典	缓冲区 {buf} 的撤销树
 uniq({list} [, {func} [, {dict}]])
 				列表	从列表中删除相邻的重复项
 uri_decode({string})		字符串	对字符串进行 URI-解码
@@ -1192,7 +1196,7 @@ balloon_show({expr})					*balloon_show()*
 		{仅当编译时加入 |+balloon_eval| 或 |balloon_eval_term| 特性才
 		有效}
 
-		返回类型: |Number|
+		返回类型: 无
 
 
 balloon_split({msg})					*balloon_split()*
@@ -1391,7 +1395,7 @@ bufload({buf})						*bufload()*
 		也可用作 |method|: >
 			eval 'somename'->bufload()
 <
-		返回类型: |Number|
+		返回类型: 无
 
 
 bufloaded({buf})					*bufloaded()*
@@ -1750,7 +1754,7 @@ clearmatches([{win}])					*clearmatches()*
 		也可用作 |method|: >
 			GetWin()->clearmatches()
 <
-		返回类型: |Number|
+		返回类型: 无
 
 
 cmdcomplete_info()					*cmdcomplete_info()*
@@ -1853,7 +1857,7 @@ complete({startcol}, {matches})				*complete()* *E785*
 		也可用作 |method|，基是作为第二个参数传递的: >
 			GetMatches()->complete(col('.'))
 <
-		返回类型: |Number|
+		返回类型: 无
 
 
 complete_add({expr})					*complete_add()*
@@ -2256,7 +2260,7 @@ diff({fromlist}, {tolist} [, {options}])		*diff()*
 		有关这些选项的更多信息，参见 'diffopt'。
 
 		为了计算合并风格的 diff，会先将 {fromlist} 里的所有项目用换行
-		符连接成一个字符串，对 {tolist} 也同样处理。因而，合并风格的
+		符合并成一个字符串，对 {tolist} 也同样处理。因而，合并风格的
 		diff 输出会出现行号。
 
 		如果 {fromlist} 和 {tolist} 等同，返回空列表或空串。
@@ -2337,7 +2341,7 @@ digraph_get({chars})					*E1214*
 
 digraph_getlist([{listall}])				*digraph_getlist()*
 		返回二合字母列表。{listall} 参数给出且为 TRUE 时，返回包括系统
-		缺省在内的的所有二合字母。否则，只返回用户定义的二合字母。
+		缺省在内的所有二合字母。否则，只返回用户定义的二合字母。
 
 		如有需要，字符会从 Unicode 转化为 'encoding'。此种转换必须可
 		行，有时可能会失败。
@@ -2414,7 +2418,7 @@ echoraw({expr})						*echoraw()*
 			call echoraw(&t_TI)
 <		使用时要谨慎，否则可能会扰乱终端显示。
 
-		返回类型: |Number|
+		返回类型: 无
 
 
 empty({expr})						*empty()*
@@ -2453,7 +2457,7 @@ err_teapot([{expr}])					*err_teapot()*
 		{expr} 给出时必须为字符串。
 		(译者注: 如果 {expr} 为空串或者只有空白字符，不会报错)
 
-		返回类型: |Number|
+		返回类型: 无
 
 
 escape({string}, {chars})				*escape()*
@@ -2891,7 +2895,7 @@ feedkeys({string} [, {mode}])				*feedkeys()*
 		也可用作 |method|: >
 			GetInput()->feedkeys()
 <
-		返回类型: |Number|
+		返回类型: 无
 
 
 filecopy({from}, {to})					*filecopy()*
@@ -3207,9 +3211,9 @@ foldtext()						*foldtext()*
 			+-- 45 lines: abcdef
 <		开头连字符的数目取决于折叠级别。"45" 是折叠包含的行数。
 		"abcdef" 是折叠里首个非空白行的文本。去掉开头的空白，"//" 或
-		"/*"，还有 'foldmarker' 和 'commentstring' 选项包含的文本。
-		用本函数来描绘实际的折叠文本时，行的其余部分会用 'fillchars'
-		设置里的 fold 字符来填充。
+		"/*"，以及 'foldmarker' 和 'commentstring' 选项包含的文本。
+		用本函数描绘实际折叠文本后，会用 'fillchars' 设置里的 fold 字
+		符来填充行的剩余空间。
 		如果没有折叠，则返回空串。
 
 		返回类型: |String|
@@ -3217,11 +3221,11 @@ foldtext()						*foldtext()*
 
 
 foldtextresult({lnum})					*foldtextresult()*
-		返回替代行 {lnum} 所在的已关闭折叠所显示的文本。在合适的上下文
-		下，通过计算 'foldtext' 得到。
+		返回替代行 {lnum} 所在的已关闭折叠所显示的文本。通过在合适上下
+		文下计算 'foldtext' 获取。
 		如果 {lnum} 不在任何已关闭的折叠中，返回空串。
-		{lnum} 的用法可见 |getline()|。例如，"." 表示当前行，"'m" 对应
-		位置标记 m 的所在行，等等。
+		{lnum} 的用法可见 |getline()|。如 "." 表示当前行，"'m" 对应位
+		置标记 m 的所在行等。
 		可用于导出折叠文本，例如在生成 HTML 格式时输出折叠信息。
 		{仅当编译时加入 |+folding| 特性才有效}
 
@@ -3276,7 +3280,7 @@ foreground()						*foreground()*
 		Win32 系统上此功能未必可用，操作系统并不总允许窗口主动把自己切
 		换到前台。可用 |remote_foreground()| 代替。
 
-		返回类型: |Number|
+		返回类型: 无
 		{仅当使用 Win32、Motif 和 GTK GUI 版本和 Win32 控制台版本时才
 		有效}
 
@@ -3414,7 +3418,7 @@ garbagecollect([{atexit}])				*garbagecollect()*
 		符的时候。要强制立即进行垃圾回收，可用
 		|test_garbagecollect_now()|。
 
-		返回类型: |String|
+		返回类型: 无
 
 
 get({list}, {idx} [, {default}])			*get()* *get()-list*
@@ -3747,8 +3751,8 @@ getcharmod()						*getcharmod()*
 			64	鼠标三击
 			96	鼠标四击 (== 32 + 64)
 			128	Command (Mac) 或 Super (GTK)
-		只返回字符本身未包含的的修饰符。例如，Shift-a 会得到 "A"，返回
-		值不带修饰符。如果没有任何修饰符，返回 0。
+		只返回字符本身未包含的修饰符。例如，Shift-a 会得到 "A"，返回值
+		不带修饰符。如果没有任何修饰符，返回 0。
 
 		返回类型: |Number|
 
@@ -4931,7 +4935,7 @@ glob2regpat({string})					 *glob2regpat()*
 
 							*globpath()*
 globpath({path}, {expr} [, {nosuf} [, {list} [, {alllinks}]]])
-		在 {path} 的所有目录下，用 |glob()| 扩展字符串 {expr}，并连接
+		在 {path} 的所有目录下，用 |glob()| 扩展字符串 {expr}，并合并
 		所有的返回结果。例如: >
 			:echo globpath(&rtp, "syntax/c.vim")
 <
@@ -5553,7 +5557,7 @@ instanceof({object}, {class})				*E616* *E693*
 <		也可用作 |method|: >
 			myobj->instanceof(mytype)
 <
-		返回类型: |Number|
+		返回类型: |vim9-boolean|
 
 
 interrupt()						*interrupt()*
@@ -5685,7 +5689,7 @@ job_ 函数文档在这里: |job-functions-details|
 
 
 join({expr} [, {sep}])					*join()*
-		将 {expr} 的所有项目连接成一个字符串。{expr} 可为 |List| 或
+		将 {expr} 的所有项目合并成一个字符串。{expr} 可为 |List| 或
 		|Tuple|。
 		{sep} 给出的分隔符放置在项目之间。缺省为单个空格。
 		注意 返回值尾部不加 {sep}。如果确实需要: >
@@ -5706,6 +5710,8 @@ js_decode({string})					*js_decode()*
 		- 字符串可以用单引号括起。
 		- 数组里允许出现空项 (即两个逗句之间没有内容)，此时会返回
 		  v:none 项。
+		- 以下关键字忽略大小写: true、false、null、NaN、Infinity 和
+		  -Infinity。
 
 		也可用作 |method|: >
 			ReadObject()->js_decode()
@@ -5741,18 +5747,17 @@ json_decode({string})					*json_decode()* *E491*
 		- 对象中接受整数键，例如 {1:2} 等同于 {"1":2}。
 		- 识别更多形式的浮点数，例如 "1." 等同于 "1.0"，而 "001.2" 等
 		  同于 "1.2"。并接受特殊浮点值 "Infinity"、"-Infinity" 和
-		  "NaN" (大小写不敏感)。
+		  "NaN"。
 		- 忽略整数的前导零，例如 "012" 等同于 "12"，而 "-012" 等同于
 		  "-12"。
-		- 按本义的名字 null、true 或 false 对大小写不敏感，例如 "NULL"
-		  等同于 "null"，"True" 等同于 "true"。
 		- 接受字符串中未转义的控制字符 U+0000 到 U+001F，例如 "	"
 		  (字符串中的制表符) 等同于 "\t"。
 		- 接受空或只有空白组成的 JSON 表达式，生成 v:none。
 		- 非法的两字符转义序列会忽略反斜杠，例如 "\a" 会被解码为 "a"。
-		- JSON 字符串中，完整的 Unicode 代理对 (surrogate pair) 通常应
-		  为 12 个字符的序列，例如 "\uD834\uDD1E"，但 json_decode() 会
-		  安静地接受不完整的代理对，例如 "\uD834" 或 "\uD834\u"。
+		- JSON 字符串中，完整的 Unicode 代理对 (surrogate pair) 为 12
+		  个字符的序列，例如 "\uD834\uDD1E"，孤立代理项或其他无效代理
+		  对 (如 "\uD800" 或 "\uD800\uD800") 会报错。
+
 							*E938*
 		对象里的重复键值，虽然在 rfc7159 中合法，但 json_decode() 不接
 		受，因为转换结果必须是合法的 Vim 类型，例如，下例会解码失败:
@@ -5958,7 +5963,7 @@ list2blob({list})					*list2blob()*
 
 
 list2str({list} [, {utf8}])				*list2str()*
-		把 {list} 中的每个数值视为字符代码，转换为相应字符后连接成字符
+		把 {list} 中的每个数值视为字符代码，转换为相应字符后合并成字符
 		串。例如: >
 			list2str([32])		返回 " "
 			list2str([65, 66, 67])	返回 "ABC"
@@ -5984,9 +5989,9 @@ list2tuple({list})					*list2tuple()*
 			list2tuple([1, 2, 3])		返回 (1, 2, 3)
 <		|tuple2list()| 是其逆操作。
 
-		本函数不会递归地将 {list} 内部的列表项目转换为为元组。注意 列
-		表和元组共享相同的项目引用，如果任何一个项目被修改，元组和列表
-		都会受到影响。
+		本函数不会递归地将 {list} 内部的列表项目转换为元组。注意 列表
+		和元组共享相同的项目引用，如果任何一个项目被修改，元组和列表都
+		会受到影响。
 
 		如果出错，返回空元组。
 
@@ -6079,6 +6084,8 @@ listener_add({callback} [, {buf} [, {unbuffered}]])	*listener_add()*
 		也可用作 |method|，基是作为第二个参数传递的: >
 			GetBuffer()->listener_add(callback)
 <
+		该函数在沙盘里不可用 |sandbox|。
+
 		返回类型: |Number|
 
 
@@ -6092,7 +6099,9 @@ listener_flush([{buf}])					*listener_flush()*
 		也可用作 |method|: >
 			GetBuffer()->listener_flush()
 <
-		返回类型: |Number|
+		该函数在沙盘里不可用 |sandbox|。
+
+		返回类型: 无
 
 
 listener_remove({id})					*listener_remove()*
@@ -6103,6 +6112,8 @@ listener_remove({id})					*listener_remove()*
 		也可用作 |method|: >
 			GetListenerId()->listener_remove()
 <
+		该函数在沙盘里不可用 |sandbox|。
+
 		返回类型: |Number|
 
 
@@ -6398,7 +6409,7 @@ mapset({dict})
 			    mapset(d)
 			endfor
 <
-		返回类型: |Number|
+		返回类型: 无
 
 
 match({expr}, {pat} [, {start} [, {count}]])		*match()*
@@ -7534,8 +7545,10 @@ prompt_setcallback({buf}, {expr})			*prompt_setcallback()*
 
 <		也可用作 |method|: >
 			GetBuffer()->prompt_setcallback(callback)
+<
+		返回类型: 无
 
-<		{仅当编译时加入 |+channel| 特性才有效}
+		{仅当编译时加入 |+channel| 特性才有效}
 
 
 prompt_setinterrupt({buf}, {expr})			*prompt_setinterrupt()*
@@ -7549,7 +7562,7 @@ prompt_setinterrupt({buf}, {expr})			*prompt_setinterrupt()*
 		也可用作 |method|: >
 			GetBuffer()->prompt_setinterrupt(callback)
 <
-		返回类型: |Number|
+		返回类型: 无
 
 		{仅当编译时加入 |+channel| 特性才有效}
 
@@ -7563,7 +7576,7 @@ prompt_setprompt({buf}, {text})				*prompt_setprompt()*
 		也可用作 |method|: >
 			GetBuffer()->prompt_setprompt('command: ')
 <
-		返回类型: |Number|
+		返回类型: 无
 
 		{仅当编译时加入 |+channel| 特性才有效}
 
@@ -7699,7 +7712,7 @@ readblob({fname} [, {offset} [, {size}]])		*readblob()*
 		仅当设备支持定位时，才可指定 {offset}。否则必须将其设为零。例
 		如要从串行终端读取 10 个字节: >
 			readblob('/dev/ttyS0', 0, 10)
-<		如果文件不能打开，，会报错并返回空 |Blob|。
+<		如果文件不能打开，会报错并返回空 |Blob|。
 		如果偏移超过文件尾，会返回空 blob。
 		如果尝试读取的字节数超过实际可用的字节数，读取结果会被截短。
 		另见 |readfile()| 和 |writefile()|。
@@ -7872,6 +7885,8 @@ redraw_listener_add({opts})				*redraw_listener_add()*
 		也可用作 |method|: >
 			GetOpts()->redraw_listener_add()
 <
+		该函数在沙盘里不可用 |sandbox|。
+
 		返回类型: |Number|
 
 
@@ -7997,7 +8012,7 @@ remote_expr({server}, {string} [, {idvar} [, {timeout}]])
 
 		待发送的字符串视作表达式，返回的是其在远端执行的结果。这个结果
 		必须是字符串或 |List|。其它类型都会被转换为字符串。|List| 也会
-		将各项用换行符连接转换成字符串 (末项之后不添加换行符)，就像用
+		将各项用换行符合并转换成字符串 (末项之后不添加换行符)，就像用
 		join(expr, "\n") 那样。
 
 		{idvar} 给出且非空时，该参数应是一个变量名，调用后，返回的
@@ -8037,7 +8052,7 @@ remote_foreground({server})				*remote_foreground()*
 		也可用作 |method|: >
 			ServerName()->remote_foreground()
 <
-		返回类型: |Number|
+		返回类型: 无
 
 		{仅可用在 Win32、Motif 和 GTK GUI 版本和 Win32 的控制台版本}
 
@@ -8117,7 +8132,7 @@ remote_startserver({name})				*E941* *E942*
 		也可用作 |method|: >
 			ServerName()->remote_startserver()
 <
-		返回类型: |Number|
+		返回类型: 无
 
 		{仅当编译时加入 |+clientserver| 特性才有效}
 
@@ -8148,10 +8163,10 @@ remove({blob}, {idx})
 remove({blob}, {idx}, {end})
 		{end} 未给出时: 删除 {blob} |Blob| 里索引为 {idx} 的字节并返回
 		该字节。
-		{end} 给出时: 删除从从指定索引区间 {idx} 到 {end} (闭区间) 的
-		字节，并返回这些字节构成的的 |Blob|。如果 {idx} 和 {end} 指向
-		相同的字节，返回单字节构成的 |Blob|。而如果 {end} 指向在 {idx}
-		之前的字节，报错。
+		{end} 给出时: 删除从指定索引区间 {idx} 到 {end} (闭区间) 的字
+		节，并返回这些字节构成的 |Blob|。如果 {idx} 和 {end} 指向相同
+		的字节，返回单字节构成的 |Blob|。而如果 {end} 指向在 {idx} 之
+		前的字节，报错。
 		如果出错，返回零。
 		示例: >
 			:echo "last byte: " .. remove(myblob, -1)
@@ -8182,10 +8197,10 @@ rename({from}, {to})					*rename()*
 
 
 repeat({expr}, {count})					*repeat()*
-		将 {expr} 重复 {count} 次，并返回连接后的结果。例如: >
+		将 {expr} 重复 {count} 次，并返回合并后的结果。例如: >
 			:let separator = repeat('-', 80)
 <		如果 {count} 为零或负，返回相应类型的空值。
-		{expr} 为 |List|、|Tuple| 或 |Blob| 类型时，返回连接 {expr} 重
+		{expr} 为 |List|、|Tuple| 或 |Blob| 类型时，返回合并 {expr} 重
 		复 {count} 次后的结果。例如: >
 			:let longlist = repeat(['a', 'b'], 3)
 <		会返回 ['a', 'b', 'a', 'b', 'a', 'b']。
@@ -8795,7 +8810,7 @@ setbufvar({buf}, {varname}, {val})			*setbufvar()*
 		也可用作 |method|，基是作为第三个参数传递的: >
 			GetValue()->setbufvar(buf, varname)
 <
-		返回类型: |Number|
+		返回类型: 无
 
 
 setcellwidths({list})					*setcellwidths()*
@@ -8828,7 +8843,7 @@ setcellwidths({list})					*setcellwidths()*
 		示的单元宽度是否与 Vim 记录的宽度一致。如果显示不正确，请相应
 		调整 {list} 参数。
 
-		返回类型: |Number|
+		返回类型: 无
 
 
 setcharpos({expr}, {list})				*setcharpos()*
@@ -8866,7 +8881,7 @@ setcharsearch({dict})					*setcharsearch()*
 		也可用作 |method|: >
 			SavedSearch()->setcharsearch()
 <
-		返回类型: dict<any>
+		返回类型: 无
 
 
 setcmdline({str} [, {pos}])				*setcmdline()*
@@ -8927,7 +8942,7 @@ setenv({name}, {val})					*setenv()*
 		也可用作 |method|，基是作为第二个参数传递的: >
 			GetPath()->setenv('PATH')
 <
-		返回类型: |Number|
+		返回类型: 无
 
 
 setfperm({fname}, {mode})				*setfperm()* *chmod*
@@ -9236,7 +9251,7 @@ settabvar({tabnr}, {varname}, {val})			*settabvar()*
 		也可用作 |method|，基是作为第三个参数传递的: >
 			GetValue()->settabvar(tab, name)
 <
-		返回类型: |Number|
+		返回类型: 无
 
 
 settabwinvar({tabnr}, {winnr}, {varname}, {val})	*settabwinvar()*
@@ -9258,7 +9273,7 @@ settabwinvar({tabnr}, {winnr}, {varname}, {val})	*settabwinvar()*
 		也可用作 |method|，基是作为第四个参数传递的: >
 			GetValue()->settabwinvar(tab, winnr, name)
 <
-		返回类型: |Number|
+		返回类型: 无
 
 
 settagstack({nr}, {dict} [, {action}])			*settagstack()*
@@ -9304,7 +9319,7 @@ setwinvar({winnr}, {varname}, {val})			*setwinvar()*
 <		也可用作 |method|，基是作为第三个参数传递的: >
 			GetValue()->setwinvar(winnr, name)
 <
-		返回类型: |Number|
+		返回类型: 无
 
 
 sha256({expr})						*sha256()*
@@ -9394,9 +9409,9 @@ sign_ 函数文档在这里: |sign-functions-details|。
 simplify({filename})					*simplify()*
 		在不改变含义的前提下，尽可能简化文件名。不会解析 (MS-Windows
 		上) 快捷方式或者 (Unix 上) 符号链接。本函数会保留 {filename}
-		中指向当前目录的首个路径部分，也保留拖尾的的路径分隔符。在
-		Unix 上，"//path" 会被原样保留，而 "///path" 会被简化为
-		"/path" (这符合 posix 规范)。
+		中指向当前目录的首个路径部分，也保留拖尾的路径分隔符。在 Unix
+		上，"//path" 会被原样保留，而 "///path" 会被简化为 "/path" (这
+		符合 posix 规范)。
 		示例: >
 			simplify("./dir/.././/file/") == "./file/"
 <		注意: "dir/.." 的组合仅在 "dir" 是可遍历目录或者不存在时才会被
@@ -9534,7 +9549,7 @@ sound_clear()						*sound_clear()*
 		在有些 Linux 系统上，可能需要 libcanberra-pulse 包，否则声音不
 		会停止。
 
-		返回类型: |Number|
+		返回类型: 无
 
 		{仅当编译时加入 |+sound| 特性才有效}
 
@@ -9602,7 +9617,7 @@ sound_stop({id})					*sound_stop()*
 		也可用作 |method|: >
 			soundid->sound_stop()
 <
-		返回类型: |Number|
+		返回类型: 无
 
 		{仅当编译时加入 |+sound| 特性才有效}
 
@@ -9654,7 +9669,7 @@ spellsuggest({word} [, {max} [, {capital}]])		*spellsuggest()*
 		'spellcapcheck' 匹配之后的单词上使用此功能。
 
 		{word} 可以是一个有拼写错误的单词，后跟其它文本。这样方便把错
-		误分开的单词重新连接回来。返回的建议里同时会包含附加文本，以便
+		误分开的单词重新合并回来。返回的建议里同时会包含附加文本，以便
 		对整行进行替换。
 
 		{word} 也可以是个好词。此时会返回和其类似的单词。建议里不会包
@@ -10100,7 +10115,12 @@ strptime({format}, {timestring})			*strptime()*
 		定 {timestring} 的具体格式，可以尝试使用不同的 {format} 值直到
 		返回非零值为止。
 
+		注意: 在 MS-Windows 上，由于 C 运行库未提供 strptime() 函数，
+		Vim 会使用内置兜底实现，该实现总是使用英语 locale 名，不受系统
+		当前 locale 设置影响。
+
 		另见 |strftime()|。
+
 		示例: >
 		  :echo strptime("%Y %b %d %X", "1997 Apr 27 11:49:23")
 <		  862156163 >
@@ -10240,7 +10260,7 @@ substitute({string}, {pat}, {sub}, {flags})		*substitute()*
 		注意 {sub} 里字符有特殊含义 |sub-replace-special|。比如，要将
 		文本替代为 "\n" (两个字符)，要用 "\\\\n" 或 '\\n'。那里也说明
 		了 {sub} 和 |:substitute| 行为的若干差异，包括 {sub} 里的 '~'
-		不会被换成前一个 {sub}。
+		不会被换成上次替代操作使用的 {sub}。
 
 		如果 {pat} 在 {string} 里找不到匹配，返回未经修改的 {string}。
 
@@ -10449,6 +10469,25 @@ system({expr} [, {input}])				*system()* *E677*
 		返回外壳命令 {expr} 的输出结果，类型为 |String|。要得到 |List|
 		形式的输出结果，见 |systemlist()|。
 
+		{expr} 可以是 |String| 或 |List|。
+		{expr} 为 |String| 时，命令会通过外壳执行 (命令构造方式见下)。
+
+								*E1575*
+		{expr} 为 |List| 时，首项为可执行文件，其余项直接作为参数传
+		递。命令不经过外壳执行，用法与 |job_start()| 类似。由于不经过
+		外壳，重定向、管道、通配符、环境变量展开和反引号展开等功能均无
+		效。像 ">" 这类字符会按本义作为参数传递给命令，不会被解析为重
+		定向。当参数包含不应被外壳解析的特殊字符时，推荐使用此列表形
+		式。示例: >
+		    :let out = system(['grep', '-r', 'pattern', '.'])
+<		">" 在字符串模式中会被当作重定向，而在列表格式中，则作为按文本
+		出现的参数: >
+		    :let out = system(['echo', 'hello', '>', 'world'])
+<		结果会输出 "hello > world"，而非重定向 "hello" 到文件。
+
+		要显式使用外壳配合列表格式: >
+		    :let out = system(['/bin/sh', '-c', 'echo $HOME'])
+<
 		{input} 给出且为 |String| 时，该字符串会写入一个临时文件，并作
 		为标准输入传给外壳命令。字符串会照原样写入，因此需要自行确保
 		使用合适的换行符。
@@ -10463,13 +10502,15 @@ system({expr} [, {input}])				*system()* *E677*
 
 		如果加上了前缀 |:silent|，终端不设为加工 (cooked) 模式。这里假
 		定命令不需要用户输入，从而避免屏幕上显示多余的字符，也就无需使
-		用 |CTRL-L| 来清屏。 >
+		用 |CTRL-L| 来清屏。在 'statusline' 表达式、|autocommand| 或
+		|timer| 回调中调用 system() 时，建议添加 |:silent| 前缀，避免
+		终端响应 (如光标样式查询) 在屏幕上异常回显。 >
 			:silent let f = system('ls *.vim')
 <
-		注意: |shellescape()|、|expand()| 里使用 |::S| 或
-		|fnamemodify()| 都可以转义命令参数里的特殊字符。{expr} 里的换
-		行可能会使命令失败。'shellquote' 和 'shellxquote' 里列出的字符
-		也可能会引起麻烦。
+		注意: {expr} 为字符串时，|shellescape()|、|expand()| 里使用
+		|::S| 或 |fnamemodify()| 都可以转义命令参数里的特殊字符。
+		{expr} 里的换行可能会使命令失败。'shellquote' 和 'shellxquote'
+		里列出的字符也可能会引起麻烦。
 		本函数不用于执行交互命令。
 
 		返回字符串。示例: >
@@ -10482,7 +10523,7 @@ system({expr} [, {input}])				*system()* *E677*
 		为了避免返回字符串在 NUL 处被截断，输出结果里所有的 NUL 的字符
 		都会被替换为 SOH (0x01)。
 
-		执行的命令是根据多个选项以下述方法构造的:
+		{expr} 为字符串时，执行的命令是根据多个选项以下述方法构造的:
 		'shell' 'shellcmdflag' 'shellxquote' {expr} 'shellredir'
 			\ {tmp} 'shellxquote'
 		({tmp} 是自动生成的一个临时文件名)。
@@ -10508,9 +10549,11 @@ system({expr} [, {input}])				*system()* *E677*
 
 systemlist({expr} [, {input}])				*systemlist()*
 		和 |system()| 类同，但返回由行组成的 |List| (通过将命令的输出
-		结果用 NL 字符拆分得到)，输出结果里的 NUL 会被转换为 NL。其行
-		为和 |readfile()| 使用 {binary} 参数设为 "b" 的方式基本相同，
-		区别在于如果结果以 NL 结尾，不会产生额外的空列表项。
+		结果用 NL 字符拆分得到)，输出结果里的 NUL 会被转换为 NL。
+		也和 |system()| 类似，{expr} 可以是 |String| (通过外壳执行) 或
+		|List| (直接执行，不经过外壳)。详见 |system()|。
+		其行为和 |readfile()| 使用 {binary} 参数设为 "b" 的方式基本相
+		同，区别在于如果结果以 NL 结尾，不会产生额外的空列表项。
 		注意 MS-Windows 上，可能会产生拖尾的 CR 字符。
 
 		如果要看到 "echo hello" 和 "echo -n hello" 的区别，不能用本函
@@ -10518,6 +10561,10 @@ systemlist({expr} [, {input}])				*systemlist()*
 			echo system('echo hello')->split('\n', 1)
 <
 		如果出错，返回空串。
+
+		和 |system()| 类似，当命令不需要用户输入，且需要在
+		'statusline' 表达式、|autocommand| 或 |timer| 回调中调用时，建
+		议加上 |:silent| 前缀。详见 |system()|。
 
 		也可用作 |method|: >
 			:echo GetCmd()->systemlist()
@@ -10573,6 +10620,35 @@ tabpagewinnr({tabarg} [, {arg}])			*tabpagewinnr()*
 			GetTabpage()->tabpagewinnr()
 <
 		返回类型: |Number|
+
+
+tabpanel_getinfo()					*tabpanel_getinfo()*
+		返回描述标签页面板 (见 |tabpanel|) 当前状态的 |Dictionary|。字
+		典包含以下键:
+			align		对齐方式: "left" 或 "right"
+			columns		以屏幕列计的宽度
+			scrollbar	显示滚动条则为 |TRUE|
+			offset		以行数计的当前滚动偏移量
+			total		已渲染的总行数
+			max_offset	"offset" 的最大有效值
+
+		"total" 和 "max_offset" 值只有在标签页面板至少被绘制一次后才会
+		准确。
+
+		返回类型: dict<any>
+
+
+tabpanel_scroll({n} [, {opts}])				*tabpanel_scroll()*
+		将标签页面板滚动 {n} 行。正数值向下滚动 (显示后面的标签页)，负
+		数值向上滚动。新偏移量会自动限制在有效范围内。
+
+		{opts} 为 |Dictionary| 且其中 "absolute" 项为 |TRUE| 时，{n}
+		不再是增量，而是直接设置为新的绝对偏移量。
+
+		滚动偏移成功改变则返回 |TRUE|，否则返回 |FALSE| (例如标签页面
+		板未显示、或已在目标位置)。
+
+		返回类型: |vim9-boolean|
 
 
 tagfiles()						*tagfiles()*
@@ -10683,6 +10759,7 @@ terminalprops()						*terminalprops()*
 		   underline_rgb	|t_8u| 是否可用 **
 		   mouse		支持的鼠标类型
 		   kitty		是否检测到 Kitty 终端
+		   decrqm		是否支持 DECRQM 终端序列
 
 		** 值 'u' 代表未知，'y' 代表是，'n' 代表否
 
@@ -10699,6 +10776,9 @@ terminalprops()						*terminalprops()*
 		到 xterm 以清除色彩。
 
 		"mouse" 对应的值 'u' 代表鼠标类型未知。
+
+		"decrqm" 为 'y' 时，Vim 会通过终端序列查询终端是否支持
+		'termsync' 和 'termresize' ("inband") 选项。
 
 		另见:
 		- 'ambiwidth' - 由 |t_u7| 自动检测。
@@ -10745,7 +10825,7 @@ timer_pause({timer}, {paused})				*timer_pause()*
 		也可用作 |method|: >
 			GetTimer()->timer_pause(1)
 <
-		返回类型: |Number|
+		返回类型: 无
 
 		{仅当编译时加入 |+timers| 特性才有效}
 
@@ -10796,7 +10876,7 @@ timer_stop({timer})					*timer_stop()*
 		也可用作 |method|: >
 			GetTimer()->timer_stop()
 <
-		返回类型: |Number|
+		返回类型: 无
 
 		{仅当编译时加入 |+timers| 特性才有效}
 
@@ -10805,7 +10885,7 @@ timer_stopall()						*timer_stopall()*
 		停止所有定时器。不再调用所有的定时器回调。用于定时器工作不正常
 		的场合。如果没有任何定时器，不报错。
 
-		返回类型: |Number|
+		返回类型: 无
 
 		{仅当编译时加入 |+timers| 特性才有效}
 
@@ -11126,7 +11206,7 @@ virtcol({expr} [, {list} [, {winid}]])			*virtcol()*
 		此行从开头到该位置所在字符的结束位置为止占据的屏幕单元总数。如
 		果该位置是一个 <Tab>，返回值会是 <Tab> 占据的最后一个屏幕列。
 		例如在第 1 列 <Tab> 当 'ts' 设为 8 时，会返回 8。这里忽略
-		|conceal()| 的影响。
+		|conceal| 的影响。
 		关于字节位置，见 |col()|。
 
 		{expr} 的用法见 |getpos()| 和 |col()|。
@@ -11560,7 +11640,7 @@ winrestview({dict})					*winrestview()*
 		也可用作 |method|: >
 			GetView()->winrestview()
 <
-		返回类型: |Number|
+		返回类型: 无
 
 
 winsaveview()						*winsaveview()*
@@ -11710,6 +11790,7 @@ xor({expr}, {expr})					*xor()*
 acl			编译时加入了 |ACL| 支持。
 all_builtin_terms	编译时打开了所有的内建终端。(总为真)
 amiga			Vim 的 Amiga 版本。
+android			Vim 的 Android 版本。 *android*
 arabic			编译时加入了阿拉伯语的支持 |Arabic|。
 arp			编译时加入了 ARP 的支持 (Amiga)。
 autocmd			编译时加入了自动命令的支持。(总为真)
@@ -11856,6 +11937,7 @@ spell			编译时加入了拼写检查的支持 |spell|。
 startuptime		编译时加入了 |--startuptime| 支持。
 statusline		编译时加入了 'statusline' 和 'rulerformat' 还有
 			'titlestring' 和 'iconstring' 的特殊格式的支持。
+statusline_click	'statusline' 中的鼠标点击处理 |stl-%[FuncName]|。
 sun			Vim 的 SunOS 版本。
 sun_workshop		删除了 Sun |workshop| 的支持。
 syntax			编译时加入了语法高亮的支持 |syntax|。
@@ -11869,6 +11951,7 @@ termguicolors		编译时加入了终端的真彩支持。
 terminal		编译时加入 |terminal| 的支持。
 terminfo		编译时决定使用 terminfo 而不是 termcap。
 termresponse		编译时加入了 |t_RV| 和 |v:termresponse| 的支持。
+termux			Vim 的 termux 版本。 *termux*
 textobjects		编译时加入了 |text-objects| 的支持。
 textprop		编译时加入了 |text-properties| 的支持。
 tgetent			编译时加入了 tgetent 的支持，可以使用外部 termcap 或
@@ -11903,7 +11986,6 @@ vtp			编译时加入了 vcon 支持 |+vtp| (检查 vcon 可知当前控制
 			台是否支持)。
 wayland			编译时加入了 Wayland 协议支持。
 wayland_clipboard	编译时加入了 Wayland 剪贴板支持。
-wayland_focus_steal	编译时加入了 Wayland 剪贴板焦点盗取支持。
 wildignore		编译时加入了 'wildignore' 选项支持。
 wildmenu		编译时加入了 'wildmenu' 选项支持。
 win16			旧版本 MS-Windows 3.1。(总为假)

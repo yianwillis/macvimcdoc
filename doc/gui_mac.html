@@ -1,0 +1,925 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8" />
+<!--[if lt IE 9]>
+  <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+<![endif]-->
+<title>VIM 中文帮助: MacVim GUI</title>
+<link rel="stylesheet" href="vim-stylesheet.css" type="text/css" />
+<link rel="canonical" href="https://yianwillis.github.io/vimcdoc/doc/gui_mac.html" />
+<script type="text/javascript" src="vimcdoc.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+</head>
+<body>
+<nav id=banner>
+<form action=tags.html target="tag_iframe">
+  <input type="text" name="tag" id="tag" placeholder="标签搜索">
+</form>
+<iframe name="tag_iframe" src=""></iframe>
+<a href="help.html">帮助总览</a> &middot;
+<hr/>
+<a href="quickref.html">快速参考</a> &middot;
+<a href="index.html">命令索引</a> &middot;
+<a href="eval.html#functions">函数列表</a> &middot;
+<a href="quickref.html#option-list">选项列表</a> &middot;
+<hr/>
+<a href="usr_toc.html">用户手册</a> &middot;
+<a href="help.html#reference_toc">参考手册</a> &middot;
+</nav>
+
+<header>
+<h2>gui_mac</h2>
+</header>
+<article id=outer>
+<section class=inner>
+<b class="vimtag"> <a name="gui_mac.txt">gui_mac.txt</a> </b>   For Vim version 9.1.  最近更新: 2025年3月
+
+                        MAC<code class="vim">VIM 参考手册</code>
+                                <code class="vim">译者</code>: Willis
+                                <a href="http://vimcdoc.sf.net">http://vimcdoc.sf.net</a>
+
+
+MacVim 图形用户介面                                     <b class="vimtag"> <a name="macvim">macvim</a> </b> <b class="vimtag"> <a name="gui-macvim">gui-macvim</a> </b>
+
+ 1. MacVim 的不同之处            <a href="gui_mac.html#macvim-differences">macvim-differences</a> 
+ 2. 启动 MacVim                  <a href="gui_mac.html#macvim-start">macvim-start</a> 
+ 3. 设置                         <a href="gui_mac.html#macvim-settings">macvim-settings</a> 
+ 4. MacVim 外观                  <a href="gui_mac.html#macvim-appearance">macvim-appearance</a> 
+ 5. 特殊颜色                     <a href="gui_mac.html#macvim-colors">macvim-colors</a> 
+ 6. 菜单                         <a href="gui_mac.html#macvim-menus">macvim-menus</a> 
+ 7. 工具栏                       <a href="gui_mac.html#macvim-toolbar">macvim-toolbar</a> 
+ 8. 触控栏                       <a href="gui_mac.html#macvim-touchbar">macvim-touchbar</a> 
+ 9. 查找数据                     <a href="gui_mac.html#macvim-lookup">macvim-lookup</a> 
+10. 对话框                       <a href="gui_mac.html#macvim-dialogs">macvim-dialogs</a> 
+11. 系统服务                     <a href="gui_mac.html#macvim-services">macvim-services</a> 
+12. mvim:// URL 处理程序         <a href="gui_mac.html#macvim-url-handler">macvim-url-handler</a> 
+13. 键盘快捷键                   <a href="gui_mac.html#macvim-shortcuts">macvim-shortcuts</a> 
+14. 触控板手势                   <a href="gui_mac.html#macvim-gestures">macvim-gestures</a> 
+15. 国际化                       <a href="gui_mac.html#macvim-international">macvim-international</a> 
+16. 已知漏洞/缺失功能            <a href="gui_mac.html#macvim-todo">macvim-todo</a> 
+17. 提示                         <a href="gui_mac.html#macvim-hints">macvim-hints</a> 
+
+其它相关的文档:
+ <a href="gui.html#gui.txt">gui.txt</a>        用于 GUI 的通用条目。
+
+<code class="notvi">{Vi 没有 GUI}</code>
+
+本手册也可在 <a href="https://macvim.org/docs/gui_mac.txt.html">https://macvim.org/docs/gui_mac.txt.html</a> 找到。
+
+</section><hr class="doubleline" /><section class=inner>
+<h4>1. MacVim 的不同之处                                    <b class="vimtag"> <a name="macvim-differences">macvim-differences</a> </b></h4>
+MacVim 的目标之一是使 Vim 成为合乎规范的 macOS 应用。为此，MacVim 和 Vim 的其
+它 GUI 移植版本的行为稍有不同。多数的修改由系统 gvimrc 文件提供；可以这样快速
+地打开此文件来自己看看:
+<code class="example">        :tabe $VIM/gvimrc</code>
+<code class="note">注意</code> 每次更新 MacVim 时会覆盖此文件，最好把你自己的修改保存于 "~/.gvimrc" 中。
+
+                                                        <b class="vimtag"> <a name="macvim-windows">macvim-windows</a> </b>
+MacVim 里关于术语 "窗口" 有些混淆，因为 Vim 里的窗口意义和 MacVim 的不同。Vim
+里的窗口是键入 ":sp" 时打开的那个，而 MacVim 里的 "窗口" 是包含文本视图、滚动
+条、工具栏和标签页栏的 GUI 窗口。为了避免混淆，前者被称为 Vim 窗口，而后者被简
+单地称为窗口。
+
+                                                        <b class="vimtag"> <a name="macvim-encoding">macvim-encoding</a> </b>
+MacVim 里不能修改 <a href="options.html#'termencoding'">'termencoding'</a>；此选项强制设为 "utf-8"。选项 <a href="options.html#'encoding'">'encoding'</a> 缺省
+也设为 "utf-8" (而不是其它 GUI 移植版本的 "latin1")。
+
+一般而言，应把 <a href="options.html#'encoding'">'encoding'</a> 保持在其缺省值 ('utf-8') 因为这是 macOS 使用的编码。
+可用于任何字符。有时你需要设置 <a href="options.html#'fileencodings'">'fileencodings'</a> 来自动检测待编辑文件的编码，或
+者在命令行上用  <a href="editing.html#++enc">++enc</a>  强制检测结果。
+
+不过，编辑使用多种编码 (MIME 或 Unix mbox 文件这类的包容器格式) 或二进制文件
+时，请确保置位 <a href="options.html#'binary'">'binary'</a> (见  <a href="editing.html#edit-binary">edit-binary</a> )。
+
+                                                        <b class="vimtag"> <a name="macvim-shift-movement">macvim-shift-movement</a> </b>
+macOS 上的文本编辑器让用户按住 shift+移动键来扩展选择区。另外，选中时按住可显
+示字符会用该字符替换当前选择区。Macvim 可以模拟此类行为 (提供键映射并设置
+<a href="options.html#'keymodel'">'keymodel'</a> 和 <a href="options.html#'selectmode'">'selectmode'</a> 为非缺省值)，但缺省不采用。要使 MacVim 的行为更类似
+于 TextEdit 而不是 Vim，在 "~/.vimrc" (不是 .gvimrc) 文件里加入以下的行:
+<code class="example">        if has("gui_macvim")</code>
+<code class="example">          let macvim_hig_shift_movement = 1</code>
+<code class="example">        endif</code>
+
+                                                        <b class="vimtag"> <a name="macvim-drag-n-drop">macvim-drag-n-drop</a> </b>
+拖动文件并在某窗口中放置文件，会在该窗口的标签页上打开那些文件，除非 Vim 处于
+命令行模式。在命令行模式时，把文件的名字加入命令行。不支持拖动时按住修饰符。
+
+如果拖放文件到 Dock 图标上，则不管 Vim 正处于什么模式，总是在新标签页上打开。
+在 Finder 中双击文件也是如此。
+
+如果不希望用标签页打开，通用设置面板里的 "Open files from applications" (应用
+中打开文件) 设置提供更多拖放文件如何打开的选项，
+
+                                    <b class="vimtag"> <a name="macvim-default-menus">macvim-default-menus</a> </b> <b class="vimtag"> <a name="macvim-help-menu">macvim-help-menu</a> </b>
+MacVim 的缺省菜单 ( <a href="gui.html#menu.vim">menu.vim</a> ) 经过改动，以更符合 Apple 人机界面设计指南 (HIG)
+的规范。(<code class="vim">译者注</code>: 本 github 项目包含了 MacVim 的本地化中文菜单)
+
+帮助菜单下的搜索可用于搜索 Vim 文档。这是  <a href="helphelp.html#:help">:help</a>  以外查找文档的又一捷径。
+
+                                                        <b class="vimtag"> <a name="macvim-window-title">macvim-window-title</a> </b>
+缺省窗口标题不包含参数列表，一旦开始使用标签页后，看起来很难看。例如，拖放两个
+文件，再多拖放两个，然后切换回第一个标签页，窗口标题上会出现 "((3) of 2)" 这样
+奇怪的字符串。
+
+                                                        <b class="vimtag"> <a name="macvim-tablabel">macvim-tablabel</a> </b>
+缺省，标签页标签只显示文件名的尾部，这样编辑深度嵌套目录下的文件时标签页会更可
+读。在 .gvimrc 文件里加入 "set guitablabel=" 可以恢复 Vim 缺省的标签页标签。在
+.vimrc 里设置 <a href="options.html#'guitablabel'">'guitablabel'</a> 为任何值也会使此缺省行为不生效。
+
+                                                        <b class="vimtag"> <a name="E9000-M">E9000-M</a> </b>
+下面是 MacVim 支持的非标准的 Vim 命令和选项。只在 GUI 激活时才可用。
+
+                                                        <b class="vimtag"> <a name="macvim-options">macvim-options</a> </b>
+MacVim 支持以下非标准的选项:
+        <a href="options.html#'antialias'">'antialias'</a>     <a href="options.html#'blurradius'">'blurradius'</a>    <a href="options.html#'fullscreen'">'fullscreen'</a>
+        <a href="options.html#'fuoptions'">'fuoptions'</a>     <a href="options.html#'macligatures'">'macligatures'</a>  <a href="options.html#'macmeta'">'macmeta'</a>       <a href="options.html#'macthinstrokes'">'macthinstrokes'</a>
+        <a href="options.html#'toolbariconsize'">'toolbariconsize'</a>       <a href="options.html#'transparency'">'transparency'</a>
+
+有 MacVim 特有行为的 GUI 相关的 Vim 选项:
+        <a href="options.html#'guifont'">'guifont'</a>
+
+                                                        <b class="vimtag"> <a name="macvim-commands">macvim-commands</a> </b>
+MacVim 支持以下非标准的命令:
+         <a href="gui_mac.html#:macaction">:macaction</a>      <a href="gui_mac.html#:macmenu">:macmenu</a> 
+
+                                                <b class="vimtag"> <a name="macvim-builtin-functions">macvim-builtin-functions</a> </b>
+MacVim 支持以下非标准的内建函数:
+         <a href="builtin.html#showdefinition()">showdefinition()</a> 
+
+                                                        <b class="vimtag"> <a name="macvim-autocommands">macvim-autocommands</a> </b>
+MacVim 支持以下非标准的事件:
+         <a href="autocmd.html#OSAppearanceChanged">OSAppearanceChanged</a> 
+
+                                               <b class="vimtag"> <a name="macvim-internal-variables">macvim-internal-variables</a> </b>
+MacVim 支持以下非标准的内部变量:
+         <a href="eval.html#v:os_appearance">v:os_appearance</a> 
+
+                                                        <b class="vimtag"> <a name="macvim-find">macvim-find</a> </b>
+在 Vim 中进行查找 (例如，用 "/") 或在选中文本后按 <code class="special">&lt;D-e&gt;</code> 时，搜索查询被复制到
+macOS 的 "查找粘贴板 (Find Pasteboard)"。这里的想法是你先查找一些东西，然后切
+换到其它应用时，按 <code class="special">&lt;D-g&gt;</code> (或 <code class="special">&lt;D-G&gt;</code>) 可以在新应用中重复该查找。同样的特性也可用
+于先在某应用进行查找，然后切换回 MacVim 并按 <code class="special">&lt;D-g&gt;</code>。
+
+如果你不想 Vim 把搜索查询分享给 macOS 的查找粘贴板，可设  <a href="gui_mac.html#MMShareFindPboard">MMShareFindPboard</a> 
+为 "NO"。即使那么设，<code class="special">&lt;D-g&gt;</code> 还是会使用 OS 的查找粘贴板进行搜索 (如果不想要，用
+ <a href="pattern.html#n">n</a>  代替)，而 <code class="special">&lt;D-e&gt;</code> ("Edit -&gt; Use Selecton for Find") 还是会把搜索查询分享给查
+找粘贴板。
+
+<code class="note">注意</code> 命令  <a href="pattern.html#n">n</a>  不同于 <code class="special">&lt;D-g&gt;</code>。前者重复上次 Vim 进行的查找，而后者用 findNext: 动
+作 (见  <a href="gui_mac.html#:macaction">:macaction</a> ) 查找 macOS 查找粘贴板里的字符串。
+
+<code class="special">&lt;D-g&gt;</code> 键或其等价功能是在 MacVim 里把搜索从一个窗口带到另一个窗口的很好的方法。
+简单地在一个窗口里查找 (用 "/") 然后切换到另一个 (如 &lt;D-`&gt;) 并按 <code class="special">&lt;D-g&gt;</code> 会在新
+窗口中重复同样的搜索。
+
+                                        <b class="vimtag"> <a name="macvim-backspace">macvim-backspace</a> </b> <b class="vimtag"> <a name="macvim-delete">macvim-delete</a> </b>
+系统 vimrc 里设置 <a href="options.html#'backspace'">'backspace'</a> 选项，使删除键的行为对新用户更熟悉。如果不喜欢此
+非缺省的行为，在 "~/.vimrc" 文件里加入 "set backspace&amp;"。
+
+</section><hr class="doubleline" /><section class=inner>
+<h4>2. 启动 MacVim                                          <b class="vimtag"> <a name="macvim-start">macvim-start</a> </b></h4>
+要在 macOS 里启动 MacVim，简单地在 Finder 里双击其图标或在程序坞图标上点击就可
+以了。通常安装在  <code class="badlink">/Applications/MacVim.app</code> 。
+
+MacVim 自动注册自身为若干标准文件格式的编辑器。这样双击文件时可以用 MacVim 打
+开 (如果没有和其它程序相关联的话)，或右击文件以打开 "Open with" 菜单。也可以在
+Dock 图标上拖放文件以便在新窗口上用标签页打开这些文件，也可以在已经打开的窗口
+上拖放文件以便在该窗口上用标签页打开这些文件 (通过改变通用设置面板的 "Open
+files from applications" 选项，也可以用分割等方式打开文件)。最后，macOS 系统服
+务可用来在 MacVim 里打开文件，见  <a href="gui_mac.html#macvim-services">macvim-services</a> 。
+
+或者，也可用 "open" 命令 (此方法不能用来给 Vim 传递参数)
+<code class="example">        open -a MacVim file ...</code>
+后者的优点是会采用设置面板里文件打开相关的设定，如果打开  <a href="gui_mac.html#Quickstart">Quickstart</a> ，文件会
+瞬时打开。
+
+<code class="section">从终端启动 MacVim </code>
+
+                                                    <b class="vimtag"> <a name="mvim">mvim</a> </b> <b class="vimtag"> <a name="macvim-cmdline">macvim-cmdline</a> </b>
+MacVim 捆绑了一个名为 "mvim" 的从终端启动 MacVim 的外壳脚本。它位于
+<code class="example">        /Applications/MacVim.app/Contents/bin/mvim</code>
+
+                                                        <b class="vimtag"> <a name="macvim-PATH">macvim-PATH</a> </b>
+把此目录
+<code class="example">        /Applications/MacVim.app/Contents/bin</code>
+加到你的 path 里，就可以方便使用。如用 zsh，可在  <code class="badlink">~/.zprofile</code>  里加入:
+<code class="example">        export PATH="/Applications/MacVim.app/Contents/bin:$PATH"</code>
+
+然后，就可以简单地从终端里通过键入 "mvim" 来启动 MacVim。
+<code class="example">        $ mvim</code>
+也可以指定要打开的文件。
+<code class="example">        $ mvim file ...</code>
+bin 目录也有  <code class="badlink">mvimdiff</code>  和  <code class="badlink">mview</code> ，相当于  <a href="diff.html#gvimdiff">gvimdiff</a>  和  <a href="starting.html#gview">gview</a>  的别名，也有
+用于  <a href="tips.html#hex-editing">hex-editing</a>  的  <code class="badlink">xxd</code>  。
+
+如果想要非 GUI 的 Vim 版本，还是可用普通的 "vim"、"vimdiff" 和 "view" 命令，而
+"gvim" 启动 MacVim ("gvim" 的用法和 "mvim" 相同)。
+
+如果想要命令行工具访问到 man 帮助页，可在  <code class="badlink">~/.zprofile</code>  里加入:
+<code class="example">        export MANPATH="/Applications/MacVim.app/Contents/man:$MANPATH"</code>
+
+<code class="section">从终端切换到 GUI 模式 </code>
+
+终端 Vim 里用以下命令可以打开 MacVim GUI (见  <a href="gui_x11.html#:gui">:gui</a> ):
+<code class="example">        :gui [++opt] [+cmd] [-f|-b] [files...]</code>
+<code class="note">注意</code>: 分叉 ("-b") 目前不能用。
+
+                                                        <b class="vimtag"> <a name="Quickstart">Quickstart</a> </b>
+Quickstart 确保新窗口会快速打开，如按下 <code class="special">&lt;D-n&gt;</code> 时。实现办法是在在后台运行 Vim
+进程，打开新窗口时就可以立即激活。可从高级设置面板中打开此特性 (缺省关闭)。注
+意 此设定不影响运行  <a href="gui_mac.html#mvim">mvim</a>  命令时打开窗口的速度。
+
+<code class="note">注意</code> 任何保存在非标准位置 (也就是不在 ~/.vim 里) 的 runtime 文件被改动之后，首
+个打开窗口看不见这些改动。另外，还有一些和  <a href="starting.html#viminfo">viminfo</a>  文件的读写相关的问题，可
+能会导致命令行历史 (和其它保存在  <a href="starting.html#viminfo">viminfo</a>  文件的信息) 看起来有丢失。例如，如
+果你打开窗口，编辑一些文件，然后关闭窗口，此时下个打开的窗口看不见刚刚关闭窗口
+的相同命令行历史 (不过再下个打开的窗口就会有了)。为了这些原因，缺省关闭
+Quickstart。
+
+                                                <b class="vimtag"> <a name="odbeditor">odbeditor</a> </b> <b class="vimtag"> <a name="external-editor">external-editor</a> </b>
+MacVim 可以作为 "外部编辑器"，用于支持 ODB 编辑器协议 (或 "外部编辑器" 协议)
+的 macOS 应用。每个应用有不同的配置此选项的方式，请查阅应用本身的文档。一经正
+确配置，MacVim 可用来在这样的应用中打开文件。
+
+技术 <code class="note">备注</code>: MacVim 处理文件打开、修改和关闭事件。在打开事件中解析 FTok 和 Burl
+参数 (不过现在忽略后者)。在修改和关闭事件中把 Tokn 参数回传给服务器应用。
+
+ODB 编辑器协议的文档在:
+        <a href="https://www.barebones.com/support/develop/odbsuite.html">https://www.barebones.com/support/develop/odbsuite.html</a>
+
+</section><hr class="doubleline" /><section class=inner>
+<h4>3. 设置                     <b class="vimtag"> <a name="macvim-prefs">macvim-prefs</a> </b> <b class="vimtag"> <a name="macvim-preferences">macvim-preferences</a> </b> <b class="vimtag"> <a name="macvim-settings">macvim-settings</a> </b></h4>
+有些设置全局于 MacVim 应用，因而不合适作为 Vim 选项 (见  <a href="gui_mac.html#macvim-options">macvim-options</a> )。这
+些设置保存在用户缺省数据库里，可以通过 "MacVim.Settings..." (macOS 12 Monterey
+和之前版本叫做 "MacVim.Preferences…") 菜单项目访问。
+
+如使用缺省设置打开 MacVim，打开时可在启动参数里传入 `-IgnoreUserDefaults 1`
+(怎么做到这一点，可见 "open" 的 man 帮助页)。
+
+                                                        <b class="vimtag"> <a name="macvim-user-defaults">macvim-user-defaults</a> </b>
+不是所有用户缺省数据库的项目都可通过设置面板访问，通常因为它们在正常情况下不
+应被用户修改。这些选项仍然可以在终端里通过 "defaults" 命令进行改变，键入
+<code class="example">        defaults write org.vim.MacVim KEY VALUE</code>
+关于此命令和 macOS 用户缺省值的一般情况的详情可查阅 "defaults" 的手册页。
+
+这里是相关的字典项目的列表:
+
+<code class="section">键                              值 </code>
+<b class="vimtag"> <a name="MMCellWidthMultiplier">MMCellWidthMultiplier</a> </b>         以 em 单位计普通字型的宽度 <code class="special">[float]</code>
+<b class="vimtag"> <a name="MMCmdLineAlignBottom">MMCmdLineAlignBottom</a> </b>          把命令行固定在 MacVim 底部 <code class="special">[bool]</code>
+<b class="vimtag"> <a name="MMDialogsTrackPwd">MMDialogsTrackPwd</a> </b>             打开/保存对话框跟踪 Vim 的当前路径 <code class="special">[bool]</code>
+<b class="vimtag"> <a name="MMDisableLaunchAnimation">MMDisableLaunchAnimation</a> </b>      打开新 MacVim 窗口时关闭启动动画 <code class="special">[bool]</code>
+<b class="vimtag"> <a name="MMDisableTablineAnimation">MMDisableTablineAnimation</a> </b>     关闭 GUI 标签页的动画 <code class="special">[bool]</code>
+<b class="vimtag"> <a name="MMFontPreserveLineSpacing">MMFontPreserveLineSpacing</a> </b>     使用字体指定的行间距 <code class="special">[bool]</code>
+<b class="vimtag"> <a name="MMLoginShell">MMLoginShell</a> </b>                  用登录外壳来启动 Vim <code class="special">[bool]</code>
+<b class="vimtag"> <a name="MMLoginShellArgument">MMLoginShellArgument</a> </b>          登录外壳的参数 <code class="special">[string]</code>
+<b class="vimtag"> <a name="MMLoginShellCommand">MMLoginShellCommand</a> </b>           使用哪个外壳来启动 Vim <code class="special">[string]</code>
+<b class="vimtag"> <a name="MMFullScreenFadeTime">MMFullScreenFadeTime</a> </b>          非自带全屏的淡入淡出的延迟 <code class="special">[float]</code>
+<b class="vimtag"> <a name="MMNativeFullScreen">MMNativeFullScreen</a> </b>            使用原生全屏模式 <code class="special">[bool]</code>
+<b class="vimtag"> <a name="MMNonNativeFullScreenShowMenu">MMNonNativeFullScreenShowMenu</a> </b> 非原生全屏模式下显示菜单 <code class="special">[bool]</code>
+<b class="vimtag"> <a name="MMNonNativeFullScreenSafeAreaBehavior">MMNonNativeFullScreenSafeAreaBehavior</a> </b>
+                                非原生全屏模式下关于安全区域 (也就是 "刘海")
+                                的行为 <code class="special">[int]</code>
+<b class="vimtag"> <a name="MMNoFontSubstitution">MMNoFontSubstitution</a> </b>          关闭自动字体替换 <code class="special">[bool]</code>
+                                (已废弃: 只用于 非-CoreText 渲染器)
+<b class="vimtag"> <a name="MMNoTitleBarWindow">MMNoTitleBarWindow</a> </b>            隐藏标题栏 <code class="special">[bool]</code>
+<b class="vimtag"> <a name="MMTitlebarAppearsTransparent">MMTitlebarAppearsTransparent</a> </b>  打开透明标题栏 <code class="special">[bool]</code>
+<b class="vimtag"> <a name="MMAppearanceModeSelection">MMAppearanceModeSelection</a> </b>     深色模式选择 ( <a href="gui_mac.html#macvim-dark-mode">macvim-dark-mode</a> ) <code class="special">[bool]</code>
+<b class="vimtag"> <a name="MMRendererClipToRow">MMRendererClipToRow</a> </b>           裁剪高字符到所在行的高度 <code class="special">[bool]</code>
+<b class="vimtag"> <a name="MMSmoothResize">MMSmoothResize</a> </b>                允许平滑调整 MacVim 窗口的大小 <code class="special">[bool]</code>
+<b class="vimtag"> <a name="MMShareFindPboard">MMShareFindPboard</a> </b>             将搜索文本分享到查找粘贴板 <code class="special">[bool]</code>
+<b class="vimtag"> <a name="MMTextInsetBottom">MMTextInsetBottom</a> </b>             文本区域以像素计的位移 <code class="special">[int]</code>
+<b class="vimtag"> <a name="MMTextInsetLeft">MMTextInsetLeft</a> </b>               文本区域以像素计的位移 <code class="special">[int]</code>
+<b class="vimtag"> <a name="MMTextInsetRight">MMTextInsetRight</a> </b>              文本区域以像素计的位移 <code class="special">[int]</code>
+<b class="vimtag"> <a name="MMTextInsetTop">MMTextInsetTop</a> </b>                文本区域以像素计的位移 <code class="special">[int]</code>
+<b class="vimtag"> <a name="MMTexturedWindow">MMTexturedWindow</a> </b>              使用拉丝金属质感窗口 (仅适用于 Tiger) <code class="special">[bool]</code>
+<b class="vimtag"> <a name="MMTranslateCtrlClick">MMTranslateCtrlClick</a> </b>          把 ctrl-鼠标左键解释为鼠标右键 <code class="special">[bool]</code>
+<b class="vimtag"> <a name="MMVerticalSplit">MMVerticalSplit</a> </b>               用垂直分割来打开文件 <code class="special">[bool]</code>
+<b class="vimtag"> <a name="MMZoomBoth">MMZoomBoth</a> </b>                    缩放按钮在两个方向同时最大化 <code class="special">[bool]</code>
+<b class="vimtag"> <a name="MMUpdaterPrereleaseChannel">MMUpdaterPrereleaseChannel</a> </b>    选择性加入预发布软件更新 <code class="special">[bool]</code>
+<b class="vimtag"> <a name="MMShowWhatsNewOnStartup">MMShowWhatsNewOnStartup</a> </b>       更新版本后显示 "最近更新 (What's New)" <code class="special">[bool]</code>
+
+<code class="section">鼠标 / 触控板 </code>
+<b class="vimtag"> <a name="MMScrollOneDirectionOnly">MMScrollOneDirectionOnly</a> </b>      使用触控板时只在一轴方向滚动 <code class="special">[bool]</code>
+<b class="vimtag"> <a name="MMAllowForceClickLookUp">MMAllowForceClickLookUp</a> </b>       压力点击进行数据查找而不是 <code class="special">&lt;ForceClick&gt;</code> <code class="special">[bool]</code>
+<b class="vimtag"> <a name="MMMouseWheelDisableAcceleration">MMMouseWheelDisableAcceleration</a> </b> 关闭 OS 滚轮加速 <code class="special">[bool]</code>
+<b class="vimtag"> <a name="MMMouseWheelNumLines">MMMouseWheelNumLines</a> </b>          滚轮加速关闭时滚动的行数 <code class="special">[int]</code>
+<b class="vimtag"> <a name="MMMouseWheelMinLines">MMMouseWheelMinLines</a> </b>          滚轮加速打开时每次滚轮点击最少的滚动行数 <code class="special">[int]</code>
+<b class="vimtag"> <a name="MMUseMouseTime">MMUseMouseTime</a> </b>                使用鼠标时间来检测多重点击 <code class="special">[bool]</code>
+
+<code class="section">标签页 </code>
+<b class="vimtag"> <a name="MMTabColorsMode">MMTabColorsMode</a> </b>               标签页色彩使用 default/auto/colorscheme <code class="special">[int]</code>
+<b class="vimtag"> <a name="MMWindowUseTabBackgroundColor">MMWindowUseTabBackgroundColor</a> </b> 把标签页背景填充色用作窗口颜色 <code class="special">[bool]</code>
+<b class="vimtag"> <a name="MMShowAddTabButton">MMShowAddTabButton</a> </b>            在标签页行上打开 "add tab" 按钮 <code class="special">[bool]</code>
+<b class="vimtag"> <a name="MMShowTabScrollButtons">MMShowTabScrollButtons</a> </b>        标签页行打开标签页滚动按钮 <code class="special">[bool]</code>
+<b class="vimtag"> <a name="MMTabMinWidth">MMTabMinWidth</a> </b>                 标签最小宽度 <code class="special">[int]</code>
+<b class="vimtag"> <a name="MMTabOptimumWidth">MMTabOptimumWidth</a> </b>             标签缺省宽度 <code class="special">[int]</code>
+
+作为一个例子，如果你有多于一个鼠标按钮，并想把 Ctrl-鼠标左键空出来以绑定其它功
+能，那么合适的命令是:
+<code class="example">        defaults write org.vim.MacVim MMTranslateCtrlClick 0</code>
+<code class="example"></code>
+如果你想恢复所有的用户缺省值为预设值，打开终端并转入:
+<code class="example">        defaults delete org.vim.MacVim</code>
+
+                                                        <b class="vimtag"> <a name="macvim-login-shell">macvim-login-shell</a> </b>
+Finder 打开的应用不自动载入用户环境变量 (通常在 .profile 或 .bashrc 里设置)。
+这会在  <a href="various.html#:!">:!</a>  执行外壳命令时产生问题，例如 $PATH 可能没有正确设置。要绕过这个问
+题，MacVim 用登录外壳来启动新 Vim 进程，这样就能设置所有的环境变量了。
+
+缺省 MacVim 使用 $SHELL 环境变量来决定使用哪个外壳 (如果没有设置 $SHELL，使用
+"/bin/bash")。设置用户缺省值  <a href="gui_mac.html#MMLoginShellCommand">MMLoginShellCommand</a>  可以改变此选择 (如
+"/bin/tcsh")。MacVim 试图在 argv[0] 前加上破折号，使外壳成为登录外壳。如果使用
+一个特别的外壳版本而必须通过传递参数来使之成为登录外壳，可以设置用户缺省值
+ <a href="gui_mac.html#MMLoginShellArgument">MMLoginShellArgument</a>  (如设为 "-l")。最后，使用 "bash" 外壳时会自动加入参数
+"-l"。要覆盖此行为，设置  <a href="gui_mac.html#MMLoginShellArgument">MMLoginShellArgument</a>  为 "--"。
+
+要不使用登录外壳，可把  <a href="gui_mac.html#MMLoginShell">MMLoginShell</a>  设为 0。
+
+</section><hr class="doubleline" /><section class=inner>
+<h4>4. MacVim 外观                                          <b class="vimtag"> <a name="macvim-appearance">macvim-appearance</a> </b></h4>
+更多配置选项可见 Settings… → Appearance 面板。
+
+                                <b class="vimtag"> <a name="macvim-appearance-mode">macvim-appearance-mode</a> </b> <b class="vimtag"> <a name="macvim-dark-mode">macvim-dark-mode</a> </b>
+MacVim 缺省使用系统外观模式 (浅色或深色)。不过，可以在设置中手动强制 MacVim 使
+用浅色或深色。第四个选项是让 MacVim 遵从 Vim 的 <a href="options.html#'background'">'background'</a> 选项，这会更灵活
+一些，方便处理在系统设置使用浅色模式下载入深色色彩方案之类的情况。如果标题栏设
+置为 "Transparent" (见  <a href="gui_mac.html#MMTitlebarAppearsTransparent">MMTitlebarAppearsTransparent</a> )，这也是建议的设置。
+
+要在 Vim 里查询系统外观模式 (如启动时要使色彩方案与之匹配)，见
+ <a href="eval.html#v:os_appearance">v:os_appearance</a> 。也可用自动命令  <a href="autocmd.html#OSAppearanceChanged">OSAppearanceChanged</a> ，在 OS 修改外观时收到
+通知。
+
+                                                        <b class="vimtag"> <a name="macvim-full-screen">macvim-full-screen</a> </b>
+MacVim 可使用全屏模式，见 <a href="options.html#'fullscreen'">'fullscreen'</a>。
+
+有两种类型的全屏模式。缺省，MacVim 使用 macOS 的原生全屏功能，在调度中心上创建
+新的空间。
+
+MacVim 也提供了非原生的全屏模式，可通过在设置面板关闭 native full
+screen (见  <a href="gui_mac.html#MMNativeFullScreen">MMNativeFullScreen</a> )。<a href="options.html#'fuoptions'">'fuoptions'</a> 可用来配置背景色和是否最大化行/
+列。如果你的 MacBook 在屏幕顶部有摄像头外壳 ("刘海")，可设置
+ <a href="gui_mac.html#MMNonNativeFullScreenShowMenu">MMNonNativeFullScreenShowMenu</a>  为  <code class="badlink">NO</code>  还有
+ <a href="gui_mac.html#MMNonNativeFullScreenSafeAreaBehavior">MMNonNativeFullScreenSafeAreaBehavior</a>  为 1 来充分利用全屏 (但会导致部分内容
+被刘海遮挡)。
+
+</section><hr class="doubleline" /><section class=inner>
+<h4>5. 特殊颜色                                             <b class="vimtag"> <a name="macvim-colors">macvim-colors</a> </b></h4>
+MacVim 主要使用标准 Vim 色。如何设置和覆盖色彩可见  <a href="syntax.html#gui-colors">gui-colors</a>  和
+ <a href="eval.html#v:colornames">v:colornames</a> 。
+
+                                                        <b class="vimtag"> <a name="SystemColors.plist">SystemColors.plist</a> </b>
+ <a href="syntax.html#:hi">:hi</a>  命令可使用一些额外的系统颜色。它们在 MacVim.app bundle 里的
+"SystemColors.plist" 字典中定义。这些色彩值对应 macOS 的 NSColor 选择器。可用
+的色彩名是:
+
+<code class="section">键                                      值 </code>
+MacSecondarySelectedControlColor        应用失去焦点时的选择区颜色。
+MacSelectedTextBackgroundColor          "高亮显示颜色"，在系统设置的 "外观" 小
+                                        节里可以调节。
+MacTextBackgroundColor                  普通文本背景色。
+MacTextColor                            普通文本色。
+
+                                                        <b class="vimtag"> <a name="macvim-colorscheme">macvim-colorscheme</a> </b>
+MacVim 自带定制的色彩方案，而不用缺省的 Vim 色彩方案。色彩方案可以这样改变
+<code class="example">        :colorscheme macvim</code>
+如果你喜欢深色背景，载入 "macvim" 色彩方案后键入
+<code class="example">        :set bg=dark</code>
+<code class="example"></code>
+如果你想用其它的色彩方案，可用  <a href="syntax.html#:colorscheme">:colorscheme</a>  命令。<code class="note">注意</code> 要想手动设置系统高亮
+颜色，必须建立自己的色彩方案，或者在 .vimrc (~/.gvimrc 不行) 里加入
+<code class="example">        let macvim_skip_colorscheme=1</code>
+一行。否则执行系统 gvimrc 文件时会载入 "macvim" 色彩方案而搞乱你所作的改动。
+
+此色彩方案使用系统 "高亮显示颜色"，在系统设置的 "外观" 面板里可以调节。也改变
+窗口不在激活状态时的高亮色。
+
+</section><hr class="doubleline" /><section class=inner>
+<h4>6. 菜单                                                 <b class="vimtag"> <a name="macvim-menus">macvim-menus</a> </b></h4>
+<code class="section">缺省菜单 </code>
+
+见  <a href="gui_mac.html#macvim-default-menus">macvim-default-menus</a> 。
+
+<code class="section">图标 </code>
+
+和常规 Vim 不同，MacVim 的菜单可用图标定制。和工具栏类似，简单地用 "icon=" 参
+数。用法见  <a href="gui_mac.html#macvim-toolbar-icon">macvim-toolbar-icon</a> 。
+
+<code class="section">定制 </code>
+
+macOS 的菜单行为和其它平台稍有不同。因此，为 Vim 新增了两个命令。要理解这些命
+令，你必须先了解 macOS 的菜单工作方式。
+
+菜单里的每一项称为 "菜单项目"。每个菜单项目相关联的有: 标题、等价键和动作消
+息。显示菜单时，标题显示在左侧，而等价键 (如有) 显示在右侧。等价键使你可以用键
+盘而不是鼠标来访问菜单项目。点击菜单项目时，发送其相联的动作消息。动作可以用来
+指示 MacVim 粘贴文本 (paste:)，打开新窗口 (newWindow:) 等等。若干动作是整个
+macOS 里的标准动作，所以 MacVim 必须为每个菜单项目设置动作。(例如，菜单项目
+"Edit.Paste" 必须绑定动作 "paste:"，否则对话框里不能正常粘贴，因为那是指示对话
+框进行粘贴的动作。)
+
+菜单通过  <a href="gui_mac.html#:macmenu">:macmenu</a>  命令配置，而  <a href="gui_mac.html#:macaction">:macaction</a>  命令可用来发送动作消息。
+
+                                                <b class="vimtag"> <a name="E9001-M">E9001-M</a> </b> <b class="vimtag"> <a name=":maca">:maca</a> </b> <b class="vimtag"> <a name=":macaction">:macaction</a> </b>
+:maca[ction] <code class="special">{action:}</code>  发送信息 "action:" 到 MacVim 的首个响应者。要看到合法
+                        动作的列表，可键入
+                            :maca <code class="special">&lt;C-d&gt;</code>
+                        试图发送没有在这里列出的动作会报错。见下
+                         <a href="gui_mac.html#macvim-actions">macvim-actions</a> 。
+
+                                                <b class="vimtag"> <a name=":macm">:macm</a> </b> <b class="vimtag"> <a name=":macmenu">:macmenu</a> </b>
+:macm[enu] <code class="special">{menu}</code> <code class="special">{key}</code>=<code class="special">{arg}</code> ...
+                        设置 Mac 特定的 <code class="special">{menu}</code> 属性。可以设置的属性是:
+                            action      此菜单发送的动作
+                            alt         如是上条菜单的替代，"yes"
+                            key         此菜单的等价键
+                        此命令必须在启动文件中使用，如 "~/.gvimrc"。否则无效。
+
+                        为方便计，带有 "action=name:" 且和 <code class="special">&lt;Nop&gt;</code> 绑定的菜单会
+                        为当作和 ":maca name:<code class="special">&lt;CR&gt;</code>" 绑定。比如，如果这样给出
+                        "Menu.Item"
+<code class="example">                            :an Menu.Item &lt;Nop&gt;</code>
+<code class="example">                            :macm Menu.Item action=name:</code>
+                        那么 ":emenu Menu.Item" 等价于 ":maca name:"。
+
+                        等价键通过 &lt;D-..&gt; 语法给定。这里大小写敏感，<code class="special">&lt;D-a&gt;</code> 意味
+                        着 Cmd-a 而 <code class="special">&lt;D-A&gt;</code> 意味着 Cmd-Shift-a。
+                        <code class="note">注意</code> 等价键必须包含 Cmd 修饰符标志位 (&lt;D-..&gt;)，其优先
+                        级高于普通映射。
+                        "key=<code class="special">&lt;nop&gt;</code>" 语法用来清除菜单的等价键。可用来释放系统
+                        gvimrc 设定的键组合，以便可重新用 ":map" 映射。
+
+                        "alt" 认可的值包括 "0"、"no"、"1" 和 "yes"。缺省是
+                        "no"。替代菜单必须和它的上条菜单和相同的等价键，除了修
+                        饰符标志位必须不同以外。替代菜单缺省隐藏，只有在按下修
+                        饰符时才会显示。
+
+下面是如何使用这些命令的一些例子:
+
+1. 建立菜单，在 "File" 菜单下，标题是 "New Window"，等价键是 Cmd-n，选中时打开
+新窗口:
+<code class="example">        :an 10.290 File.New\ Window &lt;Nop&gt;</code>
+<code class="example">        :macm File.New\ Window action=newWindow: key=&lt;D-n&gt;</code>
+2. 改变轮流切换标签页的等价键为 Cmd-Left/Right:
+<code class="example">        :macm Window.Previous\ Tab  key=&lt;D-Left&gt;</code>
+<code class="example">        :macm Window.Next\ Tab      key=&lt;D-Right&gt;</code>
+3. 建立普通模式映射来关闭当前标签页/窗口:
+<code class="example">        :map &lt;C-w&gt; :maca performClose:&lt;CR&gt;</code>
+4. 释放 Cmd-t 并把它重新映射来在分割视图里打开文件浏览器:
+<code class="example">        macm File.New\ Tab key=&lt;nop&gt;</code>
+<code class="example">        nmap &lt;D-t&gt; :sp .&lt;CR&gt;</code>
+<code class="note">注意</code>: 这两行必须加在 .gvimrc 里，否则首行会失败。第二行大小写敏感，所以 <code class="special">&lt;D-T&gt;</code>
+(Cmd-Shift-t) 和 <code class="special">&lt;D-t&gt;</code> (Cmd-t) 不同！
+
+缺省菜单在 "$VIMRUNTIME/menu.vim" 里定义。看看该文件可以找到更多如何设置菜单的
+示例。<code class="note">注意</code>: 如果没有打开任何窗口，使用最小化的缺省菜单。缺省菜单在应用捆绑的
+"Resources/English.lproj/" 目录中的 MainMenu.nib 里定义。
+
+                                                <b class="vimtag"> <a name="Actions.plist">Actions.plist</a> </b> <b class="vimtag"> <a name="macvim-actions">macvim-actions</a> </b>
+有些动作 (如字体大小的改变) 不直接和 Vim 相关，而由 MacVim 在 GUI 的应用层级处
+理。MacVim 允许你通过  <a href="gui_mac.html#:macaction">:macaction</a>  直接调用或用  <a href="gui_mac.html#:macmenu">:macmenu</a>  和菜单绑定来调用这
+些动作。动作的完整列表可见文件 "Actions.plist" (在
+MacVim.app/Contents/Resources/ 下)，但下面列出一些常用的动作。
+
+提示:  <a href="gui_mac.html#:macaction">:macaction</a>  命令支持命令行补全，可用 ":maca<code class="special">&lt;Space&gt;</code><code class="special">&lt;C-d&gt;</code>" 来看到所有可用
+动作的列表。
+
+<code class="section">动作                            描述 </code>
+fileOpen:                       显示 "File Open" 对话框
+findNext:                       使用 "查找粘贴板" 正向查找
+findPrevious:                   使用 "查找粘贴板" 反向查找
+useSelectionForFind:            搜索选中的文本并分享给 "查找粘贴板"
+fontSizeDown:                   减小字体
+fontSizeUp:                     增大字体
+hide:                           隐藏 MacVim
+miniaturizeAll:                 最小化所有窗口到 Dock 上
+newWindow:                      打开新 (空) 窗口
+orderFrontCharacterPalette:     打开 "Special Characters" 对话框
+orderFrontFontPanel:            显示字体面板
+orderFrontPreferencePanel:      显示设置面板
+performMiniaturize:             最小化窗口到程序坞上
+performZoom:                    放大窗口 (相当于点击绿色圆形按钮)
+terminate:                      退出 MacVim
+zoomAll:                        放大所有窗口
+zoomLeft:                       固定窗口到屏幕左侧
+zoomRight:                      固定窗口到屏幕右侧
+_cycleWindows:                  选择下个窗口 (类似于 &lt;D-`&gt;)
+_cycleWindowsBackwards:         选择上个窗口 (类似于 &lt;D-S-`&gt;)
+_removeWindowFromStageManagerSet  从舞台管理组 (Stage Manager Set) 中删除窗
+                                口。和 "Remove Window from Set" 菜单项目效果相
+                                同。
+joinAllStageManagerSets:        窗口会在所有的舞台管理组中浮动
+unjoinAllStageManagerSets:      窗口只会在自己的组中出现
+scrollToCurrentTab:             GUI 标签页行滚动到选中的标签页
+scrollBackwardOneTab:           标签页行往后滚动一个标签页
+scrollForwardOneTab:            标签页行往前滚动一个标签页
+
+</section><hr class="doubleline" /><section class=inner>
+<h4>7. 工具栏                                               <b class="vimtag"> <a name="macvim-toolbar">macvim-toolbar</a> </b></h4>
+MacVim 的工具栏和其它 GUI 的工作方式一致 (见  <a href="gui.html#gui-toolbar">gui-toolbar</a> )，但加上了两个分隔
+符项目 (见  <a href="gui.html#menu-separator">menu-separator</a> )。它们可以这样用:
+<code class="example">        :an ToolBar.-space1-        &lt;Nop&gt;</code>
+<code class="example">        :an ToolBar.-flexspace2-    &lt;Nop&gt;</code>
+首例在工具栏上创建空白空间，次例创建可伸缩的空白空间，使其右侧的项目右对齐。
+工具栏项目的名字以 "-space" ("-flexspace") 开始并以 "-" 结束时就会创建空间 (伸
+缩空间)。
+
+                                                        <b class="vimtag"> <a name="macvim-toolbar-icon">macvim-toolbar-icon</a> </b>
+常规 Vim 里，可用 "icon=" 参数 (见  <a href="gui.html#toolbar-icon">toolbar-icon</a> ) 指定图像文件的文件路径。
+MacVim 里此参数也可用于指定 SF 符号或 macOS 系统图像。简单地用 SF 符号名或系统
+图像名，MacVim 就会载入它们而不是图像文件。下例使用 SF 符号 "gearshape.2" 和
+名为 "NSAdvanced" 的 macOS 系统图像:
+<code class="example">        :an icon=gearshape.2 ToolBar.Setting1   &lt;Nop&gt;</code>
+<code class="example">        :an icon=NSAdvanced  ToolBar.Setting2   &lt;Nop&gt;</code>
+macOS 有些 SF 符号可定制为不同风格。风格用冒号分隔的选项指定 (绝大多数需要
+macOS 13 Ventura)。可用的选项是  <code class="badlink">monochrome</code> 、 <code class="badlink">hierarchical</code> 、 <code class="badlink">palette</code> 、
+ <code class="badlink">multicolor</code>  和  <code class="badlink">variable-0.5</code>  (这里的 0.5 可被 0 和 1 之间的任何数替换)。下载
+Apple 的 SF 符号应用来查找符号名和每个符号支持的风格选项。下面给出几个例子:
+<code class="example">        :an icon=bolt.circle:hierarchical       ToolBar.Bolt  :echo '⚡️'&lt;CR&gt;</code>
+<code class="example">        :an icon=cloud.sun.rain.fill:multicolor ToolBar.Cloud :echo '🌦️'&lt;CR&gt;</code>
+<code class="example">        :an icon=homekit:variable-0.4:palette   ToolBar.Home  :echo '🏠'&lt;CR&gt;</code>
+
+如果图标图像是模板图像 (也就是设计为映射到任何前景色的灰度图像)，可在图像名后
+加上  <code class="badlink">:template</code> ，这样 macOS 就会标记其为模板图像:
+<code class="example">        :an icon=/a/b/black-and-white.png:template ToolBar.Foo &lt;Nop&gt;</code>
+
+支持的图像格式取决于 macOS 版本。安全的格式包括 png、icns、ico。后来的 macOS
+版本也支持 heic 和 webp。
+
+工具栏图标尺寸为 32x32 或 24x24 像素。<a href="options.html#'tbis'">'tbis'</a> 为 "medium" 或 "large" 时使用大尺
+寸，否则使用小尺寸 (缺省)。如果图标文件只包含一种尺寸，macOS 在有必要时会伸缩
+图标到需要的尺寸。如果不想如此，请使用支持多种分辨率的文件格式 (如 icns) 并同
+时提供 32x32 和 24x24 版本的图标。
+
+</section><hr class="doubleline" /><section class=inner>
+<h4>8. 触控栏                                               <b class="vimtag"> <a name="macvim-touchbar">macvim-touchbar</a> </b></h4>
+MacVim 中的触控栏是可配置的，和工具栏类似 (见  <a href="gui_mac.html#macvim-toolbar">macvim-toolbar</a> )。区别在于使用
+特殊菜单 "TouchBar" 而不是 "ToolBar":
+<code class="example">        :an TouchBar.Hello          :echo "Hello"&lt;CR&gt;</code>
+
+此功能只适用于带触控栏的 Mac 设备。否则什么都不会显示。
+
+也可以创建子菜单。因为 macOS 的限制，子菜单只能有一层:
+<code class="example">        :an TouchBar.Navigate.Next  :next&lt;CR&gt;</code>
+<code class="example">        :an TouchBar.Navigate.Prev  :prev&lt;CR&gt;</code>
+
+                                                <b class="vimtag"> <a name="macvim-touchbar-separator">macvim-touchbar-separator</a> </b>
+分隔符和工具栏的工作方式类似:
+<code class="example">        :an TouchBar.-Sep-          &lt;Nop&gt;</code>
+<code class="example">        :an TouchBar.-space1-       &lt;Nop&gt;</code>
+<code class="example">        :an TouchBar.-flexspace2-   &lt;Nop&gt;</code>
+
+首例是一个 Vim 分隔符 (见  <a href="gui.html#menu-separator">menu-separator</a> )，会在两个按钮间插入空白。次例创建
+一个比正常分隔符窄一点的空白，这是通过命名以 "-space" 开始且以 "-" 结尾来指定
+的。第三例创建可变空间，会适当缩放使得之后的项目右对齐，这是通过命名以
+"-flexspace" 开始且以 "-" 结尾来指定的。
+
+                                                <b class="vimtag"> <a name="macvim-touchbar-icon">macvim-touchbar-icon</a> </b>
+触控栏按钮可以和用工具栏图标同样的方式来指定图标，包括使用 SF 符号 (见
+ <a href="gui_mac.html#macvim-toolbar-icon">macvim-toolbar-icon</a> )。按钮有图标时，不显示菜单名。触控栏图标最好是 36x36 像
+素，而不应大于 44x44 像素。
+<code class="example">        :an icon=/home/foo/bar.png          TouchBar.DoThing  :echo 'Do'&lt;CR&gt;</code>
+<code class="example">        :an icon=gearshape.2                TouchBar.Setting  &lt;Nop&gt;</code>
+macOS 也提供了为触控栏专门设计的若干缺省模板图标。例如:
+<code class="example">        :an icon=NSTouchBarListViewTemplate TouchBar.ShowList :ls&lt;CR&gt;</code>
+<code class="example">        :an icon=NSTouchBarRefreshTemplate  TouchBar.Refresh  :e!&lt;CR&gt;</code>
+
+                                                <b class="vimtag"> <a name="macvim-touchbar-title">macvim-touchbar-title</a> </b>
+触控栏按钮缺省使用菜单名作为标题。使用图标时，标题不会显示。用  <code class="badlink">tmenu</code>  设置工
+具提示可绕过这一点。工具提示会显示为按钮的标题。如果给出图标，工具提示覆盖值会
+和图标并列显示。例如:
+<code class="example">        :an icon=NSTouchBarAddTemplate TouchBar.AddItem &lt;Nop&gt;</code>
+<code class="example">        :tmenu TouchBar.AddItem Add an Item</code>
+
+                        <b class="vimtag"> <a name="macvim-touchbar-characterpicker">macvim-touchbar-characterpicker</a> </b> <b class="vimtag"> <a name="macvim-touchbar-emoji">macvim-touchbar-emoji</a> </b>
+也可以通过加入字符选择器按钮 (由 "-characterpicker" 开始 "-" 结束的名字指定)
+插入表情符号:
+<code class="example">        :inoremenu TouchBar.-characterpicker-   &lt;Nop&gt;</code>
+
+                                                <b class="vimtag"> <a name="macvim-touchbar-defaults">macvim-touchbar-defaults</a> </b>
+以下是 MacVim 设置的缺省触控栏按钮列表:
+
+                                                <b class="vimtag"> <a name="macvim-touchbar-fullscreen">macvim-touchbar-fullscreen</a> </b>
+                                        <b class="vimtag"> <a name="g:macvim_default_touchbar_fullscreen">g:macvim_default_touchbar_fullscreen</a> </b>
+EnterFullScreen         可用于切换  <a href="options.html#'fullscreen'">'fullscreen'</a>  模式的触控栏按钮。要关闭之，
+ExitFullScreen          在 vimrc 文件里加入:
+<code class="example">                          let g:macvim_default_touchbar_fullscreen=0</code>
+
+                                <b class="vimtag"> <a name="g:macvim_default_touchbar_characterpicker">g:macvim_default_touchbar_characterpicker</a> </b>
+-characterpicker-       在插入和终端模式下插入特殊字符和表情符号的字符选择器。
+                        要关闭之，在 vimrc 文件里加入:
+<code class="example">                          let g:macvim_default_touchbar_characterpicker=0</code>
+
+</section><hr class="doubleline" /><section class=inner>
+<h4>9. 查找数据                                             <b class="vimtag"> <a name="macvim-lookup">macvim-lookup</a> </b></h4>
+macOS 里可用 Ctrl-Cmd-D 查找光标所在的文本的定义，或用触控板 (三指轻点或者压力
+点击，取决于系统设置)。这也适用于 MacVim。像 URL 这样特殊的数据行为有所不同
+(如显示 URL 链接到的网页预览)。可选择文本以查找完整的短语 (如用可视模式选择
+"ice cream"，那么会显示整个短语的定义，而不是 "ice" 或 "cream" 的定义)。如果可
+用，可视模式下右键点击有菜单项 "Look Up" 可完成同样的操作。
+
+如果要编程访问此功能，可调用  <a href="builtin.html#showdefinition()">showdefinition()</a>  以显示任何文本的定义。MacVim
+也提供两个便捷函数，供你调用或映射到键 (它们内部调用  <a href="builtin.html#showdefinition()">showdefinition()</a> ):
+
+ <code class="badlink">macvim#ShowDefinitionUnderCursor()</code>     显示光标所在的单词的定义。
+
+ <code class="badlink">macvim#ShowDefinitionSelected()</code>        显示可视模式最近选择文本的定义。
+
+</section><hr class="doubleline" /><section class=inner>
+<h4>10. 对话框                                              <b class="vimtag"> <a name="macvim-dialogs">macvim-dialogs</a> </b></h4>
+有两种方式可以用键盘控制对话框。对话框的每个按钮缺省和一个键绑定。蓝色高亮的按
+钮和 Enter 绑定，标题为 "Cancel" 的按钮和 Escape 绑定，而标题为 "Don't Save"
+的按钮和 <code class="special">&lt;D-d&gt;</code> 绑定。其它按钮通常和其标题的第一个字母绑定。因为没有按钮绑定哪
+个字母的视觉反馈，有时需要实验一下才能确定要按哪个键。
+
+第二种用键盘来控制对话框的方式是在系统设置的 "键盘" 面板中打开 "全键盘控制"
+功能 (也可以按 Ctrl-F7 开关此功能)。打开键盘访问后，用 Tab 键可在按钮间移动，
+然后用空格键选择当前按钮。蓝色边框指示当前按钮。
+
+</section><hr class="doubleline" /><section class=inner>
+<h4>11. 系统服务                                            <b class="vimtag"> <a name="macvim-services">macvim-services</a> </b></h4>
+MacVim 提供两种系统服务。可以通过服务菜单的 MacVim 子菜单或右击选择进行访问。
+要使用服务，MacVim.app 必须在 /Applications 目录下。(可以先退出登录再重新登录
+确保 macOS 能检测到 MacVim 服务。)
+
+这里是当前支持的服务:
+* New MacVim Buffer With Selection: 新建缓冲区并粘贴当前选择的文本。
+* New MacVim Buffer Here: 新建缓冲区并设置当前目录为 Finder 选中的文件或目录。
+
+这些服务遵从通用设置的 "Open files from applications" 设定。
+
+另一个方向上，MacVim 里也可以访问选中文本相关联的系统服务 (如打开 URL，在繁
+体/简体中文间转换，网站搜索)，先用可视模式选择文本再打开 "服务" 子菜单，这可以
+通过在文本上右击或顶层 "MacVim" 菜单里找到。
+
+</section><hr class="doubleline" /><section class=inner>
+<h4>12. mvim:// URL 处理程序                        <b class="vimtag"> <a name="mvim:%2F%2F">mvim://</a> </b> <b class="vimtag"> <a name="macvim-url-handler">macvim-url-handler</a> </b></h4>
+MacVim 支持 "mvim://" URL 的定制 URL 处理程序。此处理程序应该与以下文档所述的
+TextMate 的 URL 方案兼容:
+        <a href="https://macromates.com/blog/2007/the-textmate-url-scheme/">https://macromates.com/blog/2007/the-textmate-url-scheme/</a>
+
+目前，这意味着格式应是
+<code class="example">        mvim://open?&lt;arguments&gt;</code>
+其中 "arguments" 可为:
+        * url — 要实际打开的文件 (即 file://... URL)，此参数省略时隐含最前面的
+                文档
+        * line — 要转到的行号 (以一为基)
+        * column — 要转到的列号 (以一为基)
+
+例如，在网页浏览器里点击下面的链接
+<code class="example">        mvim://open?url=file:///etc/profile&amp;line=20</code>
+时会打开文件 /etc/profile 并定位在第 20 行。
+
+<code class="note">注意</code>: MacVim 实现的一个问题是它期待特殊字符被两次编码。例如，空格应编码为
+"%2520" 而不是 "%20"。文件 "/tmp/file name?.txt" 需要以下链接:
+<code class="example">        mvim://open?url=file:///tmp/file%2520name%253F.txt</code>
+
+MacVim 会试图智能地检测错误的一次编码的情况，但为了最佳结果，建议用上面的方法
+使用两次编码。
+
+<code class="note">注意</code> url 必须是指向已存在的本地文件的 file:// url。
+
+</section><hr class="doubleline" /><section class=inner>
+<h4>13. 键盘快捷键                                          <b class="vimtag"> <a name="macvim-shortcuts">macvim-shortcuts</a> </b></h4>
+多数 MacVim 的键盘快捷键和菜单项目绑定，可以通过菜单查看 ( <a href="gui_mac.html#macvim-menus">macvim-menus</a>  说明
+如何建立自己的菜单快捷键， <a href="gui_mac.html#cmd-key">cmd-key</a>  说明如果映射自己的命令到 Cmd-key 快捷键)。
+这里列出其余的快捷键:
+
+                                                        <b class="vimtag"> <a name="Cmd-.">Cmd-.</a> </b> <b class="vimtag"> <a name="%3CD-.%3E">&lt;D-.&gt;</a> </b>
+Cmd-.                   中断 Vim。和 <code class="keystroke">CTRL-C</code> 不同，后者作为正常的键盘输出发送
+                        (因而必须先被接收到再作解释)，前者向 Vim 进程发送
+                        SIGINT 信号。如果 Vim 进程看来被锁住，而对键输入无反应
+                        时，可使用此快捷键。此 Cmd-key 组合不能被重映射。
+
+                                                        <b class="vimtag"> <a name="Cmd-`">Cmd-`</a> </b> <b class="vimtag"> <a name="%3CD-`%3E">&lt;D-`&gt;</a> </b>
+Cmd-`                   轮转到下个窗口。在美式键盘上 "`" 键在 Esc 键之下。在欧
+                        式键盘上此键通常和左 Shift 键相邻，可能都不用 "`" 标
+                        注。此 Cmd-key 组合只能通过 "键盘" 系统设置取消映射。
+
+                                                        <b class="vimtag"> <a name="Cmd-Left">Cmd-Left</a> </b>  <b class="vimtag"> <a name="%3CD-Left%3E">&lt;D-Left&gt;</a> </b>
+Cmd-Left                移到光标到行首 (见  <a href="gui_mac.html#cmd-movement">cmd-movement</a> )。
+
+                                                        <b class="vimtag"> <a name="Cmd-Right">Cmd-Right</a> </b> <b class="vimtag"> <a name="%3CD-Right%3E">&lt;D-Right&gt;</a> </b>
+Cmd-Right               移到光标到行尾 (见  <a href="gui_mac.html#cmd-movement">cmd-movement</a> )。
+
+                                                        <b class="vimtag"> <a name="Cmd-Up">Cmd-Up</a> </b>    <b class="vimtag"> <a name="%3CD-Up%3E">&lt;D-Up&gt;</a> </b>
+Cmd-Up                  移动光标到首行 (见  <a href="gui_mac.html#cmd-movement">cmd-movement</a> )。
+
+                                                        <b class="vimtag"> <a name="Cmd-Down">Cmd-Down</a> </b>  <b class="vimtag"> <a name="%3CD-Down%3E">&lt;D-Down&gt;</a> </b>
+Cmd-Down                移动光标到末行 (见  <a href="gui_mac.html#cmd-movement">cmd-movement</a> )。
+
+                                                        <b class="vimtag"> <a name="Alt-Left">Alt-Left</a> </b>  <b class="vimtag"> <a name="%3CM-Left%3E">&lt;M-Left&gt;</a> </b>
+Alt-Left                移动光标和上个单词的开头 (见  <a href="gui_mac.html#alt-movement">alt-movement</a> )。
+
+                                                        <b class="vimtag"> <a name="Alt-Right">Alt-Right</a> </b> <b class="vimtag"> <a name="%3CM-Right%3E">&lt;M-Right&gt;</a> </b>
+Alt-Right               移动光标到下个单词的开头 (见  <a href="gui_mac.html#alt-movement">alt-movement</a> )。
+
+                                                        <b class="vimtag"> <a name="Alt-Up">Alt-Up</a> </b>    <b class="vimtag"> <a name="%3CM-Up%3E">&lt;M-Up&gt;</a> </b>
+Alt-Up                  移动光标前进一个段落 (见  <a href="gui_mac.html#alt-movement">alt-movement</a> )
+                        (<code class="vim">译者注</code>: 原文如此，应为后退一个段落)。
+
+                                                        <b class="vimtag"> <a name="Alt-Down">Alt-Down</a> </b>  <b class="vimtag"> <a name="%3CM-Down%3E">&lt;M-Down&gt;</a> </b>
+Alt-Down                移动光标后退一个段落 (见  <a href="gui_mac.html#alt-movement">alt-movement</a> )。
+                        (<code class="vim">译者注</code>: 原文如此，应为前进一个段落)。
+
+                                                <b class="vimtag"> <a name="cmd-movement">cmd-movement</a> </b> <b class="vimtag"> <a name="alt-movement">alt-movement</a> </b>
+上述涉及 Cmd/Alt + 光标键的映射在系统 gvimrc 文件 "$VIM/gvimrc" 里缺省打开。可
+以在 "~/.vimrc" (不是 .gvimrc) 文件里加入如下行，以快速关闭所有这些映射:
+<code class="example">        if has("gui_macvim")</code>
+<code class="example">          let macvim_skip_cmd_opt_movement = 1</code>
+<code class="example">        endif</code>
+<code class="note">注意</code>: 这些是 MacVim 生成的仅有的键盘映射 (不算菜单的等价键，因为它们不通过
+:map 设置)。
+
+如果你想 Shift 和上述 Cmd/Alt 移动快捷键联合使用时选择文本，请见
+ <a href="gui_mac.html#macvim-shift-movement">macvim-shift-movement</a> 。
+
+                                                <b class="vimtag"> <a name="cmd-key">cmd-key</a> </b> <b class="vimtag"> <a name="cmd-shortcuts">cmd-shortcuts</a> </b>
+涉及 Cmd 键 (Vim 记法是 &lt;D-..&gt;) 的键盘映射的建立有时是比较麻烦的。这里是所有你
+要考虑的事情:
+
+- 查看菜单，确定快捷键不被用于任何菜单项目。如果是，在可以映射之前，先要取消
+  绑定。 <a href="gui_mac.html#:macmenu">:macmenu</a>  命令的帮助有说明。
+- &lt;D-..&gt; 的绑定大小写敏感: <code class="special">&lt;D-d&gt;</code> 不同于 <code class="special">&lt;D-D&gt;</code>。如果你要映射 Cmd+Shift+d，要用
+  <code class="special">&lt;D-D&gt;</code> 而不是 <code class="special">&lt;D-S-d&gt;</code> 或 <code class="special">&lt;D-S-D&gt;</code>。
+- 有些命令快捷键是 macOS 保留的，不能进行映射 (如 <code class="special">&lt;D-Tab&gt;</code>)。但其中有些可在系统
+  设置的键盘页里进行释放 (如 Cmd+Space)。
+- 一些命令快捷键是 MacVim 设置的，见  <a href="gui_mac.html#cmd-movement">cmd-movement</a> 。
+
+</section><hr class="doubleline" /><section class=inner>
+<h4>14. 触控板手势                                          <b class="vimtag"> <a name="macvim-gestures">macvim-gestures</a> </b></h4>
+MacVim 支持触控板滑动手势。缺省可用于帮助里后退/前进的导航 (试试！)。
+
+每个手势生成以下 Vim 虚拟键之一:
+
+                                                 <b class="vimtag"> <a name="%3CSwipeLeft%3E">&lt;SwipeLeft&gt;</a> </b> <b class="vimtag"> <a name="%3CSwipeRight%3E">&lt;SwipeRight&gt;</a> </b>
+        触控板上横向轻扫三个手指。Apple Magic Mouse 则在横向轻扫两个手指时生成
+        这些事件。
+
+                                                 <b class="vimtag"> <a name="%3CSwipeUp%3E">&lt;SwipeUp&gt;</a> </b>   <b class="vimtag"> <a name="%3CSwipeDown%3E">&lt;SwipeDown&gt;</a> </b>
+        触控板上纵向轻扫三个手指。(Apple Magic Mouse 不支持)
+
+                                                 <b class="vimtag"> <a name="%3CForceClick%3E">&lt;ForceClick&gt;</a> </b>
+        在触控板上用力按会生成压力点击事件。
+        (仅在支持压力触碰的触控板上才有效)
+
+        如果系统设置中配置了使用压力点击来 "查找和数据检测"，缺省 MacVim 进行
+        字典查找，而非触发此映射。在 MacVim 的设置面板里可以关闭之，也可直接设
+        置  <a href="gui_mac.html#MMAllowForceClickLookUp">MMAllowForceClickLookUp</a> 。
+
+像其它键一样，可以用  <a href="map.html#:map">:map</a>  命令家族来映射这些键。例如，下面的命令映射普通模式
+下的左/右轻扫到上个/下个标签页的切换:
+<code class="example"></code>
+<code class="example">        nmap &lt;SwipeLeft&gt; gT</code>
+<code class="example">        nmap &lt;SwipeRight&gt; gt</code>
+
+另一例，这样可使左/右轻扫切换缓冲区:
+<code class="example"></code>
+<code class="example">        nmap &lt;SwipeLeft&gt; :bN&lt;CR&gt;</code>
+<code class="example">        nmap &lt;SwipeRight&gt; :bn&lt;CR&gt;</code>
+
+参见  <a href="map.html#key-mapping">key-mapping</a>  章节，有更多如何对键映射的帮助。
+
+</section><hr class="doubleline" /><section class=inner>
+<h4>15. 国际化                              <b class="vimtag"> <a name="macvim-international">macvim-international</a> </b> <b class="vimtag"> <a name="macvim-multilang">macvim-multilang</a> </b></h4>
+<code class="section">键入文本</code>
+
+编辑非英语文本时，如果能把普通和插入模式的键盘布局分开，可能较为方便。在 macOS
+10.5 或之后，这可通过 <a href="options.html#'imd'">'imd'</a> 选项支持 (10.4 上 <a href="options.html#'imd'">'imd'</a> 选项的支持不太有用，它只能
+在罗马和非罗马输入源之间切换，而且已知不太可靠)。
+
+例如: 打开 <a href="options.html#'noimd'">'noimd'</a> 时 (即 IM 打开时)，在普通和插入模式切换时保存输入源，这样你
+可以在普通模式时使用美国布局，而切换到插入模式时选择瑞典布局。回到普通模式时又
+会选择美国布局，而进入插入模式时又会选择瑞典布局。这也适用于文本搜索等场合。见
+<a href="options.html#'imc'">'imc'</a>、<a href="options.html#'imi'">'imi'</a>、<a href="options.html#'ims'">'ims'</a>。
+
+<code class="note">注意</code>　普通模式使用的布局是设置 <a href="options.html#'noimd'">'noimd'</a> 时 (即 IM 打开时) 所使用的布局。如果你
+发现回到普通模式时 MacVim 切换到了错误的布局，选择你想在普通模式用的布局，键入
+":set imd"，然后 ":set noimd"。
+
+<code class="section">翻译</code>
+
+MacVim 使用本地化的 Vim 消息 (见  <a href="mlang.html#multilang-messages">multilang-messages</a> ) 和菜单 (见
+ <a href="mlang.html#multilang-menus">multilang-menus</a> )。不过，MacVim 中的一些用户界面 (如设置面板) 还没有本地化。
+还有一些 MacVim 特定的 Vim 消息/菜单目前还没有本地化。如果希望某些消息能本地
+化，请提交议题。
+
+</section><hr class="doubleline" /><section class=inner>
+<h4>16. 已知漏洞/缺失功能                                   <b class="vimtag"> <a name="macvim-todo">macvim-todo</a> </b></h4>
+此清单不一定完整，这里只列出最常见的漏洞/缺失功能。
+
+-  <a href="map.html#modifyOtherKeys">modifyOtherKeys</a>  支持。此功能支持更细致的键映射 (如区别 <code class="special">&lt;C-I&gt;</code> 和 <code class="special">&lt;Tab&gt;</code>)，
+  MacVim GUI 尚不支持。
+- 一些 MacVim GUI 和 MacVim 特定的 Vim 消息尚未本地化。
+- 有时多字节字符看来 "太宽" 了，也就是，和后面的字符有重叠。改变 <a href="options.html#'ambiwidth'">'ambiwidth'</a>
+  或有帮助，也可以通过手动设置 <a href="options.html#'guifontwide'">'guifontwide'</a>  来覆盖自动的字体替换。
+- 内建打印。 <a href="print.html#:hardcopy">:hardcopy</a>  / <code class="special">&lt;D-p&gt;</code> 建立 PDF 文件并在 Preview 里打开，然后就可以打
+  印了。见  <a href="print.html#pexpr-option">pexpr-option</a> 。
+
+一般性的漏洞和问题在 Github 上跟踪。如果发现新的漏洞或有功能请求，请在那里提交
+议题:
+        <a href="https://github.com/macvim-dev/macvim/issues">https://github.com/macvim-dev/macvim/issues</a>
+
+一般的讨论和提问可用 Github 讨论页:
+        <a href="https://github.com/macvim-dev/macvim/discussions">https://github.com/macvim-dev/macvim/discussions</a>
+
+也有一个 vim_mac 邮件列表。也可以在那里贴出发现的漏洞和问题:
+                                                        <b class="vimtag"> <a name="vim_mac_group">vim_mac_group</a> </b>
+        <a href="http://groups.google.com/group/vim_mac">http://groups.google.com/group/vim_mac</a>
+
+</section><hr class="doubleline" /><section class=inner>
+<h4>17. 提示                                                <b class="vimtag"> <a name="macvim-hints">macvim-hints</a> </b></h4>
+本小节给出一些通用的 (未必和 MacVim 相关) 提示。
+
+<code class="section">场景: </code>
+要把大写锁定键重新映射到 Esc。
+<code class="section">解决方案: </code>
+到系统设置 → 键盘 → 键盘快捷键… → 修饰键，把大写锁定键映射为 Escape。
+
+<code class="section">场景: </code>
+试图用标签页打开一些文件，但不是所有文件都在自己的标签页里打开。
+<code class="section">解决方案: </code>
+要绕过这个问题，在 .gvimrc 文件里设置 <a href="options.html#'tabpagemax'">'tabpagemax'</a> 为大数 (如 ":set
+tabpagemax=100")。
+
+<code class="section">场景: </code>
+要用标签页中已经打开的窗口中打开文件，但在终端中键入 "mvim filename" 时在单独
+的窗口中打开了该文件。
+<code class="section">解决方案: </code>
+用  <a href="remote.html#--remote-tab">--remote-tab</a>  开关。如果有多个窗口打开，可能要通过  <a href="remote.html#--servername">--servername</a>  开关指定
+想要文件在哪个窗口中打开。窗口的标题通常以 "VIM" 或 "VIM3" 接尾 --- 该窗口的服
+务器名。要在标题以 "VIM3" 结尾的窗口打开名为 "foobar.txt" 的文件，请键入 (参数
+顺序是有关系的):
+<code class="example">        mvim --servername VIM3 --remote-tab foobar.txt</code>
+详情可参阅  <a href="remote.html#client-server">client-server</a>  手册页。
+
+<code class="section">场景: </code>
+你喜欢按住 shift 并移动箭头键时选择文本，觉得 Vim 选择文本的方式很奇怪。
+<code class="section">解决方案: </code>
+见  <a href="gui_mac.html#macvim-shift-movement">macvim-shift-movement</a> 。
+
+<code class="section">场景: </code>
+不希望 MacVim 设置任何键盘映射。
+<code class="section">解决方案: </code>
+见  <a href="gui_mac.html#cmd-movement">cmd-movement</a> 。
+
+<code class="section">场景: </code>
+点击 (绿色) 全屏按钮时，你想要窗口最大化而不是进入全屏。你也要横向和纵向同时最
+大化。
+<code class="section">解决方案: </code>
+按住 Option 再点击时全屏按钮就变缩放按钮，缺省行为是只纵向最大化。
+要两个方向都最大化，按住 Cmd 再按缩放按钮。如果你希望这是缺省动作，设置用户缺
+省值 MMZoomBoth (见  <a href="gui_mac.html#macvim-prefs">macvim-prefs</a> )。
+
+<code class="section">场景: </code>
+光标刚好在右括号 (即 ')'、'}' 或 ']') 前时键入反应比较迟钝。
+<code class="section">解决方案: </code>
+通过 :NoMatchParen 来屏蔽 "matchparen" 插件 (见  <a href="pi_paren.html#matchparen">matchparen</a> )。如要这有用，你
+可在 "~/.vimrc" 里加入以下内容来永久关闭 "matchparen":
+<code class="example">        let loaded_matchparen=1</code>
+
+<code class="section">场景: </code>
+你想要用 MacVim 作为外部应用的编辑器。
+<code class="section">解决方案: </code>
+如果外部应用让你指定要执行的程序，那么 "mvim -f" 这样就可以了 ("-f" 开关确保
+"mvim" 脚本只在你关闭编辑器窗口时才返回，否则 "mvim" 立即返回)。如果外面程序接
+受 EDITOR 环境变量 (例如 Git 就是)，那么你可以在 "~/.profile" 里加入:
+<code class="example">        export EDITOR='mvim -f'</code>
+如果你没有在 path 里安装 "mvim" 脚本，可以直接提供 Vim 可执行文件的路径。如果
+"MacVim.app" 在 Applications 目录里，可以用下行:
+<code class="example">        export EDITOR='/Applications/MacVim.app/Contents/MacOS/Vim -g -f'</code>
+
+<code class="section">场景:</code>
+外部程序中已经设置好如何打开 MacVim，完成编辑时 (通过关闭 MacVim 窗口)，你希望
+外部程序重新捕获焦点。
+<code class="section">解决方案: </code>
+使用 VimLeave 自动命令使窗口关闭时隐藏 MacVim:
+<code class="example">        au VimLeave * maca hide:</code>
+假定外部程序有打开编辑器所执行命令的设置，可以设置该选项为:
+<code class="example">        mvim -f -c "au VimLeave * maca hide:"</code>
+(关于 "-f" 开关的解释，见上面的场景。)
+
+<code class="section">场景: </code>
+创建涉及 Cmd 键的定制映射时有问题。
+<code class="section">解决方案: </code>
+要绑定涉及 Cmd 的键，要用 "&lt;D-..&gt;" 语法。许多 Cmd-key 映射己经在菜单里使用，所
+以如果映射不可用，通常的解决方法是先取消菜单绑定的映射 (见  <a href="gui_mac.html#macvim-menus">macvim-menus</a> ，尤
+其要阅读该小节的末段)。另外，有些 Cmd-key 的组合虽然不用于菜单，但仍然需要先释
+放才能用于定制的绑定，可见  <a href="gui_mac.html#macvim-shortcuts">macvim-shortcuts</a>  一节。
+
+<code class="section">场景: </code>
+找不到你认为应该在此手册页里的关于 MacVim 的信息。
+<code class="section">解决方案: </code>
+把你的问题发在  <a href="intro.html#vim_mac">vim_mac</a>  邮件列表上或者在
+<a href="https://github.com/macvim-dev/macvim/issues">https://github.com/macvim-dev/macvim/issues</a>
+上提交议题，等等回答吧。
+
+ vim:tw=78:sw=4:ts=8:noet:ft=help:norl:
+</section>
+</article>
+<footer>
+Generated by vim2html
+</footer>
+</body>
+</html>

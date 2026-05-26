@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8" />
+<!--[if lt IE 9]>
+  <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+<![endif]-->
+<title>VIM 中文帮助: Raku 文件类型插件</title>
+<link rel="stylesheet" href="vim-stylesheet.css" type="text/css" />
+<link rel="canonical" href="https://yianwillis.github.io/vimcdoc/doc/ft_raku.html" />
+<script type="text/javascript" src="vimcdoc.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+</head>
+<body>
+<nav id=banner>
+<form action=tags.html target="tag_iframe">
+  <input type="text" name="tag" id="tag" placeholder="标签搜索">
+</form>
+<iframe name="tag_iframe" src=""></iframe>
+<a href="help.html">帮助总览</a> &middot;
+<hr/>
+<a href="quickref.html">快速参考</a> &middot;
+<a href="index.html">命令索引</a> &middot;
+<a href="eval.html#functions">函数列表</a> &middot;
+<a href="quickref.html#option-list">选项列表</a> &middot;
+<hr/>
+<a href="usr_toc.html">用户手册</a> &middot;
+<a href="help.html#reference_toc">参考手册</a> &middot;
+</nav>
+
+<header>
+<h2>ft_raku</h2>
+</header>
+<article id=outer>
+<section class=inner>
+<b class="vimtag"> <a name="ft_raku.txt">ft_raku.txt</a> </b>   Raku 程序语言文件类型
+
+                                                      <b class="vimtag"> <a name="vim-raku">vim-raku</a> </b>
+
+Vim-raku 提供了 Raku 程序的语法高亮、缩进和其他支持。
+
+1. 在 Raku 文件里使用 Unicode            <a href="ft_raku.html#raku-unicode">raku-unicode</a> 
+
+</section><hr class="doubleline" /><section class=inner>
+<h4>1. 在 Raku 文件里使用 Unicode                                 <b class="vimtag"> <a name="raku-unicode">raku-unicode</a> </b></h4>
+用 Unicode 符号定义新操作符可以使 Raku 程序更易读。请见:
+<a href="https://perl6advent.wordpress.com/2012/12/18/day-18-formulas-resistance-is-futile/">https://perl6advent.wordpress.com/2012/12/18/day-18-formulas-resistance-is-futile/</a>
+
+Raku 虽然定义了部分常见操作符的 ASCII 版本 (见
+<a href="https://docs.raku.org/language/unicode_ascii">https://docs.raku.org/language/unicode_ascii</a>)，但能使用完整范围的 Unicode 操作
+符更为理想。你的操作系统可能提供了自己的输入方法，但建议使用 Vim 内建的功能。
+
+Vim 里生成这些符号的自然办法是使用二合字母的快捷方式 (:help  <a href="digraph.html#digraphs-use">digraphs-use</a> )。
+很多已有定义。键入  <a href="digraph.html#:digraphs">:digraphs</a>  可获得完整列表。为方便起见，可以读入二合字母列
+表并保存到文件里。外壳上可用:
+<code class="example">        vim +'redir &gt;/tmp/vim-digraphs-listing.txt' +digraphs +'redir END' +q</code>
+<code class="example"></code>
+有标准的 Vim 二合字母可用:
+<code class="section">        &lt;&lt; «    /0 ∅    !&lt; ≮  </code>
+<code class="section">        &gt;&gt; »    Ob ∘    !&gt; ≯  </code>
+<code class="section">        ., …    00 ∞    (C ⊂  </code>
+<code class="section">        (U ∩    -: ÷    )C ⊃  </code>
+<code class="section">        )U ∪    (_ ⊆    &gt;= ≥  </code>
+<code class="section">        ?= ≅    )_ ⊇    =&lt; ≤  </code>
+<code class="section">        (- ∈    ?= ≅    != ≠  </code>
+<code class="section">        -) ∋    ?- ≃  </code>
+
+希腊字母可通过 '*' 后跟对应的拉丁符号来获取:
+<code class="section">        *p π  </code>
+<code class="section">        *t τ  </code>
+<code class="section">        *X ×  </code>
+
+数值的上标、下标可通过 's' 和 'S' 获取:
+<code class="section">        0s ₀    0S ⁰  </code>
+<code class="section">        1s ₁    1S ¹  </code>
+<code class="section">        2s ₂    9S ⁹  </code>
+
+但有些符号没有缺省定义。可在 ~/.vimrc 文件里加入新二合字母的定义。
+<code class="example">        exec 'digraph \\ ' .. char2nr('∖')</code>
+<code class="example">        exec 'digraph \&lt; ' .. char2nr('≼')</code>
+<code class="example">        exec 'digraph \&gt; ' .. char2nr('≽')</code>
+<code class="example">        exec 'digraph (L ' .. char2nr('⊈')</code>
+<code class="example">        exec 'digraph )L ' .. char2nr('⊉')</code>
+<code class="example">        exec 'digraph (/ ' .. char2nr('⊄')</code>
+<code class="example">        exec 'digraph )/ ' .. char2nr('⊅')</code>
+<code class="example">        exec 'digraph )/ ' .. char2nr('⊅')</code>
+<code class="example">        exec 'digraph U+ ' .. char2nr('⊎')</code>
+<code class="example">        exec 'digraph 0- ' .. char2nr('⊖')</code>
+<code class="example">        " Euler 常数</code>
+<code class="example">        exec 'digraph ne ' .. char2nr('𝑒')</code>
+<code class="example">        " Raku 的原子操作标记</code>
+<code class="example">        exec 'digraph @@ ' .. char2nr('⚛')</code>
+<code class="example"></code>
+一个替代方案是用插入模式缩写来把 ASCII 操作符转换为对应的单字符 Unicode 等价符
+号。
+<code class="example">        iabbrev &lt;buffer&gt; !(&lt;) ⊄</code>
+<code class="example">        iabbrev &lt;buffer&gt; !(&lt;=) ⊈</code>
+<code class="example">        iabbrev &lt;buffer&gt; !(&gt;) ⊅</code>
+<code class="example">        iabbrev &lt;buffer&gt; !(&gt;=) ⊉</code>
+<code class="example">        iabbrev &lt;buffer&gt; !(cont) ∌</code>
+<code class="example">        iabbrev &lt;buffer&gt; !(elem) ∉</code>
+<code class="example">        iabbrev &lt;buffer&gt; != ≠</code>
+<code class="example">        iabbrev &lt;buffer&gt; (&amp;) ∩</code>
+<code class="example">        iabbrev &lt;buffer&gt; (+) ⊎</code>
+<code class="example">        iabbrev &lt;buffer&gt; (-) ∖</code>
+<code class="example">        iabbrev &lt;buffer&gt; (.) ⊍</code>
+<code class="example">        iabbrev &lt;buffer&gt; (&lt;) ⊂</code>
+<code class="example">        iabbrev &lt;buffer&gt; (&lt;+) ≼</code>
+<code class="example">        iabbrev &lt;buffer&gt; (&lt;=) ⊆</code>
+<code class="example">        iabbrev &lt;buffer&gt; (&gt;) ⊃</code>
+<code class="example">        iabbrev &lt;buffer&gt; (&gt;+) ≽</code>
+<code class="example">        iabbrev &lt;buffer&gt; (&gt;=) ⊇</code>
+<code class="example">        iabbrev &lt;buffer&gt; (\|) ∪</code>
+<code class="example">        iabbrev &lt;buffer&gt; (^) ⊖</code>
+<code class="example">        iabbrev &lt;buffer&gt; (atomic) ⚛</code>
+<code class="example">        iabbrev &lt;buffer&gt; (cont) ∋</code>
+<code class="example">        iabbrev &lt;buffer&gt; (elem) ∈</code>
+<code class="example">        iabbrev &lt;buffer&gt; * ×</code>
+<code class="example">        iabbrev &lt;buffer&gt; **0 ⁰</code>
+<code class="example">        iabbrev &lt;buffer&gt; **1 ¹</code>
+<code class="example">        iabbrev &lt;buffer&gt; **2 ²</code>
+<code class="example">        iabbrev &lt;buffer&gt; **3 ³</code>
+<code class="example">        iabbrev &lt;buffer&gt; **4 ⁴</code>
+<code class="example">        iabbrev &lt;buffer&gt; **5 ⁵</code>
+<code class="example">        iabbrev &lt;buffer&gt; **6 ⁶</code>
+<code class="example">        iabbrev &lt;buffer&gt; **7 ⁷</code>
+<code class="example">        iabbrev &lt;buffer&gt; **8 ⁸</code>
+<code class="example">        iabbrev &lt;buffer&gt; **9 ⁹</code>
+<code class="example">        iabbrev &lt;buffer&gt; ... …</code>
+<code class="example">        iabbrev &lt;buffer&gt; / ÷</code>
+<code class="example">        iabbrev &lt;buffer&gt; &lt;&lt; «</code>
+<code class="example">        iabbrev &lt;buffer&gt; &lt;&lt;[=]&lt;&lt; «=«</code>
+<code class="example">        iabbrev &lt;buffer&gt; &lt;&lt;[=]&gt;&gt; «=»</code>
+<code class="example">        iabbrev &lt;buffer&gt; &lt;= ≤</code>
+<code class="example">        iabbrev &lt;buffer&gt; =~= ≅</code>
+<code class="example">        iabbrev &lt;buffer&gt; &gt;= ≥</code>
+<code class="example">        iabbrev &lt;buffer&gt; &gt;&gt; »</code>
+<code class="example">        iabbrev &lt;buffer&gt; &gt;&gt;[=]&lt;&lt; »=«</code>
+<code class="example">        iabbrev &lt;buffer&gt; &gt;&gt;[=]&gt;&gt; »=»</code>
+<code class="example">        iabbrev &lt;buffer&gt; Inf ∞</code>
+<code class="example">        iabbrev &lt;buffer&gt; atomic-add-fetch ⚛+=</code>
+<code class="example">        iabbrev &lt;buffer&gt; atomic-assign ⚛=</code>
+<code class="example">        iabbrev &lt;buffer&gt; atomic-fetch ⚛</code>
+<code class="example">        iabbrev &lt;buffer&gt; atomic-dec-fetch --⚛</code>
+<code class="example">        iabbrev &lt;buffer&gt; atomic-fetch-dec ⚛--</code>
+<code class="example">        iabbrev &lt;buffer&gt; atomic-fetch-inc ⚛++</code>
+<code class="example">        iabbrev &lt;buffer&gt; atomic-inc-fetch ++⚛</code>
+<code class="example">        iabbrev &lt;buffer&gt; atomic-sub-fetch ⚛−=</code>
+<code class="example">        iabbrev &lt;buffer&gt; e 𝑒</code>
+<code class="example">        iabbrev &lt;buffer&gt; o ∘</code>
+<code class="example">        iabbrev &lt;buffer&gt; pi π</code>
+<code class="example">        iabbrev &lt;buffer&gt; set() ∅</code>
+<code class="example">        iabbrev &lt;buffer&gt; tau τ</code>
+
+ vim:tw=78:ts=8:noet:ft=help:norl:
+</section>
+</article>
+<footer>
+Generated by vim2html
+</footer>
+</body>
+</html>

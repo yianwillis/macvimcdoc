@@ -1,0 +1,3337 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8" />
+<!--[if lt IE 9]>
+  <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+<![endif]-->
+<title>VIM 中文帮助: 使用 Vim9 脚本</title>
+<link rel="stylesheet" href="vim-stylesheet.css" type="text/css" />
+<link rel="canonical" href="https://yianwillis.github.io/vimcdoc/doc/vim9.html" />
+<script type="text/javascript" src="vimcdoc.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+</head>
+<body>
+<nav id=banner>
+<form action=tags.html target="tag_iframe">
+  <input type="text" name="tag" id="tag" placeholder="标签搜索">
+</form>
+<iframe name="tag_iframe" src=""></iframe>
+<a href="help.html">帮助总览</a> &middot;
+<hr/>
+<a href="quickref.html">快速参考</a> &middot;
+<a href="index.html">命令索引</a> &middot;
+<a href="eval.html#functions">函数列表</a> &middot;
+<a href="quickref.html#option-list">选项列表</a> &middot;
+<hr/>
+<a href="usr_toc.html">用户手册</a> &middot;
+<a href="help.html#reference_toc">参考手册</a> &middot;
+</nav>
+
+<header>
+<h2>vim9</h2>
+</header>
+<article id=outer>
+<section class=inner>
+<b class="vimtag"> <a name="vim9.txt">vim9.txt</a> </b>      适用于 Vim 9.2 版本。  最近更新: 2025年12月
+
+
+                  <code class="vim">VIM 参考手册  by Bram Moolenaar</code>
+                                <code class="vim">译者</code>: Willis
+
+
+Vim9 脚本命令和表达式。                                 <b class="vimtag"> <a name="Vim9">Vim9</a> </b> <b class="vimtag"> <a name="vim9">vim9</a> </b>
+
+多数表达式的帮助可见  <a href="eval.html#eval.txt">eval.txt</a> 。此文件是关于 Vim9 脚本的新语法和特性。
+
+
+
+1.  什么是 Vim9 脚本？                   <a href="vim9.html#Vim9-script">Vim9-script</a> 
+2.  差别                                 <a href="vim9.html#vim9-differences">vim9-differences</a> 
+3.  新风格函数                           <a href="vim9.html#fast-functions">fast-functions</a> 
+4.  类型                                 <a href="vim9.html#vim9-types">vim9-types</a> 
+5.  泛型函数                             <a href="vim9.html#generic-functions">generic-functions</a> 
+6.  命名空间、导入和导出                 <a href="vim9.html#vim9script">vim9script</a> 
+7.  类和界面                             <a href="vim9.html#vim9-classes">vim9-classes</a> 
+8.  理据                                 <a href="vim9.html#vim9-rationale">vim9-rationale</a> 
+
+
+</section><hr class="singleline" /><section class=inner>
+
+  <code class="note">注意</code>: 在本 vim9.txt 帮助文件里，以  <a href="vim9.html#vim9script">vim9script</a>  开始的 Vim9 脚本代码块 (以及
+        以  <code class="badlink">vim9cmd</code>  开始的单行语句) 会使用 Vim9 脚本语法高亮。它们还可以被直
+        接执行，从而直观地看到运行后输出的结果。具体来说，用  <code class="badlink">:'&lt;,'&gt;source</code> 
+        (见  <a href="repeat.html#:source-range">:source-range</a> ) 来执行，也就是，先可视选择内容，再用  <a href="visual.html#V">V</a>  进入可视
+        行模式，然后输入  <a href="repeat.html#:so">:so</a> 。例如，试试运行一下下面的 Vim9 脚本:
+<code class="example"></code>
+<code class="example">                vim9script</code>
+<code class="example">                echowindow "Welcome to Vim9 script!"</code>
+
+        也有不应去执行的代码示例 - 它们解释概念，但不需要示例可执行。这样的代
+        码会使用通用的代码语法高亮，如下例:
+<code class="example"></code>
+<code class="example">                def ThisFunction()          # 局部于脚本</code>
+<code class="example">                def g:ThatFunction()        # 全局</code>
+<code class="example">                export def Function()       # 用于 import 和 import autoload</code>
+<code class="example"></code>
+</section><hr class="doubleline" /><section class=inner>
+<h4></h4>1. 什么是 Vim9 脚本？                                   <b class="vimtag"> <a name="Vim9-script">Vim9-script</a> </b>
+
+Vim 脚本随着时间推移日渐庞大，同时需要保持后向兼容。这意味着过去所做的错误决定
+常常不能再改变，而和 Vi 的兼容性限制了可能的解决方案。执行颇慢，每行在每次执行
+时都要先解析。
+
+Vim9 脚本的主要目标是大幅提高性能。这是通过把命令编译为可有效执行的指令完成
+的。可以期待执行速度有成十上百倍的提高。
+
+一个次要目标是避免 Vim 特定的构造，而尽量和包括 JavaScript、TypeScript 和 Java
+这样的主流编程语言接近。
+
+只有不 100% 后向兼容才能达到所需的性能提高。例如，要使函数参数可通过 "a:" 字典
+获取，会增加不少开销。其它一些差别，比如错误处理的方式，则更细微一些。
+
+Vim9 脚本语法、语义和行为会应用于:
+- 使用  <a href="vim9.html#:def">:def</a>  命令定义的函数
+- 首个命令是  <a href="vim9.html#vim9script">vim9script</a>  的脚本文件
+- 在上述上下文中，定义的自动命令
+- 使用  <code class="badlink">vim9cmd</code>  命令修饰符前缀的命令
+
+Vim9 脚本文件里使用  <a href="userfunc.html#:function">:function</a>  时，仍然会用老式语法并使用最高的
+ <a href="eval.html#scriptversion">scriptversion</a> 。不过，这容易混淆，不鼓励。
+
+Vim9 脚本和老式的 Vim 脚本可以混合。重写旧脚本并非必需，它们会继续工作。但可用
+一些  <a href="vim9.html#:def">:def</a>  函数来编写要求快速的代码。
+
+:vim9<code class="special">[cmd]</code> <code class="special">{cmd}</code>                                <b class="vimtag"> <a name=":vim9">:vim9</a> </b> <b class="vimtag"> <a name=":vim9cmd">:vim9cmd</a> </b>
+                使用 Vim9 脚本语法、语义和执行方式来解析和执行 <code class="special">{cmd}</code>。在手动键
+                入的命令、 <a href="userfunc.html#:function">:function</a>  定义的函数和老式脚本里都可用。
+
+                下列的简短例子展示了老式 Vim 脚本命令和 :vim9cmd (因此使用
+                Vim9 脚本的上下文) 的异同。外观看来很相似，但区别不止是语法
+                上，还有语义和执行方式上。 &gt;vim
+
+                  call popup_notification('entrée'[5:]
+                    \ -&gt;str2list()-&gt;string(), #{time: 7000})
+                  vim9cmd popup_notification('entrée'[5 :]
+                      -&gt;str2list()-&gt;string(), {time: 7000})
+&lt;
+                 <code class="note">备注</code>: 1) 之所以输出结果不同，是因为 Vim9 脚本使用字符索引，而
+                          老式 Vim 脚本使用字节索引 - 见  <a href="vim9.html#vim9-string-index">vim9-string-index</a> 。
+                        2) 语法也有区别。Vim9 脚本里:
+                          - "[5 :]" 里的空格是必须的 (见  <a href="vim9.html#vim9-white-space">vim9-white-space</a> )。
+                          - 续行符 "\" 是非必须的。
+                          - "#" (以避免给字典键加上引号) 既非必要，也不合法 -
+                            见  <a href="eval.html#%23{}">#{}</a> 。
+
+                                                <b class="vimtag"> <a name="E1164">E1164</a> </b>
+                 <a href="vim9.html#:vim9cmd">:vim9cmd</a>  不能单独使用；必须后跟一个命令。
+
+:leg[acy] <code class="special">{cmd}</code>                                 <b class="vimtag"> <a name=":leg">:leg</a> </b> <b class="vimtag"> <a name=":legacy">:legacy</a> </b>
+                使用老式脚本语法、语义和执行方式来解析和执行 <code class="special">{cmd}</code>。只在 Vim9
+                脚本或  <a href="vim9.html#:def">:def</a>  函数里有用。要得到和上例等价的结果 (注释说明了为
+                什么输出结果会不同):
+<code class="example"></code>
+<code class="example">                  vim9script</code>
+<code class="example">                  # 老式脚本上下文 - 所以，创建弹出并显示 [769, 101]</code>
+<code class="example">                  legacy call popup_notification('entrée'[5:]</code>
+<code class="example">                    \ -&gt;str2list()-&gt;string(), #{time: 7000})</code>
+<code class="example">                  # Vim9 脚本上下文 - 所以，创建弹出并显示 [101]</code>
+<code class="example">                  popup_notification('entrée'[5 :]</code>
+<code class="example">                      -&gt;str2list()-&gt;string(), {time: 7000})</code>
+
+                Vim9 脚本里，脚本局部变量可用前缀 "s:"，和老式 Vim 脚本的语法
+                相同，不过在 Vim9 脚本里，此前缀是可选的，因为变量缺省就是局部
+                于脚本的。下例展示了语法上的差异: 在 Vim9 脚本里，"k" 定义了脚
+                本局部变量，而在老式 Vim 脚本的上下文里，须用 "s:k" 来访
+                问。
+<code class="example"></code>
+<code class="example">                  vim9script</code>
+<code class="example">                  var k: string = "Okay"</code>
+<code class="example">                  echo k</code>
+<code class="example">                  legacy echo s:k</code>
+                                                <b class="vimtag"> <a name="E1189">E1189</a> </b>
+                在已编译的 Vim9 脚本里，用于控制流的命令不支持  <a href="vim9.html#:legacy">:legacy</a> 。
+                例如:
+<code class="example"></code>
+<code class="example">                  vim9script</code>
+<code class="example">                  def F_1189()</code>
+<code class="example">                    if v:version == 900</code>
+<code class="example">                    # E1189: Cannot use :legacy with this command: endif</code>
+<code class="example">                    legacy endif</code>
+<code class="example">                  enddef</code>
+<code class="example">                  F_1189()</code>
+                                                <b class="vimtag"> <a name="E1234">E1234</a> </b>
+                 <a href="vim9.html#:legacy">:legacy</a>  不能单独使用；必须后跟一个命令。
+
+
+</section><hr class="doubleline" /><section class=inner>
+<h4></h4>2. 和老式 Vim 脚本的差异                                <b class="vimtag"> <a name="vim9-differences">vim9-differences</a> </b>
+
+<code class="section">总览 </code>
+                                                        <b class="vimtag"> <a name="E1146">E1146</a> </b>
+使用 Vim9 脚本和  <a href="vim9.html#:def">:def</a>  函数最常见差异的简要小结；细节见后:
+- 注释以 # 开始而不是 ":
+<code class="example">        echo "hello"   # 注释</code>
+- 很少需要反斜杠用来作续行符:
+<code class="example">        echo "hello "</code>
+<code class="example">             .. yourName</code>
+<code class="example">             .. ", how are you?"</code>
+- 很多地方需要空格以提高可读性，见  <a href="vim9.html#vim9-white-space">vim9-white-space</a> 。
+- 赋值不用  <a href="eval.html#:let">:let</a>  <b class="vimtag"> <a name="E1126">E1126</a> </b> ，变量用  <a href="vim9.html#:var">:var</a>  声明:
+<code class="example">        var count = 0</code>
+<code class="example">        count += 3</code>
+- 常量可用  <a href="vim9.html#:final">:final</a>  和  <a href="eval.html#:const">:const</a>  声明:
+<code class="example">        final matches = []                # 之后可再扩充列表</code>
+<code class="example">        const names = ['Betty', 'Peter']  # 不能改变</code>
+-  <a href="vim9.html#:final">:final</a>  不再能用作  <a href="eval.html#:finally">:finally</a>  的缩写。
+- 变量和函数缺省局部于脚本。
+- 函数声明要带参数类型和返回值类型:
+<code class="example">        def CallMe(count: number, message: string): bool</code>
+- 调用函数不用  <a href="userfunc.html#:call">:call</a> :
+<code class="example">        writefile(['done'], 'file.txt')</code>
+- 不能用以下的旧式的 Ex 命令:
+         <a href="various.html#:Print">:Print</a> 
+         <a href="insert.html#:append">:append</a> 
+         <a href="change.html#:change">:change</a> 
+         <a href="change.html#:d">:d</a>   后跟 'd' 或 'p'。
+         <a href="insert.html#:insert">:insert</a> 
+         <a href="motion.html#:k">:k</a> 
+         <a href="term.html#:mode">:mode</a> 
+         <a href="vi_diff.html#:open">:open</a> 
+         <a href="change.html#:s">:s</a>   只带标志位
+         <a href="change.html#:t">:t</a> 
+         <a href="editing.html#:xit">:xit</a> 
+- 有些命令，特别是用于流控制的命令，不能缩短。例如， <a href="eval.html#:throw">:throw</a>  不能写成  <a href="eval.html#:th">:th</a> 。
+  <b class="vimtag"> <a name="vim9-no-shorten">vim9-no-shorten</a> </b>
+- 不可用花括号名字。
+- 命令前的范围必须用冒号前缀:
+<code class="example">        :%s/this/that</code>
+- 不再可以用 "@r" 来执行寄存器，需要冒号前缀或使用  <a href="eval.html#:exe">:exe</a> :
+<code class="example">        :exe @a</code>
+- 除非特别指出，使用最高的  <a href="eval.html#scriptversion">scriptversion</a> 。
+- 定义表达式映射时，在定义所在的脚本上下文里计算表达式。
+- 字符串索引以字符而不是字节计:  <a href="vim9.html#vim9-string-index">vim9-string-index</a> 
+- 可能意想不到的一些差异:  <a href="vim9.html#vim9-gotchas">vim9-gotchas</a> 。
+
+
+
+<code class="section"># 开始的注释 </code>
+
+老式 Vim 脚本以双引号开始脚本注释。Vim9 脚本则用 # 开始脚本注释。
+<code class="example">        # 声明</code>
+<code class="example">        var count = 0  # 出现的次数</code>
+<code class="example"></code>
+原因是双引号也是字符串的开始，在很多地方，尤其是表达式内部换行处，很难区分双引
+号真正的意思，因为字符串和注释都可以后跟任意文本。为避免混淆，现在只识别 # 注
+释。这和外壳脚本和 Python 程序完全相同。
+
+Vi 里 # 是带行号列出文本的命令。Vim9 脚本可用  <a href="various.html#:number">:number</a>  代替。
+<code class="example">        :101 number</code>
+<code class="example"></code>
+为提高可读性，命令和开始注释的 # 之间必须有一个空格:
+<code class="example">        var name = value # 注释</code>
+<code class="example">        var name = value# 出错！</code>
+                                                        <b class="vimtag"> <a name="E1170">E1170</a> </b>
+不要以 #{ 开始注释，它看来像老式的字典常数，有歧义时这会报错。#{{ 和 #{{{ 则可
+以，它们用来启动折叠。
+
+开始读取脚本文件时 vim 不知道是  <a href="vim9.html#vim9">vim9</a>  脚本，直到找到  <a href="vim9.html#vim9script">vim9script</a>  命令为止。
+在那之前，需要用老式注释:
+<code class="example">        " 老式注释</code>
+<code class="example">        vim9script</code>
+<code class="example">        # vim9 注释</code>
+<code class="example"></code>
+这很难看，最好在第一行就放上  <a href="vim9.html#vim9script">vim9script</a> :
+<code class="example">        vim9script</code>
+<code class="example">        # vim9 注释</code>
+<code class="example"></code>
+老式 Vim 脚本中 # 也用于轮换文件名。Vim9 脚本里，要改用 %%。## 可改用 %%% (代
+表所有参数)。
+
+
+<code class="section">Vim9 函数 </code>
+                                                        <b class="vimtag"> <a name="E1099">E1099</a> </b>
+由  <a href="vim9.html#:def">:def</a>  定义的函数进行编译。执行成倍加快，通常有 10 到 100 倍的加速。
+
+许多错误在编译时已经可以发现，而不用等到函数执行的时候。有严格的语法，以确保代
+码易读易理解。
+
+以下情形之一时进行编译:
+- 函数第一次调用时
+- 脚本中在函数定义后遇到  <a href="vim9.html#:defcompile">:defcompile</a>  命令时
+- 函数使用  <a href="vim9.html#:disassemble">:disassemble</a>  时。
+- 函数被已编译的函数调用或用作函数引用时 (为了检查参数和返回类型)
+                                                <b class="vimtag"> <a name="E1091">E1091</a> </b> <b class="vimtag"> <a name="E1191">E1191</a> </b>
+编译失败后，下次调用时不会再次尝试编译，而会报错: "E1091: Function is not
+compiled: <code class="special">{name}</code>"。
+遇到尚未创建的用户命令时，编译会失败。这种情况可用  <a href="builtin.html#execute()">execute()</a>  在运行时调用该
+命令。
+<code class="example">        def MyFunc()</code>
+<code class="example">          execute('DefinedLater')</code>
+<code class="example">        enddef</code>
+<code class="example"></code>
+ <a href="vim9.html#:def">:def</a>  不像  <a href="userfunc.html#:function">:function</a>  那样有 "range"、"abort"、"dict" 或 "closure" 这样的选
+项。 <a href="vim9.html#:def">:def</a>  函数总会在错误时中止 (除非命令使用了  <code class="badlink">:slient!</code>  或错误在  <a href="eval.html#:try">:try</a>  块
+里捕获)，不接受范围、不能是 "dict" 函数，而且总可以有闭包。
+                                                <b class="vimtag"> <a name="vim9-no-dict-function">vim9-no-dict-function</a> </b> <b class="vimtag"> <a name="E1182">E1182</a> </b>
+可用 Vim9 类 ( <a href="vim9class.html#Vim9-class">Vim9-class</a> ) 而不是 "字典函数"。也可以显式传递入字典:
+<code class="example">        def DictFunc(self: dict&lt;any&gt;, arg: string)</code>
+<code class="example">           echo self[arg]</code>
+<code class="example">        enddef</code>
+<code class="example">        var ad = {item: 'value', func: DictFunc}</code>
+<code class="example">        ad.func(ad, 'item')</code>
+<code class="example"></code>
+但可以调用老式字典函数:
+<code class="example">        func Legacy() dict</code>
+<code class="example">          echo self.value</code>
+<code class="example">        endfunc</code>
+<code class="example">        def CallLegacy()</code>
+<code class="example">          var d = {func: Legacy, value: 'text'}</code>
+<code class="example">          d.func()</code>
+<code class="example">        enddef</code>
+<code class="example"></code>
+必须指定参数类型和返回类型。可用 "any" 类型，和老式函数一样，此时类型检查会在
+运行时完成。
+                                                        <b class="vimtag"> <a name="E1106">E1106</a> </b>
+参数用不带 "a:" 的名字访问，就像其它语言一样。没有 "a:" 字典或 "a:000" 列表。
+                        <b class="vimtag"> <a name="vim9-variable-arguments">vim9-variable-arguments</a> </b> <b class="vimtag"> <a name="E1055">E1055</a> </b> <b class="vimtag"> <a name="E1160">E1160</a> </b> <b class="vimtag"> <a name="E1180">E1180</a> </b>
+类似于 TypeScript，通过给定名字和列表类型的末项参数来定义可变参数。例如，数值
+的列表:
+<code class="example">        def MyFunc(...itemlist: list&lt;number&gt;)</code>
+<code class="example">           for item in itemlist</code>
+<code class="example">             ...</code>
+<code class="example"></code>
+如果函数参数可选 (有缺省值)，传递  <a href="eval.html#v:none">v:none</a>  作为参数会使用其缺省值。用于在使用
+缺省值的参数之后需要指定其它参数的场合。例如:
+<code class="example">        def MyFunc(one = 'one', last = 'last')</code>
+<code class="example">          ...</code>
+<code class="example">        enddef</code>
+<code class="example">        MyFunc(v:none, 'LAST')  # 首个参数使用缺省值 'one'</code>
+
+                                        <b class="vimtag"> <a name="vim9-ignored-argument">vim9-ignored-argument</a> </b> <b class="vimtag"> <a name="E1181">E1181</a> </b>
+参数 "_" (下划线) 可用于忽略参数值。用于回调中不需要提供参数值但要给出一个参数
+以匹配调用的场合。例如，使用 map() 时需要两个参数，键和值，要忽略键:
+<code class="example">        map(numberList, (_, v) =&gt; v * 2)</code>
+"_" 参数多次使用不会报错。也不需要指定类型。
+
+
+<code class="section">函数和变量缺省局部于脚本 </code>
+
+                                                        <b class="vimtag"> <a name="vim9-scopes">vim9-scopes</a> </b>
+在 Vim9 脚本中，用  <a href="userfunc.html#:function">:function</a>  或  <a href="vim9.html#:def">:def</a>  来指定脚本级别的新函数时，函数局部于
+脚本，就像老式脚本里用了 "s:" 前缀那样。"s:" 前缀可选。要定义全局函数或变量，
+必须使用 "g:" 前缀。脚本里要被别人导入和在自动载入脚本定义的函数，需要使用
+"export"，才能被别处使用。
+<code class="example">        def ThisFunction()          # 局部于脚本</code>
+<code class="example">        def s:ThisFunction()        # 局部于脚本</code>
+<code class="example">        export def Function()       # 用于 import 和 import autoload</code>
+                                                <b class="vimtag"> <a name="E1075">E1075</a> </b>
+用  <a href="userfunc.html#:function">:function</a>  或  <a href="vim9.html#:def">:def</a>  来指定  <a href="vim9.html#:def">:def</a>  函数内的嵌套函数时，如果没给出命名空
+间，此嵌套函数局部于定义所在的代码块。不能用传递字符串参数的  <a href="builtin.html#function()">function()</a>  形式
+访问，但函数引用本身可以:
+<code class="example">        def Outer()</code>
+<code class="example">          def Inner()</code>
+<code class="example">            echo 'inner'</code>
+<code class="example">          enddef</code>
+<code class="example">          var Fok = function(Inner)     # 正确</code>
+<code class="example">          var Fbad = function('Inner')  # 不行</code>
+<code class="example"></code>
+细节: 这是因为 "Inner" 实际会变成函数引用，指向一个名字内部生成的函数。
+
+函数内不可以定义局部于脚本的函数。可以定义局部函数并赋值给局部于脚本的函数引用
+(函数必须在脚本级别声明)。可以用 "g:" 前缀来定义全局函数。
+
+引用函数时如果不带 "s:" 或 "g:" 前缀，Vim 会依次搜索函数:
+- 在函数作用域内，在块作用域内
+- 在脚本作用域内
+
+导入的函数可根据  <a href="vim9.html#:import">:import</a>  命令给出的前缀找到。
+
+因为使用局部于脚本的函数引用时可以不带 "s:"，其名字必须以大写字母开头，即使用
+了 "s:" 前缀也是如此。老式脚本里因为不能以 "funcref" 来进行引用，所以可用
+"s:funcref"。而 Vim9 脚本里这种直接引用的形式是可以的，因此必须使用
+"s:Funcref" 形式，以防其名和内建函数起冲突。
+                                                <b class="vimtag"> <a name="vim9-s-namespace">vim9-s-namespace</a> </b> <b class="vimtag"> <a name="E1268">E1268</a> </b>
+Vim9 脚本级别不支持使用 "s:" 前缀。所有不带前缀的函数和变量都是局部于脚本的。
+
+:def 函数里，"s:" 的使用取决于脚本: 老式脚本里的局部于脚本的变量和函数要用
+"s:"，而 Vim9 脚本里它们不用 "s:"。这和文件其余部分你能看到的用法匹配。
+
+老式函数里必须使用 "s:"，见前。不管脚本是 Vim9 还是老式的都是如此。
+
+在所有情况下，函数必须先定义，然后才能使用。所谓使用，是指函数调用时，或
+ <a href="vim9.html#:defcompile">:defcompile</a>  导致调用被编译时，或调用它的函数被编译时 (以确定返回类型)。
+
+其结果是，无命名空间的函数和变量通常可在其定义所在或导入的脚本内找到。而全局函
+数和变量可以在任何地方定义 (要找到需要点运气！用  <a href="various.html#:verbose">:verbose</a>  往往可以看到它上次
+是在哪里设置的)。
+                                                        <b class="vimtag"> <a name="E1102">E1102</a> </b>
+全局函数还是可以在几乎任何时候定义和删除。vim9 脚本里，局部于脚本的函数在脚本
+载入时定义一次，且不能自己删除或替代 (但脚本重载时是会的)。
+
+编译函数时和遇到函数调用时如果函数 (还) 未定义，不触发  <a href="autocmd.html#FuncUndefined">FuncUndefined</a>  自动命
+令。如果需要，可用自动载入函数，或调用老式函数，那里会触发  <a href="autocmd.html#FuncUndefined">FuncUndefined</a> 。
+
+
+<code class="section">重载 Vim9 脚本时缺省清除函数或变量 </code>
+                                                <b class="vimtag"> <a name="vim9-reload">vim9-reload</a> </b> <b class="vimtag"> <a name="E1149">E1149</a> </b> <b class="vimtag"> <a name="E1150">E1150</a> </b>
+再次载入同一老式 Vim 脚本时，不会删除任何东西，脚本里的命令会替代原有的变量和
+函数，创建新的内容，而被删除的东西还会悬挂在那里。
+
+再次载入同一 Vim9 脚本时，删除所有已有的局部于脚本的函数和变量，以便从干净的状
+态开始。这可用于开发插件时新版本的实验。如果换了任何名字，不需要担心旧名字还存
+在。
+
+如果确实要保留项目，可用:
+<code class="example">        vim9script noclear</code>
+<code class="example"></code>
+可在脚本中使用此命令，以便在脚本重载时，在某些情况下用  <code class="badlink">finish</code>  命令放弃载入。
+例如，如果设置了某个缓冲区局部选项为函数时，函数不需要再次定义:
+<code class="example">        vim9script noclear</code>
+<code class="example">        setlocal completefunc=SomeFunc</code>
+<code class="example">        if exists('*SomeFunc')</code>
+<code class="example">          finish</code>
+<code class="example">        endif</code>
+<code class="example">        def SomeFunc()</code>
+<code class="example">        ....</code>
+<code class="example"></code>
+<code class="example"></code>
+<code class="section">用 :var、:final 和 :const 声明变量 </code>
+                                <b class="vimtag"> <a name="vim9-declaration">vim9-declaration</a> </b> <b class="vimtag"> <a name=":var">:var</a> </b> <b class="vimtag"> <a name="E1079">E1079</a> </b>
+                                <b class="vimtag"> <a name="E1017">E1017</a> </b> <b class="vimtag"> <a name="E1020">E1020</a> </b> <b class="vimtag"> <a name="E1054">E1054</a> </b> <b class="vimtag"> <a name="E1087">E1087</a> </b> <b class="vimtag"> <a name="E1124">E1124</a> </b>
+局部变量须用  <a href="vim9.html#:var">:var</a>  定义。局部常量须用  <a href="vim9.html#:final">:final</a>  或  <a href="eval.html#:const">:const</a>  定义。我们把两者都
+称为 "变量"。
+
+变量可以局部于脚本、函数或代码块:
+<code class="example">        vim9script</code>
+<code class="example">        var script_var = 123</code>
+<code class="example">        def SomeFunc()</code>
+<code class="example">          var func_var = script_var</code>
+<code class="example">          if cond</code>
+<code class="example">            var block_var = func_var</code>
+<code class="example">          ...</code>
+<code class="example"></code>
+变量只在定义所在的块和嵌套块中可见。块定义结束后，变量不再可访问:
+<code class="example">        if cond</code>
+<code class="example">           var inner = 5</code>
+<code class="example">        else</code>
+<code class="example">           var inner = 0</code>
+<code class="example">        endif</code>
+<code class="example">        echo inner  # 出错！</code>
+<code class="example"></code>
+变量必须在使用之前进行声明:
+<code class="example">        var inner: number</code>
+<code class="example">        if cond</code>
+<code class="example">           inner = 5</code>
+<code class="example">        else</code>
+<code class="example">           inner = 0</code>
+<code class="example">        endif</code>
+<code class="example">        echo inner</code>
+<code class="example"></code>
+不过对简单值有更简短和更快的方法:
+<code class="example">        var inner = 0</code>
+<code class="example">        if cond</code>
+<code class="example">           inner = 5</code>
+<code class="example">        endif</code>
+<code class="example">        echo inner</code>
+                                                        <b class="vimtag"> <a name="E1025">E1025</a> </b> <b class="vimtag"> <a name="E1128">E1128</a> </b>
+要有意识地从之后的代码中隐藏某个变量，可用代码块:
+<code class="example">        {</code>
+<code class="example">           var temp = 'temp'</code>
+<code class="example">           ...</code>
+<code class="example">        }</code>
+<code class="example">        echo temp  # 出错！</code>
+<code class="example"></code>
+用户命令里这特别有用:
+<code class="example">        command -range Rename {</code>
+<code class="example">                 var save = @a</code>
+<code class="example">                 @a = 'some expression'</code>
+<code class="example">                 echo 'do something with ' .. @a</code>
+<code class="example">                 @a = save</code>
+<code class="example">            }</code>
+<code class="example"></code>
+自动命令也是:
+<code class="example">   au BufWritePre *.go {</code>
+<code class="example">                 var save = winsaveview()</code>
+<code class="example">                 silent! exe ':%! some formatting command'</code>
+<code class="example">                 winrestview(save)</code>
+<code class="example">           }</code>
+<code class="example"></code>
+不过，用 :def 函数可能更好些。
+
+                                <b class="vimtag"> <a name="E1022">E1022</a> </b> <b class="vimtag"> <a name="E1103">E1103</a> </b> <b class="vimtag"> <a name="E1130">E1130</a> </b> <b class="vimtag"> <a name="E1131">E1131</a> </b> <b class="vimtag"> <a name="E1133">E1133</a> </b>
+                                <b class="vimtag"> <a name="E1134">E1134</a> </b>
+变量声明时如果带类型但不带初始块，其值初始为假值 (布尔型)、空 (字符串、列表、
+字典，等等) 或零 (数值、any，等等)。特别重要的是，使用 "any" 类型时，缺省值为
+数值零。例如声明列表时，可以加入项目:
+<code class="example">        var myList: list&lt;number&gt;</code>
+<code class="example">        myList-&gt;add(7)</code>
+<code class="example"></code>
+初始化变量为 null 值，如  <a href="vim9.html#null_list">null_list</a>  时，和不初始化变量是不同的。以下例子会抛
+出错误:
+<code class="example">        var myList = null_list</code>
+<code class="example">        myList-&gt;add(7)  # E1130: Cannot add to null list</code>
+<code class="example"></code>
+                                                <b class="vimtag"> <a name="E1016">E1016</a> </b> <b class="vimtag"> <a name="E1052">E1052</a> </b> <b class="vimtag"> <a name="E1066">E1066</a> </b>
+Vim9 脚本中不能用  <a href="eval.html#:let">:let</a> 。已有的变量可直接赋值，不需要任何命令。全局、窗口、标
+签页、缓冲区和 Vim 变量也是一样，因为它们并非真正通过声明产生，但它们也可用
+ <a href="eval.html#:unlet">:unlet</a>  删除。
+                                                        <b class="vimtag"> <a name="E1065">E1065</a> </b>
+不能用  <code class="badlink">:va</code>  来声明变量，必须使用全名  <a href="vim9.html#:var">:var</a>  来书写。这是为了方便阅读。
+                                                        <b class="vimtag"> <a name="E1178">E1178</a> </b>
+ <a href="eval.html#:lockvar">:lockvar</a>  不能用于局部变量。可用  <a href="eval.html#:const">:const</a>  和  <a href="vim9.html#:final">:final</a>  代替。
+
+ <a href="builtin.html#exists()">exists()</a>  和  <a href="builtin.html#exists_compiled()">exists_compiled()</a>  函数不能用局部变量或参数。
+                                <b class="vimtag"> <a name="E1006">E1006</a> </b> <b class="vimtag"> <a name="E1041">E1041</a> </b> <b class="vimtag"> <a name="E1167">E1167</a> </b> <b class="vimtag"> <a name="E1168">E1168</a> </b> <b class="vimtag"> <a name="E1213">E1213</a> </b>
+变量、函数和函数参数不能隐藏在同一脚本文件里之前定义或导入的变量和函数。
+变量可以隐藏 Ex 命令，如有需要请给变量换名。
+
+全局变量必须带上 "g:" 前缀，即使脚本级别的也是如此。
+<code class="example">        vim9script</code>
+<code class="example">        var script_local = 'text'</code>
+<code class="example">        g:global = 'value'</code>
+<code class="example">        var Funcref = g:ThatFunction</code>
+<code class="example"></code>
+全局函数必须带上 "g:" 前缀:
+<code class="example">        vim9script</code>
+<code class="example">        def g:GlobalFunc(): string</code>
+<code class="example">          return 'text'</code>
+<code class="example">        enddef</code>
+<code class="example">        echo g:GlobalFunc()</code>
+自动载入函数不需要 "g:" 前缀。
+
+                                        <b class="vimtag"> <a name="vim9-function-defined-later">vim9-function-defined-later</a> </b>
+尽管可以不带 "g:" 前缀调用全局函数，编译时它们必须已存在。加上 "g:" 前缀后，函
+数可以在其后再定义。例如:
+<code class="example">        def CallPluginFunc()</code>
+<code class="example">          if exists('g:loaded_plugin')</code>
+<code class="example">            g:PluginFunc()</code>
+<code class="example">          endif</code>
+<code class="example">        enddef</code>
+<code class="example"></code>
+但如果像下面这么做，编译时会报错 "PluginFunc" 不存在，即使 "g:loaded_plugin"
+不存在:
+<code class="example">        def CallPluginFunc()</code>
+<code class="example">          if exists('g:loaded_plugin')</code>
+<code class="example">            PluginFunc()   # 报错，函数找不到</code>
+<code class="example">          endif</code>
+<code class="example">        enddef</code>
+<code class="example"></code>
+可用 exists_compiled() 来避免此错误，但函数可能也不会被调用了，即使
+"g:loaded_plugin" 之后被定义了也不会:
+<code class="example">        def CallPluginFunc()</code>
+<code class="example">          if exists_compiled('g:loaded_plugin')</code>
+<code class="example">            PluginFunc()   # Function 可能永远不会被调用</code>
+<code class="example">          endif</code>
+<code class="example">        enddef</code>
+<code class="example"></code>
+因为 `&amp;opt = value` 现在用来给选项 "opt" 赋值，所以不再能用 ":&amp;" 来重复
+ <a href="change.html#:substitute">:substitute</a>  命令了。
+                                                        <b class="vimtag"> <a name="vim9-unpack-ignore">vim9-unpack-ignore</a> </b>
+解包赋值里，下划线可用于忽略列表项目，类似于函数参数的忽略方法:
+<code class="example">        [a, _, c] = theList</code>
+要忽略其余项目:
+<code class="example">        [a, b; _] = longList</code>
+                                                        <b class="vimtag"> <a name="E1163">E1163</a> </b> <b class="vimtag"> <a name="E1080">E1080</a> </b>
+可以使用解包记法，一次声明多于一个变量。每个变量可给出类型或从值推断:
+<code class="example">        var [v1: number, v2] = GetValues()</code>
+仅当有带值列表的时候才建议使用此记法，一行声明一个变量更易阅读和修改。
+
+
+<code class="section">常量 </code>
+                                                <b class="vimtag"> <a name="vim9-const">vim9-const</a> </b> <b class="vimtag"> <a name="vim9-final">vim9-final</a> </b>
+常量如何工作因语言而异。有些语言把不能重新赋其它值的变量当作常量。JavaScript
+是一个例子。其它语言则会使值也不可更改，因此如果常量使用了列表，列表本身也不可
+改变。Vim9 可以兼有两者。
+                                                        <b class="vimtag"> <a name="E1021">E1021</a> </b> <b class="vimtag"> <a name="E1307">E1307</a> </b>
+可用  <a href="eval.html#:const">:const</a>  使变量及其值为常量。可用于复合结构以确保其不会被修改。示例:
+<code class="example">        const myList = [1, 2]</code>
+<code class="example">        myList = [3, 4]         # 出错！</code>
+<code class="example">        myList[0] = 9           # 出错！</code>
+<code class="example">        myList-&gt;add(3)          # 出错！</code>
+                                                        <b class="vimtag"> <a name=":final">:final</a> </b> <b class="vimtag"> <a name="E1125">E1125</a> </b>
+可用  <a href="vim9.html#:final">:final</a>  使变量为常量，而值仍然可更改。Java 用户对此很熟悉。例如:
+<code class="example">        final myList = [1, 2]</code>
+<code class="example">        myList = [3, 4]         # 出错！</code>
+<code class="example">        myList[0] = 9           # 正确</code>
+<code class="example">        myList-&gt;add(3)          # 正确</code>
+<code class="example"></code>
+常量写入全大写 ALL_CAPS 是惯例，但不必如此。
+
+常量限制只适用于值本身，而不是其引用的值。
+<code class="example">        final females = ["Mary"]</code>
+<code class="example">        const NAMES = [["John", "Peter"], females]</code>
+<code class="example">        NAMES[0] = ["Jack"]     # 出错！</code>
+<code class="example">        NAMES[0][0] = "Jack"    # 出错！</code>
+<code class="example">        NAMES[1] = ["Emma"]     # 出错！</code>
+<code class="example">        NAMES[1][0] = "Emma"    # 正确，现在 females[0] == "Emma"</code>
+<code class="example"></code>
+<code class="example"></code>
+<code class="section">省略 :call 和 :eval </code>
+                                                        <b class="vimtag"> <a name="E1190">E1190</a> </b>
+可直接调用函数而无需  <a href="userfunc.html#:call">:call</a> :
+<code class="example">        writefile(lines, 'file')</code>
+ <a href="userfunc.html#:call">:call</a>  还可用，但不鼓励。
+
+方法只要以标识符开始或不可能是 Ex 命令，可直接调用而无需  <a href="eval.html#eval">eval</a> 。函数的 "(" 或
+"-&gt;" 必须后跟内容，不能有换行。例如:
+<code class="example">        myList-&gt;add(123)</code>
+<code class="example">        g:myList-&gt;add(123)</code>
+<code class="example">        [1, 2, 3]-&gt;Process()</code>
+<code class="example">        {a: 1, b: 2}-&gt;Process()</code>
+<code class="example">        "foobar"-&gt;Process()</code>
+<code class="example">        ("foobar")-&gt;Process()</code>
+<code class="example">        'foobar'-&gt;Process()</code>
+<code class="example">        ('foobar')-&gt;Process()</code>
+<code class="example"></code>
+在罕见情形下函数名和 Ex 命令有二义性，用 ":" 前缀来明确你想用的是 Ex 命令。例
+如，既有  <a href="change.html#:substitute">:substitute</a>  命令，又有  <a href="builtin.html#substitute()">substitute()</a>  函数。如果一行以
+ <code class="badlink">substitute(</code>  开始，会假定使用函数，要使用命令版本，加上冒号前缀:
+<code class="example">        :substitute(模式 (替代 (</code>
+<code class="example"></code>
+如果表达式以 "!" 开始，解读为外壳命令，而不是条件取反。因而，以下是外壳命令:
+<code class="example">        !shellCommand-&gt;something</code>
+要用 "!" 进行取反，把表达式放在括号里:
+<code class="example">        (!expression)-&gt;Method()</code>
+<code class="example"></code>
+<code class="note">注意</code> 尽管变量在使用前必须先定义，函数在定义前就可以调用。为了允许函数间能相互
+依赖，这是有必要的。但因此效率会稍稍低些，因为函数需要依名查找。且函数名的拼写
+错误只有在函数被调用时才能发现。
+
+
+<code class="section">省略 function() </code>
+
+表达式中，用户定义函数可用作函数引用，而无需通过  <a href="builtin.html#function()">function()</a> 。这时会检查参数
+类型和返回类型。函数必须已经有定义。
+<code class="example"></code>
+<code class="example">        var Funcref = MyFunction</code>
+<code class="example"></code>
+而使用  <a href="builtin.html#function()">function()</a>  时，返回类型是 "func"，一个可带任何数量参数和任何返回类型
+(包括 void) 的函数。如果  <a href="builtin.html#function()">function()</a>  的参数用上引号，函数可以延后定义。
+
+
+<code class="section">匿名函数使用 =&gt; 而不是 -&gt; </code>
+                                                        <b class="vimtag"> <a name="vim9-lambda">vim9-lambda</a> </b>
+在老式脚本里，"-&gt;" 既用于函数调用，也用于匿名函数，这里可能产生混淆。另外，找
+到 "{" 时解析器需要知道它是匿名函数还是字典的开始，现在由于参数类型的使用，这
+里的情况更复杂。
+
+为避免这些问题，Vim9 脚本的匿名函数使用不同的语法，这和 JavaScript 类似:
+<code class="example">        var Lambda = (arg) =&gt; expression</code>
+<code class="example">        var Lambda = (arg): type =&gt; expression</code>
+                                                        <b class="vimtag"> <a name="E1157">E1157</a> </b>
+匿名函数在直到 "=&gt;" 为止的参数里不允许换行 (这样 Vim 才能识别带括号的表达式和
+匿名函数参数的区别)。这样可以:
+<code class="example">        filter(list, (k, v) =&gt;</code>
+<code class="example">                        v &gt; 0)</code>
+这样不可以:
+<code class="example">        filter(list, (k, v)</code>
+<code class="example">                        =&gt; v &gt; 0)</code>
+这样也不可以:
+<code class="example">        filter(list, (k,</code>
+<code class="example">                        v) =&gt; v &gt; 0)</code>
+但可用反斜杠在解析发生前，把行进行连接:
+<code class="example">        filter(list, (k,</code>
+<code class="example">                \       v)</code>
+<code class="example">                \       =&gt; v &gt; 0)</code>
+                                        <b class="vimtag"> <a name="vim9-lambda-arguments">vim9-lambda-arguments</a> </b> <b class="vimtag"> <a name="E1172">E1172</a> </b>
+在老式脚本里，匿名函数调用时可带任意多个额外参数，没办法<code class="note">警告</code>不要这么做。在
+Vim9 脚本里参数数目必须匹配。如果要接受任何参数，或任何额外参数，可用 "..._"，
+这使函数接受  <a href="vim9.html#vim9-variable-arguments">vim9-variable-arguments</a> 。例如:
+<code class="example">        var Callback = (..._) =&gt; 'anything'</code>
+<code class="example">        echo Callback(1, 2, 3)  # 显示 "anything"</code>
+<code class="example"></code>
+                                                <b class="vimtag"> <a name="inline-function">inline-function</a> </b> <b class="vimtag"> <a name="E1171">E1171</a> </b>
+此外，匿名函数可以包含 <code class="special">{}</code> 包围的多个语句:
+<code class="example">        var Lambda = (arg) =&gt; {</code>
+<code class="example">                g:was_called = 'yes'</code>
+<code class="example">                return expression</code>
+<code class="example">            }</code>
+比如可用来实现计数器:
+<code class="example">        var count = 0</code>
+<code class="example">        var timer = timer_start(500, (_) =&gt; {</code>
+<code class="example">                 count += 1</code>
+<code class="example">                 echom 'Handler called ' .. count</code>
+<code class="example">             }, {repeat: 3})</code>
+<code class="example"></code>
+结尾的 "}" 必须位于行首。后面可跟其它字符，例如:
+<code class="example">        var d = mapnew(dict, (k, v): string =&gt; {</code>
+<code class="example">             return 'value'</code>
+<code class="example">           })</code>
+"{" 之后不能跟随命令，那里只可以有注释。
+
+                                                <b class="vimtag"> <a name="command-block">command-block</a> </b> <b class="vimtag"> <a name="E1026">E1026</a> </b>
+定义用户命令时也可用代码块。在代码块内使用 Vim9 语法。
+
+这里是个使用嵌入文档 (here-docs) 的例子:
+<code class="example">    com SomeCommand {</code>
+<code class="example">        g:someVar =&lt;&lt; trim eval END</code>
+<code class="example">          ccc</code>
+<code class="example">          ddd</code>
+<code class="example">        END</code>
+<code class="example">      }</code>
+<code class="example"></code>
+如果语句包含字典，其结束花括号不能写在行首。否则，被解析为代码块的结束。下面这
+样不行:
+<code class="example">        command NewCommand {</code>
+<code class="example">             g:mydict = {</code>
+<code class="example">               'key': 'value',</code>
+<code class="example">               }  # 错误: 会识别为代码块的结束</code>
+<code class="example">           }</code>
+把 '}' 放在最后项目之后可以解决这个问题:
+<code class="example">        command NewCommand {</code>
+<code class="example">             g:mydict = {</code>
+<code class="example">               'key': 'value' }</code>
+<code class="example">           }</code>
+<code class="example"></code>
+理据: "}" 不能在命令之后出现，因为需要对命令进行解析才能找到它。为了一致起见，
+"{" 之后也不能跟随命令。不幸的是，这就意味着不接受 "() =&gt; {  command  }"，必须
+使用换行。
+
+                                                        <b class="vimtag"> <a name="vim9-curly">vim9-curly</a> </b>
+为了不让字典常量的 "{" 被识别为语句块，把它包围在括号里:
+<code class="example">        var Lambda = (arg) =&gt; ({key: 42})</code>
+<code class="example"></code>
+和命令块的开始有歧义的话也是如此:
+<code class="example">        ({</code>
+<code class="example">            key: value</code>
+<code class="example">         })-&gt;method()</code>
+<code class="example"></code>
+<code class="example"></code>
+<code class="section">自动续行 </code>
+                                        <b class="vimtag"> <a name="vim9-line-continuation">vim9-line-continuation</a> </b> <b class="vimtag"> <a name="E1097">E1097</a> </b>
+许多情况下，表达式显然会在下一行继续。这些情况不需要在行前加入反斜杠 (见
+ <a href="repeat.html#line-continuation">line-continuation</a> )。例如，当列表跨越多行时:
+<code class="example">        var mylist = [</code>
+<code class="example">                'one',</code>
+<code class="example">                'two',</code>
+<code class="example">                ]</code>
+字典跨越多行时:
+<code class="example">        var mydict = {</code>
+<code class="example">                one: 1,</code>
+<code class="example">                two: 2,</code>
+<code class="example">                }</code>
+使用函数调用时:
+<code class="example">        var result = Func(</code>
+<code class="example">                        arg1,</code>
+<code class="example">                        arg2</code>
+<code class="example">                        )</code>
+<code class="example"></code>
+对不在 []、<code class="special">{}</code> 或 () 内的表达式中的二元操作符而言，可在操作符之前或之后断行。例
+如:
+<code class="example">        var text = lead</code>
+<code class="example">                   .. middle</code>
+<code class="example">                   .. end</code>
+<code class="example">        var total = start +</code>
+<code class="example">                    end -</code>
+<code class="example">                    correction</code>
+<code class="example">        var result = positive</code>
+<code class="example">                        ? PosFunc(arg)</code>
+<code class="example">                        : NegFunc(arg)</code>
+<code class="example"></code>
+方法调用的 "-&gt;" 和成员访问的句号之前都可断行:
+<code class="example">        var result = GetBuilder()</code>
+<code class="example">                        -&gt;BuilderSetWidth(333)</code>
+<code class="example">                        -&gt;BuilderSetHeight(777)</code>
+<code class="example">                        -&gt;BuilderBuild()</code>
+<code class="example">        var result = MyDict</code>
+<code class="example">                        .member</code>
+<code class="example"></code>
+命令里如果有一组命令作为参数，行首的 | 字符指示行的继续:
+<code class="example">        autocmd BufNewFile *.match if condition</code>
+<code class="example">                |   echo 'match'</code>
+<code class="example">                | endif</code>
+<code class="example"></code>
+<code class="note">注意</code> 这意味着 here 文档里首行不能以竖线开始:
+<code class="example">        var lines =&lt;&lt; trim END</code>
+<code class="example">           | 这不行</code>
+<code class="example">        END</code>
+要么用一空行开始，要么不要用 here 文档。或者暂时在 <a href="options.html#'cpoptions'">'cpoptions'</a> 里加入 "C" 标志
+位:
+<code class="example">        set cpo+=C</code>
+<code class="example">        var lines =&lt;&lt; trim END</code>
+<code class="example">           | 这样可以</code>
+<code class="example">        END</code>
+<code class="example">        set cpo-=C</code>
+如果 here 文档在函数内出现，<a href="options.html#'cpoptions'">'cpoptions'</a> 必须在 :def 前设置，在 :enddef 后恢
+复。
+
+在续行还需要反斜杠的地方，如断开长 Ex 命令时，注释可用 '#\ ' 开始:
+<code class="example">        syn region Text</code>
+<code class="example">              \ start='foo'</code>
+<code class="example">              #\ 注释</code>
+<code class="example">              \ end='bar'</code>
+就像在老式脚本里可用 '"\ ' 一样。即使续行不需要反斜杠和以竖线开始行的情况，也
+要如此:
+<code class="example">        au CursorHold * echom 'BEFORE bar'</code>
+<code class="example">              #\ 一些注释</code>
+<code class="example">              | echom 'AFTER bar'</code>
+
+                                                        <b class="vimtag"> <a name="E1050">E1050</a> </b>
+要识别出现在行首的操作符，需要在范围之前加上冒号。要把 "start" 加上 "print":
+<code class="example">        var result = start</code>
+<code class="example">        + print</code>
+相当于:
+<code class="example">        var result = start + print</code>
+<code class="example"></code>
+而要赋值 "start" 并显示一行:
+<code class="example">        var result = start</code>
+<code class="example">        :+ print</code>
+<code class="example"></code>
+范围后必须跟 Ex 命令。不带冒号时不用  <a href="userfunc.html#:call">:call</a>  就可以调用函数，但在范围后需要:
+<code class="example">        MyFunc()</code>
+<code class="example">        :% call MyFunc()</code>
+<code class="example"></code>
+<code class="note">注意</code>  <a href="editing.html#+cmd">+cmd</a>  参数不需要冒号:
+<code class="example">        edit +6 fname</code>
+<code class="example"></code>
+函数声明中也可以在参数间换行:
+<code class="example">        def MyFunc(</code>
+<code class="example">                text: string,</code>
+<code class="example">                separator = '-'</code>
+<code class="example">                ): string</code>
+<code class="example"></code>
+因为续行不容易识别，命令的解析必须更严格。例如，因为首行有错，下面的第二行会看
+作一个单独的命令:
+<code class="example">        popup_create(some invalid expression, {</code>
+<code class="example">           exit_cb: Func})</code>
+现在，"exit_cb: Func})" 实际是一个合法的命令: 保存任何改动到文件 "_cb: Func})"
+并退出。为了避免此种错误，Vim9 脚本中在多数命令名和参数间必须有空白。 <b class="vimtag"> <a name="E1144">E1144</a> </b>
+
+不过，不能识别作为命令参数的命令里的续行。例如 "windo echo expr" 里不能识别
+"expr" 内部的换行。
+
+
+<code class="note">注意</code>:
+- "enddef" 不能用于续行的开始，它会结束当前函数。
+- 赋值语句的 LHS 不接受换行。特别是列表解包  <a href="eval.html#:let-unpack">:let-unpack</a> 。这样可以:
+<code class="example">        [var1, var2] =</code>
+<code class="example">                Func()</code>
+   这样不行:
+<code class="example">        [var1,</code>
+<code class="example">            var2] =</code>
+<code class="example">                Func()</code>
+-  <a href="eval.html#:echo">:echo</a> 、 <a href="eval.html#:execute">:execute</a>  和类似命令的参数与参数之间不接受换行。这样可以:
+<code class="example">        echo [1,</code>
+<code class="example">                2] [3,</code>
+<code class="example">                        4]</code>
+   这样不行:
+<code class="example">        echo [1, 2]</code>
+<code class="example">                [3, 4]</code>
+- 有些情况 Vim 解析命令有困难，尤其是一个命令用作另一个命令的参数的时候，如
+   <a href="windows.html#:windo">:windo</a> 。这些情况续行必须使用反斜杠。
+
+
+<code class="section">空白 </code>
+        <b class="vimtag"> <a name="vim9-white-space">vim9-white-space</a> </b> <b class="vimtag"> <a name="E1004">E1004</a> </b> <b class="vimtag"> <a name="E1068">E1068</a> </b> <b class="vimtag"> <a name="E1069">E1069</a> </b> <b class="vimtag"> <a name="E1074">E1074</a> </b> <b class="vimtag"> <a name="E1127">E1127</a> </b> <b class="vimtag"> <a name="E1202">E1202</a> </b>
+Vim9 脚本强制空白的正确使用。以下不再允许:
+<code class="example">        var name=234    # 出错！</code>
+<code class="example">        var name= 234   # 出错！</code>
+<code class="example">        var name =234   # 出错！</code>
+"=" 前后必须有空白:
+<code class="example">        var name = 234  # 正确</code>
+命令之后开始注释的 # 之前必须有空白字符:
+<code class="example">        var name = 234# 出错！</code>
+<code class="example">        var name = 234 # 正确</code>
+<code class="example"></code>
+多数操作符需要用空白包围。
+
+子列表 (切片) 表达式中的 ":" 两边需要空白，出现在开始和结束处的除外:
+<code class="example">        otherlist = mylist[v : count]   # v:count 有不同含义</code>
+<code class="example">        otherlist = mylist[:]           # 建立列表的备份</code>
+<code class="example">        otherlist = mylist[v :]</code>
+<code class="example">        otherlist = mylist[: v]</code>
+<code class="example"></code>
+以下位置不允许空白:
+- 函数名和 "(" 之间:
+<code class="example">        Func (arg)         # 出错！</code>
+<code class="example">        Func</code>
+<code class="example">             \ (arg)       # 出错！</code>
+<code class="example">        Func</code>
+<code class="example">              (arg)        # 出错！</code>
+<code class="example">        Func(arg)          # 正确</code>
+<code class="example">        Func(</code>
+<code class="example">              arg)         # 正确</code>
+<code class="example">        Func(</code>
+<code class="example">              arg          # 正确</code>
+<code class="example">              )</code>
+                                                        <b class="vimtag"> <a name="E1205">E1205</a> </b>
+ <a href="options.html#:set">:set</a>  命令在选项名和后续的 "&amp;"、"!"、"&lt;"、"="、"+="、"-=" 或 "^=" 之间不能有
+空白。
+
+
+<code class="section">没有花括号扩展 </code>
+
+不能使用  <a href="eval.html#curly-braces-names">curly-braces-names</a> 。
+
+
+<code class="section">不忽略命令修饰符 </code>
+                                                                <b class="vimtag"> <a name="E1176">E1176</a> </b>
+不接受命令修饰符的命令如果用上命令修饰符，会报错。
+                                                                <b class="vimtag"> <a name="E1082">E1082</a> </b>
+另外，使用了命令修饰符但后面不跟命令，现在也是错误。
+
+
+<code class="section">字典常量 </code>
+                                                <b class="vimtag"> <a name="vim9-literal-dict">vim9-literal-dict</a> </b> <b class="vimtag"> <a name="E1014">E1014</a> </b>
+传统上 Vim 支持使用 <code class="special">{}</code> 语法的字典常量:
+<code class="example">        let dict = {'key': value}</code>
+<code class="example"></code>
+后来越来越明显地，使用简单文本键非常常见，所以引入了支持后向兼容的常量字典:
+<code class="example">        let dict = #{key: value}</code>
+<code class="example"></code>
+不过，此种 #<code class="special">{}</code> 语法不同于任何已有的语言。因为使用常量并使用表达式作为键更为常
+见，也考虑到 JavaScript 也使用此种语法，使用 <code class="special">{}</code> 形式的字典常量被认为是更有用的
+语法。Vim9 脚本里，<code class="special">{}</code> 形式使用常量键:
+<code class="example">        var dict = {key: value}</code>
+<code class="example"></code>
+这种形式可以用于字母数字字符，下划线和连字符。如果使用其它字符，使用单引号或双
+引号:
+<code class="example">        var dict = {'key with space': value}</code>
+<code class="example">        var dict = {"key\twith\ttabs": value}</code>
+<code class="example">        var dict = {'': value}                  # 空键</code>
+                                                        <b class="vimtag"> <a name="E1139">E1139</a> </b>
+如果键需要表达式，可用方括号，就像 JavaScript 那样:
+<code class="example">        var dict = {["key" .. nr]: value}</code>
+<code class="example"></code>
+键类型可以是字符串、数值、布尔型或者浮点数。其它类型会报错。不带 [] 时直接用作
+字符串值，保留引导的零。而用 [] 的表达式会先经过计算再转换为字符串。这样引导的
+零就会被丢弃:
+<code class="example">        var dict = {000123: 'without', [000456]: 'with'}</code>
+<code class="example">        echo dict</code>
+<code class="example">        {'456': 'with', '000123': 'without'}</code>
+浮点数只能在 [] 里工作，因为如果不是的话，句号不被接受:
+<code class="example">        var dict = {[00.013]: 'float'}</code>
+<code class="example">        echo dict</code>
+<code class="example">        {'0.013': 'float'}</code>
+<code class="example"></code>
+<code class="example"></code>
+<code class="section">没有 :xit、:t、:k、:append、:change 或 :insert </code>
+                                                        <b class="vimtag"> <a name="E1100">E1100</a> </b>
+这些命令很容易会和局部变量名混淆。
+ <a href="editing.html#:x">:x</a>  或  <a href="editing.html#:xit">:xit</a>  可用  <a href="editing.html#:exit">:exit</a>  替代。
+ <a href="change.html#:t">:t</a>  可用  <a href="change.html#:copy">:copy</a>  替代。
+ <a href="motion.html#:k">:k</a>  可用  <a href="motion.html#:mark">:mark</a>  替代。
+
+
+<code class="section">比较符 </code>
+
+字符串的比较符不考虑 <a href="options.html#'ignorecase'">'ignorecase'</a> 选项。
+因此 "=~" 和 "=~#" 一样。
+
+"is" 和 "isnot" ( <a href="eval.html#expr-is">expr-is</a>  和  <a href="eval.html#expr-isnot">expr-isnot</a> ) 用于字符串时，现在总是返回假值。老
+式脚本里它们只是比较字符串内容，而在  <a href="vim9.html#Vim9">Vim9</a>  脚本里它们比较是否同一，因为字符串
+使用时会先复制，因此两个字符串永不会等价 (有一天字符串不是复制而采用引用计数，
+这可能会改变)。
+
+
+<code class="section">错误后中断 </code>
+
+老式脚本里，遇到错误时，Vim 会继续执行后续行。这会引起一长串错误，需要 <code class="keystroke">CTRL-C</code>
+才能停止。Vim9 脚本的命令执行会在第一个错误处停止。例如:
+<code class="example">        vim9script</code>
+<code class="example">        var x = 不-存-在</code>
+<code class="example">        echo '不会执行'</code>
+<code class="example"></code>
+<code class="example"></code>
+<code class="section">For 循环 </code>
+                                                        <b class="vimtag"> <a name="E1254">E1254</a> </b>
+循环变量不能事先声明:
+<code class="example">        var i = 1</code>
+<code class="example">        for i in [1, 2, 3]   # 出错！</code>
+<code class="example"></code>
+但可用全局变量:
+<code class="example">        g:i = 1</code>
+<code class="example">        for g:i in [1, 2, 3]</code>
+<code class="example">          echo g:i</code>
+<code class="example">        endfor</code>
+<code class="example"></code>
+老式 Vim 脚本有一些技巧来实现在列表句柄上的 for 循环，以删除当前或前一项目。在
+Vim9 脚本中，正常使用索引就可以了，如果项目被删除，列表中的对应项目会跳过。
+示例老式脚本:
+<code class="example">        let l = [1, 2, 3, 4]</code>
+<code class="example">        for i in l</code>
+<code class="example">           echo i</code>
+<code class="example">           call remove(l, index(l, i))</code>
+<code class="example">        endfor</code>
+会显示:
+        1
+        2
+        3
+        4
+而在编译后的 Vim9 脚本中，会得到:
+        1
+        3
+一般而言，不应改变正在遍历的列表。如果需要的话，先建立备份。
+遍历列表的列表时，可以修改内层的列表。循环变量是 "final"，它不能改变，但它的值
+可以改变。
+                                                        <b class="vimtag"> <a name="E1306">E1306</a> </b>
+循环深度，即 :for 和 :while 循环加起来，不能超过 10 层。
+
+<code class="section">条件和表达式 </code>
+                                                <b class="vimtag"> <a name="vim9-boolean">vim9-boolean</a> </b>
+多数情况下，条件和表达式就像其它语言里那样的用法。有些值和老式 Vim 脚本有所不
+同:
+<code class="section">        值              老式 Vim 脚本           Vim9 脚本 </code>
+        0               准假值                  准假值
+        1               准真值                  准真值
+        99              准真值                  出错！
+        "0"             准假值                  出错！
+        "99"            准真值                  出错！
+        "text"          准假值                  出错！
+
+用于 "??" 操作符和使用 "!" 时，不会报错，每个值都是准假值或准真值。这很像
+JavaScript，唯一的例外是空列表和字典也被视为准假值:
+
+<code class="section">        类型            何时为准真值 </code>
+        bool            为 true、v:true 或 1 时
+        number          非零时
+        float           非零时
+        string          非空时
+        blob            非空时
+        list            非空时 (和 JavaScript 不同)
+        tuple           非空时 (和 JavaScript 不同)
+        dictionary      非空时 (和 JavaScript 不同)
+        func            有函数名时
+        special         为 true 或 v:true 时
+        job             非 NULL 时
+        channel         非 NULL 时
+        class           不适用
+        object          非 NULL 时
+        enum            不适用
+        enum value      总是
+        typealias       不适用
+
+布尔操作符 "||" 和 "&amp;&amp;" 期待值为布尔型、零或一:
+<code class="example">        1 || false   == true</code>
+<code class="example">        0 || 1       == true</code>
+<code class="example">        0 || false   == false</code>
+<code class="example">        1 &amp;&amp; true    == true</code>
+<code class="example">        0 &amp;&amp; 1       == false</code>
+<code class="example">        8 || 0       出错！</code>
+<code class="example">        'yes' &amp;&amp; 0   出错！</code>
+<code class="example">        [] || 99     出错！</code>
+<code class="example"></code>
+"!" 用作反转操作符时，任何类型都不会报错，结果为布尔型。"!!" 可用于把任何值转
+换为布尔型:
+<code class="example">        !'yes'                  == false</code>
+<code class="example">        !![]                    == false</code>
+<code class="example">        !![1, 2, 3]             == true</code>
+<code class="example"></code>
+" <code class="badlink">.."</code>  用作字符串连接时，简单类型的参数总是转化为字符串。
+<code class="example">        'hello ' .. 123  == 'hello 123'</code>
+<code class="example">        'hello ' .. v:true  == 'hello true'</code>
+<code class="example"></code>
+简单类型是数值、浮点数、特殊类型和布尔型。其它类型可用  <a href="builtin.html#string()">string()</a> 。
+                        <b class="vimtag"> <a name="false">false</a> </b> <b class="vimtag"> <a name="true">true</a> </b> <b class="vimtag"> <a name="null">null</a> </b> <b class="vimtag"> <a name="null_blob">null_blob</a> </b> <b class="vimtag"> <a name="null_channel">null_channel</a> </b>
+                        <b class="vimtag"> <a name="null_class">null_class</a> </b> <b class="vimtag"> <a name="null_dict">null_dict</a> </b> <b class="vimtag"> <a name="null_function">null_function</a> </b> <b class="vimtag"> <a name="null_job">null_job</a> </b>
+                        <b class="vimtag"> <a name="null_list">null_list</a> </b> <b class="vimtag"> <a name="null_object">null_object</a> </b> <b class="vimtag"> <a name="null_partial">null_partial</a> </b> <b class="vimtag"> <a name="null_string">null_string</a> </b>
+                        <b class="vimtag"> <a name="E1034">E1034</a> </b>
+Vim9 脚本可以使用如下预定义值:
+<code class="example">        true</code>
+<code class="example">        false</code>
+<code class="example">        null</code>
+<code class="example">        null_blob</code>
+<code class="example">        null_channel</code>
+<code class="example">        null_class</code>
+<code class="example">        null_dict</code>
+<code class="example">        null_function</code>
+<code class="example">        null_job</code>
+<code class="example">        null_list</code>
+<code class="example">        null_tuple</code>
+<code class="example">        null_object</code>
+<code class="example">        null_partial</code>
+<code class="example">        null_string</code>
+ <a href="vim9.html#true">true</a>  等价于  <a href="eval.html#v:true">v:true</a> 、 <a href="vim9.html#false">false</a>  等价于  <a href="eval.html#v:false">v:false</a>  而  <a href="vim9.html#null">null</a>  等价于  <a href="eval.html#v:null">v:null</a> 。
+
+ <a href="vim9.html#null">null</a>  类型为 "special"，而其它的 "null_" 值可根据其名推定类型。null 值和空值
+处理方式通常相同，但不绝对。这些值可用于清除局部于脚本的变量，因为它们不能用
+ <a href="eval.html#:unlet">:unlet</a>  删除。例如:
+<code class="example">        var theJob = job_start(...)</code>
+<code class="example">        # 让作业自己做事</code>
+<code class="example">        theJob = null_job</code>
+<code class="example"></code>
+这些值也可用于参数的缺省值:
+<code class="example">        def MyFunc(b: blob = null_blob)</code>
+<code class="example">            # 注意: 和 null 比较，而不是 null_blob，</code>
+<code class="example">            #       以区分缺省值和空 blob。</code>
+<code class="example">            if b == null</code>
+<code class="example">                # 没给出 b 参数</code>
+更多和 null 的测试的信息可见  <a href="vim9.html#null-compare">null-compare</a> 。
+
+可以把  <a href="vim9.html#null">null</a>  和任何值比较，不会给出类型错误。但把  <a href="vim9.html#null">null</a>  和数值、浮点或布尔型
+比较总返回  <a href="vim9.html#false">false</a> 。这和老式脚本不同，那里把  <a href="vim9.html#null">null</a>  和零或  <a href="vim9.html#false">false</a>  比较会返回
+ <a href="vim9.html#true">true</a> 。
+                                                        <b class="vimtag"> <a name="vim9-false-true">vim9-false-true</a> </b>
+转换布尔型为字符串时使用  <a href="vim9.html#false">false</a>  和  <a href="vim9.html#true">true</a> ，而不像老式脚本那样用  <a href="eval.html#v:false">v:false</a>  和
+ <a href="eval.html#v:true">v:true</a> 。 <a href="eval.html#v:none">v:none</a>  没有对应的  <code class="badlink">none</code>  替代，在其他语言中它没有类似的结构。
+                                                        <b class="vimtag"> <a name="vim9-string-index">vim9-string-index</a> </b>
+字符串用 <code class="special">[idx]</code> 索引 或 [idx : idx] 取切片时使用的是字符索引而非字节索引。组合
+字符包含在内。例如:
+<code class="example">        echo 'bár'[1]</code>
+在老式脚本里，这会得到字符 0xc3 (一个非法字节)，在 Vim9 脚本里这会得到字符串
+'á'。
+负索引从结尾处开始计算，"[-1]" 代表末字符。要排除末字符，用  <a href="builtin.html#slice()">slice()</a> 。
+如果要组合字符分别计算，可用  <a href="builtin.html#strcharpart()">strcharpart()</a> 。
+索引超出范围时，返回空字符串。
+
+老式脚本中，接受 "++var" 和 "--var"，不报错也没有效果。Vim9 脚本中则会报错。
+
+零开始的数值不被识别为八进制，只有 "0o" 开始的数值才识别为八进制:
+"0o744".  <a href="eval.html#scriptversion-4">scriptversion-4</a> 
+
+
+<code class="section">要<code class="note">注意</code>什么 </code>
+                                                        <b class="vimtag"> <a name="vim9-gotchas">vim9-gotchas</a> </b>
+Vim9 设计和常用的编程语言相近，而同时试图支持老式的 Vim 命令。这里不得不做出某
+些妥协。这里是若干出人意外之处的一个小结。
+
+Ex 命令范围需要冒号前缀。
+<code class="example">        -&gt;                老式 Vim: 右移前行</code>
+<code class="example">        -&gt;func()          Vim9: 继续行上的方法调用</code>
+<code class="example">        :-&gt;               Vim9: 右移前行</code>
+<code class="example"></code>
+<code class="example">        %s/a/b            老式 Vim: 在所有行上替代</code>
+<code class="example">        x = alongname</code>
+<code class="example">             % another    Vim9: 续行上的取余操作符</code>
+<code class="example">        :%s/a/b           Vim9: 在所有行上替代</code>
+<code class="example">        't                老式 Vim: 跳转到位置标记 t</code>
+<code class="example">        'text'-&gt;func()    Vim9: 方法调用</code>
+<code class="example">        :'t               Vim9: 跳转到位置标记 t</code>
+<code class="example"></code>
+有些 Ex 命令在 Vim9 脚本中和赋值语句会引起混淆:
+<code class="example">        g:name = value    # 赋值</code>
+<code class="example">        :g:pattern:cmd    # :global 命令</code>
+<code class="example"></code>
+要避免  <a href="repeat.html#:global">:global</a>  或  <a href="change.html#:substitute">:substitute</a>  命令和表达式或赋值相混淆，当这些命令缩写为单
+字母时，不能使用若干分隔符: ':'、'-' 和 '.'。
+<code class="example">        g:pattern:cmd     # 非法命令 - 出错</code>
+<code class="example">        s:pattern:repl    # 非法命令 - 出错</code>
+<code class="example">        g-pattern-cmd     # 非法命令 - 出错</code>
+<code class="example">        s-pattern-repl    # 非法命令 - 出错</code>
+<code class="example">        g.pattern.cmd     # 非法命令 - 出错</code>
+<code class="example">        s.pattern.repl    # 非法命令 - 出错</code>
+<code class="example"></code>
+另外，命令和分隔符之间也不能有空格:
+<code class="example">        g /pattern/cmd    # 非法命令 - 出错</code>
+<code class="example">        s /pattern/repl   # 非法命令 - 出错</code>
+<code class="example"></code>
+ <a href="vim9.html#:def">:def</a>  定义的函数会对整个函数进行编译。老式函数可以中途放弃，因而以下的行不会
+被立即解析:
+<code class="example">        func Maybe()</code>
+<code class="example">          if !has('feature')</code>
+<code class="example">            return</code>
+<code class="example">          endif</code>
+<code class="example">          use-feature</code>
+<code class="example">        endfunc</code>
+而 Vim9 函数会作为一个整体被编译:
+<code class="example">        def Maybe()</code>
+<code class="example">          if !has('feature')</code>
+<code class="example">            return</code>
+<code class="example">          endif</code>
+<code class="example">          use-feature  # 可能会报编译错误</code>
+<code class="example">        enddef</code>
+一个临时解决方法是把它分割为两个函数:
+<code class="example">        func Maybe()</code>
+<code class="example">          if has('feature')</code>
+<code class="example">            call MaybyInner()</code>
+<code class="example">          endif</code>
+<code class="example">        endfunc</code>
+<code class="example">        if has('feature')</code>
+<code class="example">          def MaybeInner()</code>
+<code class="example">            use-feature</code>
+<code class="example">          enddef</code>
+<code class="example">        endif</code>
+或者把不支持的代码放在  <code class="badlink">if</code>  块里，带上计算值为假值的常量表达式:
+<code class="example">        def Maybe()</code>
+<code class="example">          if has('feature')</code>
+<code class="example">            use-feature</code>
+<code class="example">          endif</code>
+<code class="example">        enddef</code>
+为此也可用  <a href="builtin.html#exists_compiled()">exists_compiled()</a>  函数。
+                                                        <b class="vimtag"> <a name="vim9-user-command">vim9-user-command</a> </b>
+编译函数的另一个副作用是编译时要对用户命令的存在与否进行检查。如果用户命令在之
+后定义，会报错。下面这样可以:
+<code class="example">        command -nargs=1 MyCommand echom &lt;q-args&gt;</code>
+<code class="example">        def Works()</code>
+<code class="example">          MyCommand 123</code>
+<code class="example">        enddef</code>
+但这样会报错，"MyCommand" 无定义:
+<code class="example">        def Works()</code>
+<code class="example">          command -nargs=1 MyCommand echom &lt;q-args&gt;</code>
+<code class="example">          MyCommand 123</code>
+<code class="example">        enddef</code>
+一个临时解决方法是用  <a href="eval.html#:execute">:execute</a>  间接执行命令:
+<code class="example">        def Works()</code>
+<code class="example">          command -nargs=1 MyCommand echom &lt;q-args&gt;</code>
+<code class="example">          execute 'MyCommand 123'</code>
+<code class="example">        enddef</code>
+<code class="example"></code>
+<code class="note">注意</code> 在不识别的命令里，不检查 "|" 和后跟的命令。下例会报丢失  <code class="badlink">endif</code>  的错误:
+<code class="example">        def Maybe()</code>
+<code class="example">          if has('feature') | use-feature | endif</code>
+<code class="example">        enddef</code>
+<code class="example"></code>
+<code class="section">其它差异 </code>
+
+除非被显式覆盖，模式的用法假定置位了 <a href="options.html#'magic'">'magic'</a>。
+不使用 <a href="options.html#'edcompatible'">'edcompatible'</a> 选项值。
+不使用 <a href="options.html#'gdefault'">'gdefault'</a> 选项值。
+
+以下 wiki 可能对您有用。这是 Vim9 脚本的一位早期试用者编写的:
+<a href="https://github.com/lacygoill/wiki/blob/master/vim/vim9.md">https://github.com/lacygoill/wiki/blob/master/vim/vim9.md</a>
+
+                                                        <b class="vimtag"> <a name=":++">:++</a> </b> <b class="vimtag"> <a name=":--">:--</a> </b>
+新增了 ++ 和 -- 命令，类似于加一或减一:
+<code class="example">                ++var</code>
+<code class="example">                var += 1</code>
+<code class="example">                --var</code>
+<code class="example">                var -= 1</code>
+<code class="example"></code>
+在表达式中使用 ++var 或 --var 目前还不支持。
+
+
+</section><hr class="doubleline" /><section class=inner>
+<h4></h4>3. 新风格函数                                           <b class="vimtag"> <a name="fast-functions">fast-functions</a> </b>
+
+                                                        <b class="vimtag"> <a name=":def">:def</a> </b>
+:def[!] <code class="special">{name}</code>(<code class="special">[arguments]</code>)[: <code class="special">{return-type}</code>]
+                        定义名为 <code class="special">{name}</code> 的新函数。在下面的行给出函数体，直到配
+                        对的  <a href="vim9.html#:enddef">:enddef</a>  为止。
+                                                        <b class="vimtag"> <a name="E1073">E1073</a> </b>
+                        在同一脚本的局部级别上，不能重用 <code class="special">{name}</code>:
+<code class="example"></code>
+<code class="example">                          vim9script</code>
+<code class="example">                          def F_1073()</code>
+<code class="example">                          enddef</code>
+<code class="example">                          def F_1073() # E1073: 名字已被定义: &lt;SNR&gt;...</code>
+<code class="example">                          enddef</code>
+                                                        <b class="vimtag"> <a name="E1011">E1011</a> </b>
+                        <code class="special">{name}</code> 必须少于 100 字节长。
+
+                                                        <b class="vimtag"> <a name="E1077">E1077</a> </b>
+                        <code class="special">{arguments}</code> 是零或多个参数声明组成的序列。有以下三种形
+                        式:
+                                <code class="special">{name}</code>: <code class="special">{type}</code>
+                                <code class="special">{name}</code> = <code class="special">{value}</code>
+                                <code class="special">{name}</code>: <code class="special">{type}</code> = <code class="special">{value}</code>
+                        第一种形式指定必选参数，声明里必须提供类型。示
+                        例:
+<code class="example"></code>
+<code class="example">                          vim9script</code>
+<code class="example">                          def F_1077(x): void</code>
+<code class="example">                              # E1077: x 缺少参数类型</code>
+<code class="example">                          enddef</code>
+
+                        在第二种形式里，因为声明没有显式提供类型，Vim 会根据赋
+                        值自动推导参数的类型。在第二三两种形式里，调用者省略该
+                        可选参数时，都会默认使用 <code class="special">{value}</code> 值。示例:
+<code class="example"></code>
+<code class="example">                          vim9script</code>
+<code class="example">                          def SecondForm(arg = "Hi"): void</code>
+<code class="example">                              echo $'2. arg 的类型为 "{arg-&gt;typename()}" ' ..</code>
+<code class="example">                                   $'而 arg 的缺省值为 "{arg}"'</code>
+<code class="example">                          enddef</code>
+<code class="example">                          SecondForm()</code>
+<code class="example">                          def ThirdForm(arg2: number = 9): void</code>
+<code class="example">                              echo $'3. arg2 的缺省值为 {arg2}'</code>
+<code class="example">                          enddef</code>
+<code class="example">                          ThirdForm()</code>
+                                                        <b class="vimtag"> <a name="E1123">E1123</a> </b>
+                         <a href="vim9.html#:def">:def</a>  定义的函数里，调用内建函数时，参数必须以逗号分
+                        隔:
+<code class="example"></code>
+<code class="example">                          vim9script</code>
+<code class="example">                          def F_1123(a: number, b: number): void</code>
+<code class="example">                              echo max(a b)</code>
+<code class="example">                              # E1123: 参数前缺少逗号: b)</code>
+<code class="example">                          enddef</code>
+<code class="example">                          F_1123(1, 2)</code>
+                                                        <b class="vimtag"> <a name="E1003">E1003</a> </b> <b class="vimtag"> <a name="E1027">E1027</a> </b> <b class="vimtag"> <a name="E1096">E1096</a> </b>
+                         <a href="userfunc.html#:return">:return</a>  所用的值类型必须匹配 <code class="special">{return-type}</code>。
+                        <code class="special">{return-type}</code> 省略或为 "void" 时，函数不允许返回任何
+                        值。示例:
+<code class="example"></code>
+<code class="example">                          vim9script</code>
+<code class="example">                          def F_1003(): bool</code>
+<code class="example">                              return  # E1003: 缺少返回值</code>
+<code class="example">                          enddef</code>
+<code class="example">                          F_1003()</code>
+
+<code class="example">                          vim9script</code>
+<code class="example">                          def F_1027(): bool</code>
+<code class="example">                              echo false  # E1027: 缺少返回语句</code>
+<code class="example">                          enddef</code>
+<code class="example">                          F_1027()</code>
+
+<code class="example">                          vim9script</code>
+<code class="example">                          def F_1096(): void</code>
+<code class="example">                              return false  # E1096: 在没有返回类型的函数中返</code>
+<code class="example">                          enddef</code>
+<code class="example">                          F_1096()</code>
+                                                        <b class="vimtag"> <a name="E1056">E1056</a> </b> <b class="vimtag"> <a name="E1059">E1059</a> </b>
+                        采用 ": <code class="special">{return-type}</code>" 形式时，不能省略 <code class="special">{return-type}</code>
+                        部分 (也就是，只有一个冒号)。": " 的前面也不能有空格。
+                        示例: &gt;vim
+
+                          def F_1056():
+                              # E1056: 期待类型:
+                          enddef
+                          def F_1059() : bool
+                              # E1059: 冒号前不允许有空白:...
+                          enddef
+&lt;
+                         <a href="vim9.html#:def">:def</a>  定义的函数只有在实际调用、使用  <a href="vim9.html#:disassemble">:disassemble</a> 
+                        或  <a href="vim9.html#:defcompile">:defcompile</a>  时 (示例可见  <a href="vim9.html#:disassemble">:disassemble</a> )，才会被
+                        编译为指令序列。那时才会报告语法和类型错误。
+
+                                                        <b class="vimtag"> <a name="E1058">E1058</a> </b>
+                        在  <a href="vim9.html#:def">:def</a>  或  <a href="userfunc.html#:function">:function</a>  里可以嵌套另一个  <a href="vim9.html#:def">:def</a> ，最多
+                        可达 49 层。如果试图嵌套 50 或更深层，会报错  <a href="vim9.html#E1058">E1058</a> 。
+
+                                                        <b class="vimtag"> <a name="E1117">E1117</a> </b>
+                        [!] 只能用于老式 Vim 脚本，因为它允许函数重定义 (和
+                         <a href="userfunc.html#:function">:function</a> ! 相同)。在 Vim9 脚本里，不接受 ! 形式，因
+                        为脚本局部函数不能被删除或重定义，不过，重新载入相同的
+                        脚本可以移除函数的定义。另外，也不能用 ! 来重定义嵌套
+                        函数。示例: &gt;vim
+
+                          " 老式 Vim 脚本的 :def! 示例
+                          def! LegacyFunc()
+                              echo "def! 在老式 Vim 脚本里合法"
+                          enddef
+                          call LegacyFunc()
+&lt;
+<code class="example">                          vim9script</code>
+<code class="example">                          def Func()</code>
+<code class="example">                              def! InnerFunc()</code>
+<code class="example">                                  # E1117: 不能对嵌套的 :def 使用 !</code>
+<code class="example">                              enddef</code>
+<code class="example">                          enddef</code>
+<code class="example">                          Func()</code>
+
+<code class="example">                          vim9script</code>
+<code class="example">                          def! F_477(): void  # E477: 不能使用 "!"</code>
+<code class="example">                          enddef</code>
+
+<code class="example">                          vim9script</code>
+<code class="example">                          def F_1084(): void</code>
+<code class="example">                          enddef</code>
+<code class="example">                          delfunction! F_1084</code>
+<code class="example">                          # E1084: 无法删除 Vim9 函数 F_1084</code>
+
+                        <code class="note">注意</code>: 通用错误 <b class="vimtag"> <a name="E1028">E1028</a> </b> ("编译 :def 函数失败") 代表编译
+                        时出现了无法确定的错误。如果此错误可以重现，请在
+                        <a href="https://github.com/vim/vim/issues">https://github.com/vim/vim/issues</a> 处提交报告，因为它可
+                        能反映了 Vim 已有错误报告系统的不足。
+
+                                        <b class="vimtag"> <a name=":enddef">:enddef</a> </b> <b class="vimtag"> <a name="E1057">E1057</a> </b> <b class="vimtag"> <a name="E1152">E1152</a> </b> <b class="vimtag"> <a name="E1173">E1173</a> </b>
+:enddef                 结束  <a href="vim9.html#:def">:def</a>  定义的函数。必须单独起一行。示例:
+<code class="example"></code>
+<code class="example">                          vim9script</code>
+<code class="example">                          def MyFunc()</code>
+<code class="example">                          echo 'Do Something' | enddef</code>
+<code class="example">                          # E1057: 缺少 :enddef</code>
+
+<code class="example">                          vim9script</code>
+<code class="example">                          def F_1173()</code>
+<code class="example">                          enddef echo 'X'</code>
+<code class="example">                          # E1173: 在 enddef 后发现的文本: echo 'X'</code>
+
+<code class="example">                          vim9script</code>
+<code class="example">                          def F_1152()</code>
+<code class="example">                              function X()</code>
+<code class="example">                              enddef  # E1152: 不匹配的 enddef</code>
+<code class="example">                          enddef</code>
+
+以下 wiki 可能对您有用。这是 Vim9 脚本的一位早期试用者编写的:
+<a href="https://github.com/lacygoill/wiki/blob/master/vim/vim9.md">https://github.com/lacygoill/wiki/blob/master/vim/vim9.md</a>
+
+如果  <a href="vim9.html#:def">:def</a>  函数是在 Vim9 脚本里定义的，可以不经 "s:" 前缀直接访问脚本局部变
+量。但这些变量必须在函数编译之前被定义。无法通过条件判断来跳过未声明的变量 (例
+如通过  <a href="builtin.html#exists()">exists()</a> ) 以避免错误发生。例如:
+<code class="example"></code>
+<code class="example">        vim9script</code>
+<code class="example">        def MyVim9def()</code>
+<code class="example">            echo unus       # 回显 1</code>
+<code class="example">            # echo s:unus   # 会出错 E1268 (在 Vim9 脚本中不能使用 s:</code>
+<code class="example">            if exists('duo')</code>
+<code class="example">                # echo duo  # 会出错 E1001 (找不到变量: duo)</code>
+<code class="example">            endif</code>
+<code class="example">        enddef</code>
+<code class="example">        var unus: number = 1</code>
+<code class="example">        MyVim9def()         # MyVim9def 此时被编译 ("duo" 此时尚不存在)</code>
+<code class="example">        var duo: number = 2</code>
+
+如果  <a href="vim9.html#:def">:def</a>  函数是在老式脚本里定义的，脚本局部变量可用 "s:" 前缀，也可不用。不
+过，使用 "s:" 会将变量解析延迟到运行时进行，从而避免因为变量尚不存在触发编译错
+误，如下例所示: &gt;vim
+
+        " 老式 Vim 脚本
+        def! MyLegacyDef(): void
+            echo [unus, s:unus]   # 回显 [1, 1]
+            # (如果取消下行的注释) 第一次执行 'echo s:duo' 会报错 E121 并导致
+            # 编译错误；后续再执行时，会回显 2:
+            # echo s:duo
+            if exists("s:duo")
+                # 首次执行时: 跳过回显；后续再执行时: 回显 2
+                echo s:duo
+            endif
+            if exists("duo")
+                # (如果取消下行的注释) 第一次执行 'echo s:duo' 会报错 E1001 并
+                # 导致编译错误；后续再执行时，会回显 2:
+                # echo duo
+            endif
+        enddef
+        let s:unus = 1
+        call MyLegacyDef()  " 调用 MyLegacyDef() 并进行编译 (如果还没编译过)
+        let s:duo = 2
+&lt;                                                       <b class="vimtag"> <a name="E1269">E1269</a> </b>
+ <a href="vim9.html#Vim9">Vim9</a>  脚本里脚本局部变量必须在脚本级别声明，而不能在  <a href="vim9.html#:def">:def</a>  函数里创建，也不
+能在老式函数里试图使用 "s:" 前缀来声明脚本局部变量。例如:
+<code class="example"></code>
+<code class="example">        vim9script</code>
+<code class="example">        function F_1269()</code>
+<code class="example">            let s:i_wish = v:true</code>
+<code class="example">        endfunction</code>
+<code class="example">        F_1269()</code>
+<code class="example">        # E1269: 在函数中不能创建 Vim9 脚本变量: s:i_wish</code>
+
+
+                                                <b class="vimtag"> <a name=":defc">:defc</a> </b> <b class="vimtag"> <a name=":defcompile">:defcompile</a> </b>
+:defc[ompile]           编译尚未编译的在当前脚本中定义的函数和类
+                        ( <a href="vim9class.html#class-compile">class-compile</a> )。编译中如有任何错误，会报错。
+
+                        示例: 执行下例中的前三行时 (直到  <code class="badlink">enddef</code>  为止 (包
+                        含))，不会报错，因为尚未编译该 Vim9  <a href="vim9.html#:def">:def</a>  函数。但当
+                        执行完整的四行时，编译会失败:
+<code class="example"></code>
+<code class="example">                          vim9script</code>
+<code class="example">                          def F_1027(): string</code>
+<code class="example">                          enddef</code>
+<code class="example">                          defcompile F_1027  # E1027: 缺少返回语句</code>
+<code class="example"></code>
+:defc[ompile] MyClass   编译类里的所有方法。(例见  <a href="vim9.html#:disassemble">:disassemble</a> 。)
+
+:defc[ompile] <code class="special">{func}</code>
+:defc[ompile] debug <code class="special">{func}</code>
+:defc[ompile] profile <code class="special">{func}</code>
+                        有需要的话编译函数 <code class="special">{func}</code>。"debug" 和 "profile" 指定不
+                        同的编译模式。
+                        编译中如有任何错误，会报错。
+                        <code class="special">{func}</code> 也可以是 "ClassName.functionName"，以编译指定类
+                        中的函数或方法。
+                        <code class="special">{func}</code> 还可以是 "ClassName"，以编译指定类中的所有函数
+                        和方法。
+
+                                                <b class="vimtag"> <a name=":disa">:disa</a> </b> <b class="vimtag"> <a name=":disassemble">:disassemble</a> </b>
+:disa[ssemble] <code class="special">{func}</code>   显示 <code class="special">{func}</code> 生成的指令序列 (反汇编)。
+                        用于调试和测试。
+                        如果 <code class="special">{func}</code> 不存在，报错 <b class="vimtag"> <a name="E1061">E1061</a> </b> 。
+                        <code class="special">{func}</code> 也可以是 "ClassName.functionName"，用以反汇编指
+                        定类中的函数。
+                        下例展示了如何向  <a href="vim9.html#:defcompile">:defcompile</a> 传递  <a href="vim9class.html#class">class</a>  参数，同时
+                        向  <a href="vim9.html#:disassemble">:disassemble</a>  传递 "ClassName.functionName" 参数
+                        (光标会定位在可视执行脚本的末行):
+<code class="example"></code>
+<code class="example">                          vim9script</code>
+<code class="example">                          class Line</code>
+<code class="example">                              var lnum: number</code>
+<code class="example">                              def new(this.lnum)</code>
+<code class="example">                              enddef</code>
+<code class="example">                              def SetLnum()</code>
+<code class="example">                                  cursor(this.lnum, 52)</code>
+<code class="example">                              enddef</code>
+<code class="example">                          endclass</code>
+<code class="example">                          defcompile Line</code>
+<code class="example">                          disassemble Line.SetLnum</code>
+<code class="example">                          var vlast: Line = Line.new(line("'&gt;"))</code>
+<code class="example">                          vlast.SetLnum()  # 光标会定位在此处-&gt;_</code>
+<code class="example"></code>
+:disa[ssemble] profile <code class="special">{func}</code>
+                        类似于  <a href="vim9.html#:disassemble">:disassemble</a>  但指令用于刨视。
+
+:disa[ssemble] debug <code class="special">{func}</code>
+                        类似于  <a href="vim9.html#:disassemble">:disassemble</a>  但指令用于调试。
+
+  <code class="note">注意</code>: 命令行补全 <code class="special">{func}</code> 时，脚本局部函数会显示相应的 <code class="special">&lt;SNR&gt;</code> 前缀。取决于包括
+         <a href="builtin.html#wildmenumode()">wildmenumode()</a>  在内的选项设置，补全可能会作用于 "s:"、"&lt;S" 或者函数
+        名本身。(例如，假定 Vim 启动时传递了  <a href="starting.html#-u">-u</a>  NONE，":disa s:" 和
+         <a href="cmdline.html#c_CTRL-E">c_CTRL-E</a>  在补全时都会列出脚本局部函数名。)
+
+
+<code class="section">局限 </code>
+
+计算字符串表达式时，局部于 `:def 函数的变量不可见。下例展示了局部于脚本的常量
+"SCRIPT_LOCAL" 可见，但局部于函数的常量 "DEF_LOCAL" 却不可见:
+<code class="example"></code>
+<code class="example">        vim9script</code>
+<code class="example">        const SCRIPT_LOCAL = ['A', 'script-local', 'list']</code>
+<code class="example">        def MapList(scope: string): list&lt;string&gt;</code>
+<code class="example">            const DEF_LOCAL: list&lt;string&gt; = ['A', 'def-local', 'list']</code>
+<code class="example">            if scope == 'script local'</code>
+<code class="example">                return [1]-&gt;map('SCRIPT_LOCAL[v:val]')</code>
+<code class="example">            else</code>
+<code class="example">                return [1]-&gt;map('DEF_LOCAL[v:val]')</code>
+<code class="example">            endif</code>
+<code class="example">        enddef</code>
+<code class="example">        echo 'script local'-&gt;MapList()  # 回显 ['script-local']</code>
+<code class="example">        echo 'def local'-&gt;MapList()     # E121: 未定义的变量: DEF_LOCAL</code>
+
+这里 map 参数是字符串表达式，它的计算会在函数作用域之外。要避免此局限，在 Vim9
+脚本里，可用匿名函数代替:
+<code class="example"></code>
+<code class="example">        vim9script</code>
+<code class="example">        def MapList(): list&lt;string&gt;</code>
+<code class="example">            const DEF_LOCAL: list&lt;string&gt; = ['A', 'def-local', 'list']</code>
+<code class="example">            return [1]-&gt;map((_, v) =&gt; DEF_LOCAL[v])</code>
+<code class="example">        enddef</code>
+<code class="example">        echo MapList()                  # 回显 ['def-local']</code>
+<code class="example"></code>
+对于未编译的命令，如  <a href="editing.html#:edit">:edit</a> ，可用反引号扩展  <a href="editing.html#backtick-expansion">backtick-expansion</a> ，那里局部作
+用域可见。例如:
+<code class="example"></code>
+<code class="example">        vim9script</code>
+<code class="example">        def EditNewBlah()</code>
+<code class="example">            var fname: string = 'blah.txt'</code>
+<code class="example">            split</code>
+<code class="example">            edit `=fname`</code>
+<code class="example">        enddef</code>
+<code class="example">        EditNewBlah()  # 创建新分割，显示缓冲区 'blah.txt'</code>
+
+同一循环里定义的闭包或者会分享同一变量的引用，或者每个闭包会有变量的不同备份，
+这取决于变量声明所在的位置。变量在循环之外声明时，所有的闭包会引用相同的共享变
+量。下例展示了 "outloop" 变量只有一个备份时会有的效果:
+<code class="example"></code>
+<code class="example">        vim9script</code>
+<code class="example">        var flist: list&lt;func&gt;</code>
+<code class="example">        def ClosureEg(n: number): void</code>
+<code class="example">            var outloop: number = 0  # outloop 在循环外声明！</code>
+<code class="example">            for i in range(n)</code>
+<code class="example">                outloop = i</code>
+<code class="example">                flist[i] = (): number =&gt; outloop  # 闭包都引用同一变量</code>
+<code class="example">            endfor</code>
+<code class="example">            echo range(n)-&gt;map((i, _) =&gt; flist[i]())</code>
+<code class="example">        enddef</code>
+<code class="example">        ClosureEg(4)  # 回显 [3, 3, 3, 3]</code>
+
+放置在列表里的所有闭包都引用相同的实例，该变量最终的值为 3。
+
+不过，如果变量在循环内声明，每个闭包会获得自己专有的备份，如下例所示:
+<code class="example"></code>
+<code class="example">        vim9script</code>
+<code class="example">        var flist: list&lt;func&gt;</code>
+<code class="example">        def ClosureEg(n: number): void</code>
+<code class="example">            for i in range(n)</code>
+<code class="example">                var inloop: number = i  # inloop 在循环内声明</code>
+<code class="example">                flist[i] = (): number =&gt; inloop  # 闭包引用不同的 inloop 实例</code>
+<code class="example">            endfor</code>
+<code class="example">            echo range(n)-&gt;map((i, _) =&gt; flist[i]())</code>
+<code class="example">        enddef</code>
+<code class="example">        ClosureEg(4)  # 回显 [0, 1, 2, 3]</code>
+<code class="example"></code>
+让每个闭包有自己的上下文的另一方法是调用函数，在其中定义闭包:
+<code class="example"></code>
+<code class="example">        vim9script</code>
+<code class="example">        def GetClosure(i: number): func</code>
+<code class="example">            var infunc: number = i</code>
+<code class="example">            return (): number =&gt; infunc</code>
+<code class="example">        enddef</code>
+<code class="example">        var flist: list&lt;func&gt;</code>
+<code class="example">        def ClosureEg(n: number): void</code>
+<code class="example">            for i in range(n)</code>
+<code class="example">                flist[i] = GetClosure(i)</code>
+<code class="example">            endfor</code>
+<code class="example">            echo range(n)-&gt;map((i, _) =&gt; flist[i]())</code>
+<code class="example">        enddef</code>
+<code class="example">        ClosureEg(4)  # 回显 [0, 1, 2, 3]</code>
+                                                        <b class="vimtag"> <a name="E1271">E1271</a> </b>
+闭包必须在其定义所在的上下文里进行编译，以便找到在该上下文里的变量。大多数情况
+下这没有问题，但在编译函数后，再用  <a href="repeat.html#:breakadd">:breakadd</a>  标记该函数进行调试时会出问题。
+为了避免这些问题，请在编译外层函数前就定义好断点。
+                                                        <b class="vimtag"> <a name="E1248">E1248</a> </b>
+有些情况下，如捕获局部变量的 Vim9 闭包先转换为字符串再执行时，会出错。这是因为
+字符串执行的上下文不能访问闭包定义所在的上下文里的局部变量。例如:
+<code class="example"></code>
+<code class="example">        vim9script</code>
+<code class="example">        def F_1248(): void</code>
+<code class="example">            var n: number</code>
+<code class="example">            var F: func = () =&gt; {</code>
+<code class="example">                n += 1</code>
+<code class="example">            }</code>
+<code class="example">            try</code>
+<code class="example">                execute printf("call %s()", F)</code>
+<code class="example">            catch</code>
+<code class="example">                echo v:exception</code>
+<code class="example">            endtry</code>
+<code class="example">        enddef</code>
+<code class="example">        F_1248()  # Vim(call):E1248: 从无效上下文中调用了闭包</code>
+<code class="example"></code>
+在 Vim9 脚本里，循环变量在循环结束后不再有效。下例中定时器会回显 0 到 2，每个
+数值一行。不过，如果在  <a href="eval.html#:endfor">:endfor</a>  之后试图使用 "n" 变量，会报错  <a href="eval.html#E121">E121</a> :
+<code class="example"></code>
+<code class="example">        vim9script</code>
+<code class="example">        for n in range(3)</code>
+<code class="example">            var nr: number = n</code>
+<code class="example">            timer_start(1000 * n, (_) =&gt; {</code>
+<code class="example">                echowindow nr</code>
+<code class="example">            })</code>
+<code class="example">        endfor</code>
+<code class="example">        try</code>
+<code class="example">            echowindow n</code>
+<code class="example">        catch</code>
+<code class="example">            echo v:exception</code>
+<code class="example">        endtry</code>
+
+          <code class="note">备注</code>: 定时器中  <a href="eval.html#:echowindow">:echowindow</a>  很有用，因为它会使得信息在弹出中出现，
+                触发时不会干扰用户正在进行中的操作。
+
+
+<code class="section">把 :function 转换为 :def </code>
+                                        <b class="vimtag"> <a name="convert_legacy_function_to_vim9">convert_legacy_function_to_vim9</a> </b>
+                                        <b class="vimtag"> <a name="convert_:function_to_:def">convert_:function_to_:def</a> </b>
+要把  <a href="userfunc.html#:function">:function</a>  转换为  <a href="vim9.html#:def">:def</a>  函数需要不少改动。这里列出一些需要的改动:
+
+- 把用于声明变量的  <code class="badlink">let</code>  改为  <code class="badlink">var</code> 、 <code class="badlink">const</code>  或  <code class="badlink">final</code>  之一，并删除所有
+   <a href="eval.html#script-variable">script-variable</a>  的 "s:" 前缀。
+- 把  <code class="badlink">func</code>  或  <code class="badlink">function</code>  改为  <code class="badlink">def</code> 。
+- 把  <code class="badlink">endfunc</code>  或  <code class="badlink">endfunction</code>  改为  <code class="badlink">enddef</code> 。
+- 为每个函数参数加上合适的类型 (或者 "any")。
+- 删除所有  <a href="userfunc.html#function-argument">function-argument</a>  的 "a:" 前缀。
+- 删除不再适用的选项，如  <a href="userfunc.html#:func-range">:func-range</a> 、 <a href="userfunc.html#:func-abort">:func-abort</a> 、 <a href="userfunc.html#:func-dict">:func-dict</a>  和
+   <a href="userfunc.html#:func-closure">:func-closure</a> 。
+- 如果函数有返回值，加上返回类型。(如果函数不返回任何值，最好加上 "void"。)
+- 删除那些在 Vim9 里不再需要的作为续行符的反斜杠。
+- 给  <a href="eval.html#g:">g:</a> 、 <a href="eval.html#b:">b:</a> 、 <a href="eval.html#w:">w:</a> 、 <a href="eval.html#t:">t:</a>  或  <a href="eval.html#l:">l:</a>  变量赋值时删除  <code class="badlink">let</code> 。
+- 使用 Vim9 脚本语法改写  <a href="eval.html#lambda">lambda</a>  表达式 (见  <a href="vim9.html#vim9-lambda">vim9-lambda</a> )。
+- 改变注释的引导符，注释以 # (以空白前导) 开始，而不再是 "。
+- 在表达式里必要的地方插入空格 (见  <a href="vim9.html#vim9-white-space">vim9-white-space</a> )。
+- 把用于字符串连接的 "." 改为 " .. "。(替代方案是使用  <a href="eval.html#interpolated-string">interpolated-string</a> 。)
+
+下面的老式 Vim 脚本和 Vim9 脚本示例展示了上述的所有区别。首先给出老式 Vim 脚本
+版本: &gt;vim
+
+        let s:lnum=0
+        function Leg8(arg) abort
+            let l:pre=['结果',
+              \': ']
+            let b:arg=a:arg
+            let s:lnum+=2
+            let b:arg*=4
+            let l:result={pre-&gt;join(pre,'')}(l:pre)
+            return l:result.(b:arg+s:lnum)"注释前不需空白
+        endfunction
+        call Leg8(10)-&gt;popup_notification(#{time: 3000})" 弹出 '结果: 42'
+
+等价的 Vim9 脚本:
+<code class="example"></code>
+<code class="example">        vim9script</code>
+<code class="example">        var lnum: number</code>
+<code class="example">        def Vim9(arg: number): string</code>
+<code class="example">            final pre = ['结果',</code>
+<code class="example">              ': ']</code>
+<code class="example">            b:arg = arg</code>
+<code class="example">            lnum += 2</code>
+<code class="example">            b:arg *= 4</code>
+<code class="example">            const RESULT: string = ((lpre) =&gt; join(lpre, ''))(pre)</code>
+<code class="example">            return RESULT .. (b:arg + lnum) # #-开头的注释前需要空白</code>
+<code class="example">        enddef</code>
+<code class="example">        Vim9(10)-&gt;popup_notification({time: 3000}) # 弹出 '结果: 42'</code>
+<code class="example"></code>
+        <code class="note">备注</code>: 此例也展示了 (和  <a href="vim9.html#:def">:def</a>  函数的改写无关):
+                - 老式   <a href="eval.html#%23{}">#{}</a>  里的 "#" 被删除 - 见  <a href="vim9.html#vim9-literal-dict">vim9-literal-dict</a> 
+                -  <a href="userfunc.html#:call">:call</a>  被省略 (Vim9 脚本里允许，但不必要)
+
+
+<code class="section">在表达式选项里调用 :def 函数 </code>
+                                                        <b class="vimtag"> <a name="expr-option-function">expr-option-function</a> </b>
+若干选项如 <a href="options.html#'foldexpr'">'foldexpr'</a> 的值是一个表达式，该表达式会先经过计算再取得需要的值。这
+里的计算会有相当负担。一个尽量减少负担同时也使选项值保持简单的方法，是先定义一
+个编译过的函数，然后设置选项为该函数不带参数的调用。例如:
+<code class="example"></code>
+<code class="example">        vim9script</code>
+<code class="example">        def MyFoldFunc(): string</code>
+<code class="example">            # 此模式匹配从行首 (^) 开始，后跟一个数位、一个句号、一个空格或制</code>
+<code class="example">            # 表和一个非英文字符所组成的行，并且下一行必须为空行</code>
+<code class="example">            return getline(v:lnum) =~</code>
+<code class="example">                    '^[[:digit:]]\.[[:blank:]][^\%u0001-\%u00ff]'</code>
+<code class="example">                &amp;&amp; getline(v:lnum + 1)-&gt;empty() ? '&gt;1' : '1'</code>
+<code class="example">        enddef</code>
+<code class="example">        set foldexpr=MyFoldFunc()</code>
+<code class="example">        set foldmethod=expr</code>
+<code class="example">        norm! zM</code>
+
+  <code class="note">警告</code>: 此脚本在本 vim9.cnx 帮助缓冲区的一级标题级别上，创建和应用折叠。(执行
+        脚本后，在普通模式下可用  <a href="fold.html#zR">zR</a>  以打开所有的折叠。)
+
+
+</section><hr class="doubleline" /><section class=inner>
+<h4></h4>4. 类型                                         <b class="vimtag"> <a name="vim9-types">vim9-types</a> </b>
+
+支持以下类型，这里也显示了它们对应的内部  <a href="eval.html#v:t_TYPE">v:t_TYPE</a>  变量:
+
+        number                                   <a href="eval.html#v:t_number">v:t_number</a> 
+        string                                   <a href="eval.html#v:t_string">v:t_string</a> 
+        func                                     <a href="eval.html#v:t_func">v:t_func</a> 
+        func: <code class="special">{type}</code>                             <a href="eval.html#v:t_func">v:t_func</a> 
+        func(<code class="special">{type}</code>, ...)                        <a href="eval.html#v:t_func">v:t_func</a> 
+        func(<code class="special">{type}</code>, ...): <code class="special">{type}</code>                <a href="eval.html#v:t_func">v:t_func</a> 
+        list&lt;<code class="special">{type}</code>&gt;                             <a href="eval.html#v:t_list">v:t_list</a> 
+        dict&lt;<code class="special">{type}</code>&gt;                             <a href="eval.html#v:t_dict">v:t_dict</a> 
+        float                                    <a href="eval.html#v:t_float">v:t_float</a> 
+        bool                                     <a href="eval.html#v:t_bool">v:t_bool</a> 
+        none                                     <a href="eval.html#v:t_none">v:t_none</a> 
+        job                                      <a href="eval.html#v:t_job">v:t_job</a> 
+        channel                                  <a href="eval.html#v:t_channel">v:t_channel</a> 
+        blob                                     <a href="eval.html#v:t_blob">v:t_blob</a> 
+        class                                    <a href="eval.html#v:t_class">v:t_class</a> 
+        object                                   <a href="eval.html#v:t_object">v:t_object</a> 
+        typealias                                <a href="eval.html#v:t_typealias">v:t_typealias</a> 
+        enum                                     <a href="eval.html#v:t_enum">v:t_enum</a> 
+        enumvalue                                <a href="eval.html#v:t_enumvalue">v:t_enumvalue</a> 
+        tuple&lt;<code class="special">{type}</code>&gt;                            <a href="eval.html#v:t_tuple">v:t_tuple</a> 
+        tuple&lt;<code class="special">{type}</code>, <code class="special">{type}</code>, ...&gt;               <a href="eval.html#v:t_tuple">v:t_tuple</a> 
+        tuple&lt;...list&lt;<code class="special">{type}</code>&gt;&gt;                   <a href="eval.html#v:t_tuple">v:t_tuple</a> 
+        tuple&lt;<code class="special">{type}</code>, ...list&lt;<code class="special">{type}</code>&gt;&gt;           <a href="eval.html#v:t_tuple">v:t_tuple</a> 
+        void
+
+                                                 <b class="vimtag"> <a name="E1031">E1031</a> </b> <b class="vimtag"> <a name="E1186">E1186</a> </b>
+这些类型可用于声明，但没有任何简单值会对应 "void" 类型。试图使用 void 作为值类
+型会报错。示例:
+<code class="example"></code>
+<code class="example">        vim9script</code>
+<code class="example">        def NoReturnValue(): void</code>
+<code class="example">        enddef</code>
+<code class="example">        try</code>
+<code class="example">            const X: any = NoReturnValue()</code>
+<code class="example">        catch</code>
+<code class="example">            echo v:exception      # E1031: 不能使用空值</code>
+<code class="example">            try</code>
+<code class="example">                echo NoReturnValue()</code>
+<code class="example">            catch</code>
+<code class="example">                echo v:exception  # E1186: 表达式不产生值: NoReturnValue()</code>
+<code class="example">            endtry</code>
+<code class="example">        endtry</code>
+                                                <b class="vimtag"> <a name="E1008">E1008</a> </b> <b class="vimtag"> <a name="E1009">E1009</a> </b> <b class="vimtag"> <a name="E1010">E1010</a> </b> <b class="vimtag"> <a name="E1012">E1012</a> </b>
+不合乎规格的声明和不匹配的类型会报错。下面例子会分别给出错误 E1008、E1009、
+E1010 和 E1012:
+<code class="example"></code>
+<code class="example">        vim9cmd var l: list</code>
+<code class="example">        vim9cmd var l: list&lt;number</code>
+<code class="example">        vim9cmd var l: list&lt;invalidtype&gt;</code>
+<code class="example">        vim9cmd var l: list&lt;number&gt; = ['42']</code>
+
+Vim 没有数组类型，而用列表或元组代替。这些类型也可使用字面量 (常量)。下列中，
+[5, 6] 是列表常量，而 (7, ) 是元组常量。回显的列表也是一个列表常量:
+<code class="example"></code>
+<code class="example">        vim9script</code>
+<code class="example">        var l: list&lt;number&gt; = [1, 2]</code>
+<code class="example">        var t: tuple&lt;...list&lt;number&gt;&gt; = (3, 4)</code>
+<code class="example">        echo [l, t, [5, 6], (7, )]</code>
+
+                                                        <b class="vimtag"> <a name="tuple-type">tuple-type</a> </b>
+元组类型可用下列的方式声明:
+tuple<code class="special">&lt;number&gt;</code>                   带单个类型  <a href="eval.html#Number">Number</a>  的项目的元组
+tuple&lt;number, string&gt;           带两个类型  <a href="eval.html#Number">Number</a>  和  <a href="eval.html#String">String</a>  的项目的元组
+tuple&lt;number, float, bool&gt;      带三个类型  <a href="eval.html#Number">Number</a> 、 <a href="eval.html#Float">Float</a>  和  <a href="eval.html#Boolean">Boolean</a>  的项
+                                目的元组
+tuple&lt;...list<code class="special">&lt;number&gt;</code>&gt;          带可变参数零或多个类型  <a href="eval.html#Number">Number</a>  的项目的元组
+tuple&lt;number, ...list<code class="special">&lt;string&gt;</code>&gt;  带一个类型  <a href="eval.html#Number">Number</a>  的项目，后跟零或多个类型
+                                 <a href="eval.html#String">String</a>  的项目的元组
+
+示例:
+<code class="example">    var myTuple: tuple&lt;number&gt; = (20,)</code>
+<code class="example">    var myTuple: tuple&lt;number, string&gt; = (30, 'vim')</code>
+<code class="example">    var myTuple: tuple&lt;number, float, bool&gt; = (40, 1.1, true)</code>
+<code class="example">    var myTuple: tuple&lt;...list&lt;string&gt;&gt; = ('a', 'b', 'c')</code>
+<code class="example">    var myTuple: tuple&lt;number, ...list&lt;string&gt;&gt; = (3, 'a', 'b', 'c')</code>
+
+                                                <b class="vimtag"> <a name="variadic-tuple">variadic-tuple</a> </b> <b class="vimtag"> <a name="E1539">E1539</a> </b>
+可变参数元组有零或多个相同类型的项目。可变参数元组必须以列表类型结尾。例如:
+<code class="example">    var myTuple: tuple&lt;...list&lt;number&gt;&gt; = (1, 2, 3)</code>
+<code class="example">    var myTuple: tuple&lt;...list&lt;string&gt;&gt; = ('a', 'b', 'c')</code>
+<code class="example">    var myTuple: tuple&lt;...list&lt;bool&gt;&gt; = ()</code>
+
+                                    <b class="vimtag"> <a name="vim9-func-declaration">vim9-func-declaration</a> </b> <b class="vimtag"> <a name="E1005">E1005</a> </b> <b class="vimtag"> <a name="E1007">E1007</a> </b>
+                                    <b class="vimtag"> <a name="vim9-partial-declaration">vim9-partial-declaration</a> </b>
+                                    <b class="vimtag"> <a name="vim9-func-type">vim9-func-type</a> </b>
+偏函数和函数可用以下方式声明:
+func                            任何类型的函数引用，不检查参数和返回值类型
+func: void                      任何数量和类型的参数，无返回值
+func: <code class="special">{type}</code>                    任何数量和类型的参数，特定返回类型
+
+func()                          无参数的函数，无返回值
+func(): void                    同上
+func(): <code class="special">{type}</code>                  无参数的函数，指定返回类型
+
+func(<code class="special">{type}</code>)                    指定参数类型的函数，无返回值
+func(<code class="special">{type}</code>): <code class="special">{type}</code>            指定参数类型和返回类型的函数
+func(?<code class="special">{type}</code>)                   指定可选参数类型的函数，无返回值
+func(...list&lt;<code class="special">{type}</code>&gt;)           带可变数目的指定类型的参数列表的函数，无返回值
+func(<code class="special">{type}</code>, ?<code class="special">{type}</code>, ...list&lt;<code class="special">{type}</code>&gt;): <code class="special">{type}</code>
+                                带以下的函数:
+                                - 必选参数的类型
+                                - 可选参数的类型
+                                - 可变数目参数列表的类型
+                                - 返回类型
+
+如果返回类型为 "void"，函数什么都不返回。
+
+引用也可是  <a href="eval.html#Partial">Partial</a> ，此时它保存了额外参数和/或字典，而这些对调用者是不可见
+的。因为调用方式相同，声明方式也是一致的。以下使用偏函数的交互示例会提示输入圆
+的半径，并返回其面积，精确到两位小数:
+<code class="example"></code>
+<code class="example">        vim9script</code>
+<code class="example">        def CircleArea(pi: float, radius: float): float</code>
+<code class="example">            return pi * radius-&gt;pow(2)</code>
+<code class="example">        enddef</code>
+<code class="example">        const AREA: func(float): float = CircleArea-&gt;function([3.14])</code>
+<code class="example">        const RADIUS: float = "输入半径: "-&gt;input()-&gt;str2float()</code>
+<code class="example">        echo $"\n半径为 {RADIUS} 的圆的面积为 " ..</code>
+<code class="example">             $"{AREA(RADIUS)} (π 精确到两位小数)"</code>
+
+                                                <b class="vimtag"> <a name="vim9-typealias-type">vim9-typealias-type</a> </b>
+可用  <a href="vim9class.html#:type">:type</a>  定义定制类型 ( <a href="vim9class.html#typealias">typealias</a> )。定制类型必须以大写字母开头 (避免与当
+前或之后新增的内建类型名字起冲突)，这和用户函数类似。下例创建完全平方的列表，
+并报告其  <a href="builtin.html#type()">type()</a>  (14，typealias 的类型值) 和  <a href="builtin.html#typename()">typename()</a> :
+<code class="example"></code>
+<code class="example">        vim9script</code>
+<code class="example">        type Ln = list&lt;number&gt;</code>
+<code class="example">        final perfect_squares: Ln = [1, 4, 9, 16, 25]</code>
+<code class="example">        echo "Typename (Ln): " ..</code>
+<code class="example">             $"type() 为 {Ln-&gt;type()} 而 typename() 为 {Ln-&gt;typename()}"</code>
+
+                                                <b class="vimtag"> <a name="E1105">E1105</a> </b>
+typealias 自身不能转换为字符串:
+<code class="example"></code>
+<code class="example">        vim9script</code>
+<code class="example">        type Ln = list&lt;number&gt;</code>
+<code class="example">        const FAILS: func = (): string =&gt; {</code>
+<code class="example">            echo $"{Ln}"  # E1105: 无法将 typealias 转换为字符串</code>
+<code class="example">            }</code>
+
+                                    <b class="vimtag"> <a name="vim9-class-type">vim9-class-type</a> </b>  <b class="vimtag"> <a name="vim9-interface-type">vim9-interface-type</a> </b>
+                                    <b class="vimtag"> <a name="vim9-object-type">vim9-object-type</a> </b>
+ <a href="vim9class.html#class">class</a> 、 <a href="vim9class.html#object">object</a>  和  <a href="vim9class.html#interface">interface</a>  都可用作类型。以下的交互示例会提示输入浮点
+数，并返回两种不同形状的面积。此示例也会同时报告类、对象和界面的  <a href="builtin.html#type()">type()</a>  和
+ <a href="builtin.html#typename()">typename()</a> :
+<code class="example"></code>
+<code class="example">        vim9script</code>
+<code class="example">        interface Shape</code>
+<code class="example">            def InfoArea(): tuple&lt;string, float&gt;</code>
+<code class="example">        endinterface</code>
+<code class="example">        class Circle implements Shape</code>
+<code class="example">            var radius: float</code>
+<code class="example">            def InfoArea(): tuple&lt;string, float&gt;</code>
+<code class="example">                return ('圆 (π × r²)', 3.141593 * this.radius-&gt;pow(2))</code>
+<code class="example">            enddef</code>
+<code class="example">        endclass</code>
+<code class="example">        class Square implements Shape</code>
+<code class="example">            var side: float</code>
+<code class="example">            def InfoArea(): tuple&lt;string, float&gt;</code>
+<code class="example">                return ('正方形 (s²)', this.side-&gt;pow(2))</code>
+<code class="example">            enddef</code>
+<code class="example">        endclass</code>
+<code class="example">        const INPUT: float = "输入浮点数: "-&gt;input()-&gt;str2float()</code>
+<code class="example">        echo "\n形状的面积:"</code>
+<code class="example">        var myCircle: object&lt;Circle&gt; = Circle.new(INPUT)</code>
+<code class="example">        var mySquare: object&lt;Square&gt; = Square.new(INPUT)</code>
+<code class="example">        final shapes: list&lt;Shape&gt; = [myCircle, mySquare]</code>
+<code class="example">        for shape in shapes</code>
+<code class="example">            const [N: string, A: float] = shape.InfoArea()</code>
+<code class="example">            echo $"\t- {N} 的面积是 {A}"</code>
+<code class="example">        endfor</code>
+<code class="example">        echo "\n\t\ttype()\ttypename()\n\t\t------\t----------"</code>
+<code class="example">        echo $"Circle\t\t{Circle-&gt;type()}\t{Circle-&gt;typename()}"</code>
+<code class="example">        echo $"Square\t\t{Square-&gt;type()}\t{Square-&gt;typename()}"</code>
+<code class="example">        echo $"Shape\t\t{Shape-&gt;type()}\t{Shape-&gt;typename()}"</code>
+<code class="example">        echo $"MyCircle\t{myCircle-&gt;type()}\t{myCircle-&gt;typename()}"</code>
+<code class="example">        echo $"MySquare\t{mySquare-&gt;type()}\t{mySquare-&gt;typename()}"</code>
+<code class="example">        echo $"shapes\t\t{shapes-&gt;type()}\t{shapes-&gt;typename()}"</code>
+
+                                        <b class="vimtag"> <a name="vim9-enum-type">vim9-enum-type</a> </b>  <b class="vimtag"> <a name="vim9-enumvalue-type">vim9-enumvalue-type</a> </b>
+ <a href="vim9class.html#enum">enum</a>  也可用作类型 ( <a href="eval.html#v:t_enum">v:t_enum</a> )。保存枚举值的变量在运行时会有枚举值类型
+( <a href="eval.html#v:t_enumvalue">v:t_enumvalue</a> )。以下的交互示例会提示输入一个字符，并返回正方形或菱形的相关
+信息。此示例也会同时报告枚举和枚举值的  <a href="builtin.html#type()">type()</a>  和  <a href="builtin.html#typename()">typename()</a> :
+<code class="example"></code>
+<code class="example">        vim9script</code>
+<code class="example">        enum Quad</code>
+<code class="example">            Square('四条', '只有'),</code>
+<code class="example">            Rhombus('相对的', '没有')</code>
+<code class="example">            var eq: string</code>
+<code class="example">            var ra: string</code>
+<code class="example">            def string(): string</code>
+<code class="example">                return $"\n{this.name} 有" ..</code>
+<code class="example">                       $"{this.eq}等边，而且{this.ra}直角\n\n"</code>
+<code class="example">            enddef</code>
+<code class="example">        endenum</code>
+<code class="example">        echo "菱形 (r) 还是正方形 (s)？"</code>
+<code class="example">        var myQuad: Quad = getcharstr() =~ '\c^R' ? Quad.Rhombus : Quad.Square</code>
+<code class="example">        echo myQuad.string() .. "\ttype()\ttypename()"</code>
+<code class="example">        echo $"Quad  \t{Quad-&gt;type()}  \t{Quad-&gt;typename()}"</code>
+<code class="example">        echo $"myQuad\t{myQuad-&gt;type()}\t{myQuad-&gt;typename()}"</code>
+
+         <code class="note">备注</code>: 此脚本使用内建方法 "string()" ( <a href="vim9class.html#object-string()">object-string()</a> )。
+               Quad 和 myQuad 的 typename() 相同 ("enum<code class="special">&lt;Quad&gt;</code>")，但 type() 不
+               同 (myQuad 返回 16，枚举值的类型值，而 Quad 返回 15，枚举的类型
+               值)。
+
+<code class="section">变量类型和类型转换 </code>
+                                                        <b class="vimtag"> <a name="variable-types">variable-types</a> </b>
+Vim9 脚本或  <a href="vim9.html#:def">:def</a>  函数中声明的变量都有类型，或者通过显式指定，或者通过初始化
+推导得出。
+
+全局、缓冲区、窗口和标签页变量没有特定类型。因而，其值可在任何时候改变，类型也
+会同时随之改变。为此，编译后的代码假定这些变量使用 "any" 类型。
+
+如果希望有更严格的类型检查，这会有问题。例如，声明列表时:
+<code class="example">        var l: list&lt;number&gt; = [1, b:two]</code>
+因为 Vim 不知道 "b:two" 的类型，表达式类型会因此变成 list<code class="special">&lt;any&gt;</code>。这种情况下，运
+行时会在赋值前检查列表是否匹配声明的类型。
+
+                                                        <b class="vimtag"> <a name="type-casting">type-casting</a> </b>
+要进行更精确的类型检查，可使用类型转换。这样，在构造列表前会先检查变量的类型，
+而不是在赋值前检查列表项是否匹配声明的类型。例如:
+<code class="example">        var l: list&lt;number&gt; = [1, &lt;number&gt;b:two]</code>
+
+这里的类型转换会检查 "b:two" 是否为数值，如果不是会报错。
+
+下例展示其中的区别。在函数引用变量 "NTC" 里，Vim 推断表达式 "[1, b:two]" 的类
+型为 list<code class="special">&lt;any&gt;</code>，然后会检查它是否可以赋值给返回值类型 list<code class="special">&lt;number&gt;</code>。而在函数引
+用变量 "TC" 里，类型转换会使 Vim 先检查 "b:two" 是否为 <code class="special">&lt;number&gt;</code> 类型:
+<code class="example"></code>
+<code class="example">        vim9script</code>
+<code class="example">        b:two = '2'</code>
+<code class="example">        const NTC: func = (): list&lt;number&gt; =&gt; {</code>
+<code class="example">            return [1, b:two]</code>
+<code class="example">            }</code>
+<code class="example">        disassemble NTC  # 3 CHECKTYPE list&lt;number&gt; stack [-1]</code>
+<code class="example">        try</code>
+<code class="example">            NTC()</code>
+<code class="example">        catch</code>
+<code class="example">            echo v:exception .. "\n\n"  # 预期 list&lt;number&gt; 但得到 list&lt;any&gt;</code>
+<code class="example">        endtry</code>
+<code class="example">        const TC: func = (): list&lt;number&gt; =&gt; {</code>
+<code class="example">            return [1, &lt;number&gt;b:two]</code>
+<code class="example">            }</code>
+<code class="example">        disassemble TC  # 2 CHECKTYPE number stack [-1]</code>
+<code class="example">        try</code>
+<code class="example">            TC()</code>
+<code class="example">        catch</code>
+<code class="example">            echo v:exception  # 预期 number 但得到 string</code>
+<code class="example">        endtry</code>
+
+          <code class="note">备注</code>: 可以从错误信息的差异看出，类型检查是在不同的阶段发生的。
+
+                                                <b class="vimtag"> <a name="E1104">E1104</a> </b>
+类型转换的语法是 "&lt;<code class="special">{type}</code>&gt;"。如果缺失了 "&lt;" ( <a href="eval.html#E121">E121</a> ) 或者 "&gt;" ( <a href="vim9.html#E1104">E1104</a> )，会报
+错。另外，"&lt;" 之后 ( <a href="eval.html#E15">E15</a> ) 或 "&gt;" 之前 ( <a href="vim9.html#E1068">E1068</a> ) 不能有空格，以避免和小于号以
+及大于号操作符混淆。
+
+虽然类型转换会强制类型检查，但是它不会更改变量的值以及类型。如果要改变类型，可
+用  <a href="builtin.html#string()">string()</a>  函数来转换为字符串型，或者用  <a href="builtin.html#str2nr()">str2nr()</a>  来把字符串转换为数值。
+
+应用在链式表达式上时，类型转换必须和最终的结果兼容。例如:
+<code class="example"></code>
+<code class="example">        vim9script</code>
+<code class="example">        # 以下这些类型转换可行</code>
+<code class="example">        echo &lt;list&lt;any&gt;&gt;[3, 2, 1]-&gt;extend(['Go!'])</code>
+<code class="example">        echo &lt;string&gt;[3, 2, 1]-&gt;extend(['Go!'])-&gt;string()</code>
+<code class="example">        echo &lt;tuple&lt;...list&lt;number&gt;&gt;&gt;[3, 2, 1]-&gt;list2tuple()</code>
+<code class="example">        # 以下类型转换会失败</code>
+<code class="example">        echo &lt;number&gt;[3, 2, 1]-&gt;extend(['Go!'])-&gt;string()</code>
+
+                                                <b class="vimtag"> <a name="E1272">E1272</a> </b>
+如果在不期待类型的上下文中使用类型，会报错 E1272。例如:
+<code class="example">        :vim9cmd echo islocked('x: string')</code>
+   <code class="note">备注</code>: 本例必须在 Vim 的命令行上运行，不能用  <a href="repeat.html#:source">:source</a> 。
+
+                                                <b class="vimtag"> <a name="E1363">E1363</a> </b>
+如果类型不完整，例如对象所属的类未知，报错 E1363。例如:
+<code class="example"></code>
+<code class="example">        vim9script</code>
+<code class="example">        var E1363 = null_class.member  # E1363: Incomplete type</code>
+
+另一个和 null 对象相关的错误是  <a href="vim9class.html#E1360">E1360</a> :
+<code class="example"></code>
+<code class="example">        vim9script</code>
+<code class="example">        var obj = null_object</code>
+<code class="example">        var E1360 = obj.MyMethod()  # E1360: Using a null object</code>
+
+
+<code class="section">类型推导 </code>
+                                                        <b class="vimtag"> <a name="type-inference">type-inference</a> </b>
+显式声明类型有很多优点，包括精确的类型检查和更清晰的错误信息。不过，Vim 在类型
+省略时常常可以自动推断类型。例如，以下每个变量的类型都可以被推导出来， <a href="builtin.html#type()">type()</a> 
+和  <a href="builtin.html#typename()">typename()</a>  会回显推断后的类型:
+<code class="example"></code>
+<code class="example">        vim9script</code>
+<code class="example">        echo "\t type()\t typename()"</code>
+<code class="example">        var b = true    | echo $"{b} \t {b-&gt;type()} \t {b-&gt;typename()}"</code>
+<code class="example">        var f = 4.2     | echo $"{f} \t {f-&gt;type()} \t {f-&gt;typename()}"</code>
+<code class="example">        var l = [1, 2]  | echo $"{l} \t {l-&gt;type()} \t {l-&gt;typename()}"</code>
+<code class="example">        var n = 42      | echo $"{n} \t {n-&gt;type()} \t {n-&gt;typename()}"</code>
+<code class="example">        var s = 'yes'   | echo $"{s} \t {s-&gt;type()} \t {s-&gt;typename()}"</code>
+<code class="example">        var t = (42, )  | echo $"{t} \t {t-&gt;type()} \t {t-&gt;typename()}"</code>
+
+列表、元组和字典的类型来自其值的公共类型。如果所有值为相同类型，则使用该类型。
+如果有不同类型的混合，则用 "any" 类型。下例中，每个常量回显的  <a href="builtin.html#typename()">typename()</a>  展
+示了这些情况:
+<code class="example"></code>
+<code class="example">        vim9script</code>
+<code class="example">        echo [1, 2]-&gt;typename()                          # list&lt;number&gt;</code>
+<code class="example">        echo [1, 'x']-&gt;typename()                        # list&lt;any&gt;</code>
+<code class="example">        echo {ints: [1, 2], bools: [false]}-&gt;typename()  # dict&lt;list&lt;any&gt;&gt;</code>
+<code class="example">        echo (true, false)-&gt;typename()                   # tuple&lt;bool, bool&gt;</code>
+
+函数引用的公共类型里，如果参数数目不尽相同，会用 "(...)" 来指明参数数目不确
+定。下例展示了 "list&lt;func(...): void&gt;":
+<code class="example"></code>
+<code class="example">        vim9script</code>
+<code class="example">        def Foo(x: bool): void</code>
+<code class="example">        enddef</code>
+<code class="example">        def Bar(x: bool, y: bool): void</code>
+<code class="example">        enddef</code>
+<code class="example">        var funclist = [Foo, Bar]</code>
+<code class="example">        echo funclist-&gt;typename()</code>
+
+Vim9 脚本里脚本局部变量会进行类型检查，即使对在老式函数里声明的变量也会。
+例如:
+<code class="example"></code>
+<code class="example">        vim9script</code>
+<code class="example">        var my_local = (1, 2)</code>
+<code class="example">        function Legacy()</code>
+<code class="example">            let b:legacy = [1, 2]</code>
+<code class="example">        endfunction</code>
+<code class="example">        Legacy()</code>
+<code class="example">        echo $"{my_local} 的类型是 {my_local-&gt;type()} ({my_local-&gt;typename()})"</code>
+<code class="example">        echo $"{b:legacy} 的类型是 {b:legacy-&gt;type()} ({b:legacy-&gt;typename()})"</code>
+
+                                                        <b class="vimtag"> <a name="E1013">E1013</a> </b>
+一个列表、元组或字典声明类型后，该类型会与之捆绑。类似地，即使未显式声明类型，
+Vim 也会用推断出来的类型与之捆绑。不管哪种情况，如果在此之后有表达式试图改变类
+型，会报错 E1013。下例展示了类型推断和 E1013:
+<code class="example"></code>
+<code class="example">        vim9script</code>
+<code class="example">        var lb = [true, true]   # 两个 bool，所以 Vim 会推断为 list&lt;bool&gt; 类型</code>
+<code class="example">        echo lb-&gt;typename()     # 回显 list&lt;bool&gt;</code>
+<code class="example">        lb-&gt;extend([0])         # E1013 参数 2: 类型不匹配，...</code>
+
+如果要接受多种类型的列表，可以显式使用 <code class="special">&lt;any&gt;</code>，或者声明时用空列表来初始化 (或者
+两者兼有，如 `list<code class="special">&lt;any&gt;</code> = []`)。示例:
+<code class="example"></code>
+<code class="example">        vim9script</code>
+<code class="example">        final la: list&lt;any&gt; = []</code>
+<code class="example">        echo la-&gt;extend(['two', 1])</code>
+<code class="example">        final le = []</code>
+<code class="example">        echo le-&gt;extend(la)</code>
+
+类似地，要接受多种类型的字典:
+<code class="example"></code>
+<code class="example">        vim9script</code>
+<code class="example">        final da: dict&lt;any&gt; = {}</code>
+<code class="example">        echo da-&gt;extend({2: 2, 1: 'One'})</code>
+<code class="example">        final de = {}</code>
+<code class="example">        echo de-&gt;extend(da)-&gt;string()</code>
+
+另外，虽然元组本身是只读的，但可以通过 "any" 或空元组来实现能接受多种类型的元
+组连接操作:
+<code class="example"></code>
+<code class="example">        vim9script</code>
+<code class="example">        var t_any: tuple&lt;...list&lt;any&gt;&gt; = (3, '2')</code>
+<code class="example">        t_any = t_any + (true, )</code>
+<code class="example">        echo t_any</code>
+<code class="example">        var t_dec_empty = ()</code>
+<code class="example">        t_dec_empty = t_dec_empty + (3, '2', true)</code>
+<code class="example">        echo t_dec_empty</code>
+
+如果列表常量或字典常量没有和变量绑定，则其类型可变，如下例所示:
+<code class="example"></code>
+<code class="example">        vim9script</code>
+<code class="example">        echo [3, 2, 1]-&gt;typename()                       # list&lt;number&gt;</code>
+<code class="example">        echo [3, 2, 1]-&gt;extend(['Zero'])-&gt;typename()     # list&lt;any&gt;</code>
+<code class="example">        echo {1: ['One']}-&gt;typename()                    # dict&lt;list&lt;string&gt;&gt;</code>
+<code class="example">        echo {1: ['One']}-&gt;extend({2: [2]})-&gt;typename()  # dict&lt;list&lt;any&gt;&gt;</code>
+
+
+<code class="section">更严格的类型检查 </code>
+                                                <b class="vimtag"> <a name="type-checking">type-checking</a> </b>
+在老式 Vim 脚本中，在本应是数值的地方使用了字符串，Vim 会自动转换为数值。这对
+像 "123" 这样实际为数值的情形很方便，但对不以数值开始的字符串会出现意料不到的
+问题 (且不报错)。这种特性常常会导致很难发现的漏洞。例如，在老式 Vim 脚本里，下
+例会回显 "1": &gt;vim
+
+        echo 123 == '123'
+&lt;
+不过，如果不小心多了一个空格，就会回显 "0": &gt;vim
+
+        echo 123 == ' 123'
+&lt;
+                                                <b class="vimtag"> <a name="E1206">E1206</a> </b>
+在 Vim9 脚本中，类型检查会更严格。只要使用的值匹配期待的类型，绝大多数地方会和
+以前一样正常工作。例如，在老式 Vim 脚本和 Vim9 脚本里，在期待字典的地方试图用
+其他类型都会报错: &gt;vim
+
+        echo [8, 9]-&gt;keys()
+        vim9cmd echo [8, 9]-&gt;keys()      # E1206: 参数 1 需要字典
+&lt;
+                                                <b class="vimtag"> <a name="E1023">E1023</a> </b> <b class="vimtag"> <a name="E1024">E1024</a> </b> <b class="vimtag"> <a name="E1029">E1029</a> </b> <b class="vimtag"> <a name="E1030">E1030</a> </b>
+                                                <b class="vimtag"> <a name="E1174">E1174</a> </b> <b class="vimtag"> <a name="E1175">E1175</a> </b> <b class="vimtag"> <a name="E1210">E1210</a> </b> <b class="vimtag"> <a name="E1212">E1212</a> </b>
+不过，有些情况下，Vim9 脚本会报错，而老式脚本里不会，这会导致后向不兼容。下面
+的示例展示了各种不兼容的情况。先给出老式 Vim 脚本中不报错时的行为。然后再展示
+相同的命令在 Vim9 脚本里触发的错误。
+
+  - 期待布尔值时使用了数值 (0 或 1 除外): &gt;vim
+
+        echo v:version ? v:true : v:false
+        vim9cmd echo v:version ? true : false  # E1023: 将整数作布尔值使用...
+&lt;
+  - 期待字符串时使用了数值: &gt;vim
+
+        echo filter([1, 2], 0)
+        vim9cmd echo filter([1, 2], 0)  # E1024: 将整数作字符串使用
+&lt;
+  - 期待数值时不使用数值: &gt;vim
+
+        " 此例中，Vim 脚本把 v:false 视作 0
+        function Not1029()
+          let b:l = <code class="special">[42]</code> | unlet b:l[v:false]
+        endfunction
+        call Not1029() | echo b:l
+&lt;
+<code class="example">        vim9script</code>
+<code class="example">        def E1029(): void</code>
+<code class="example">          b:l = [42] | unlet b:l[false]</code>
+<code class="example">        enddef</code>
+<code class="example">        E1029()  # E1029: 预期 number 但得到 bool</code>
+
+  - 将字符串用作数值: &gt;vim
+
+        let b:l = <code class="special">[42]</code> | unlet b:l['#'] | echo b:l
+        vim9cmd b:l = <code class="special">[42]</code> | vim9cmd unlet b:l['#']  # E1030: 将字符串作整...
+&lt;
+  - 参数需要字符串时不使用字符串:
+<code class="example"></code>
+<code class="example">        echo substitute('Hallo', 'a', 'e', v:true)</code>
+<code class="example">        vim9cmd echo substitute('Hallo', 'a', 'e', true)  # E1174: 需要字符串</code>
+
+  - 参数需要非空字符串时使用空串:
+<code class="example"></code>
+<code class="example">        echo exepath('')</code>
+<code class="example">        vim9cmd echo exepath('') # E1175: 参数 1 需要非空字符串</code>
+
+  - 参数需要数值时不使用数值: &gt;vim
+
+        echo gettabinfo('a')
+        vim9cmd echo gettabinfo('a')  # E1210: 参数 1 需要整数
+&lt;
+  - 参数需要布尔值时不使用布尔值: &gt;vim
+
+        echo char2nr('¡', 2)
+        vim9cmd echo char2nr('¡', 2)  # E1212: 参数 2 需要布尔值
+&lt;
+  - 赋值需要数值时不使用数值 ( <a href="options.html#E521">E521</a> ): &gt;vim
+
+        let &amp;laststatus='2'
+        vim9cmd &amp;laststatus = '2'
+&lt;
+  - 赋值需要字符串时不使用字符串 ( <a href="message.html#E928">E928</a> ): &gt;vim
+
+        let &amp;langmenu = 42
+        vim9cmd &amp;langmenu = 42  # E928: 需要字符串
+&lt;
+  - 将  <a href="eval.html#Special">Special</a>  用 <a href="options.html#'is'">'is'</a> 作比较有些情况下会失败 ( <a href="eval.html#E1037">E1037</a> ,  <a href="eval.html#E1072">E1072</a> ): &gt;vim
+
+        " 回显 1，因为两次比较均返回 true
+        echo v:null is v:null &amp;&amp; v:none is v:none
+        " 回显 0，因为所有比较均返回 false
+        echo v:none is v:null || v:none is 8 || v:true is v:none
+        " Vim9 脚本里以下均报错
+        vim9cmd echo v:null is v:null # E1037: 不能对 special 使用 <a href="options.html#'is'">'is'</a>
+        vim9cmd echo v:none is v:none # E1037: 不能对 special 使用 <a href="options.html#'is'">'is'</a>
+        vim9cmd echo v:none is v:null # E1037: 不能对 special 使用 <a href="options.html#'is'">'is'</a>
+        vim9cmd echo v:none is 8      # E1072: 不能比较 special 和 number
+        vim9cmd echo v:true is v:none # E1072: 不能比较 bool 和 special
+&lt;
+          <code class="note">备注</code>: 在最后两例中，Vim9 脚本中如果用  <a href="eval.html#v:none">v:none</a>  会报错，但若改用
+           <a href="vim9.html#null">null</a>  (等同于  <a href="eval.html#v:null">v:null</a>  - 见  <a href="eval.html#v:null">v:null</a> ) 则会返回  <a href="vim9.html#false">false</a> :
+<code class="example"></code>
+<code class="example">                        vim9script</code>
+<code class="example">                        echo null is 8          # false</code>
+<code class="example">                        echo true is null       # false</code>
+
+  - 期待布尔值时使用字符串 ( <a href="eval.html#E1135">E1135</a> ): &gt;vim
+
+        echo '42' ? v:true : v:false
+        vim9cmd echo '42' ? true : false  # E1135: 将字符串作布尔值使用: "42"
+&lt;
+  - 期待数值时使用布尔值 ( <a href="eval.html#E1138">E1138</a> ): &gt;vim
+
+        let &amp;laststatus=v:true
+        vim9cmd &amp;laststatus = true
+&lt;
+  - 参数需要字符串时不使用字符串 ( <a href="vim9.html#E1174">E1174</a> ) &gt;vim
+
+        echo substitute('Hallo', 'a', 'e', v:true)
+        vim9cmd echo substitute('Hallo', 'a', 'e', true)  # E1174: 需要字符串
+&lt;
+一个后果是，如果项目类型已声明或被推导得到，传递给  <a href="builtin.html#map()">map()</a>  的列表或字典不能再
+更改其项目类型。下例中，Vim9 脚本里会报错但老式 Vim 脚本里不会: &gt;vim
+
+        " 老式 Vim 脚本会将 s:mylist 修改为 ['item 0', 'item 1']
+        let s:mylist = [0, 1]
+        call map(s:mylist, {i -&gt; $"item <code class="special">{i}</code>"})
+        echo s:mylist
+&lt;
+<code class="example">        vim9script</code>
+<code class="example">        var mylist = [0, 1]                # Vim 推导 mylist 为 list&lt;number&gt;</code>
+<code class="example">        map(mylist, (i, _) =&gt; $"item {i}") # E1012: 类型不匹配...</code>
+
+此错误之所以发生，是因为  <a href="builtin.html#map()">map()</a>  会试图修改列表项为字符串值，而这和列表已声明
+的类型不相符。
+
+为了避免这个问题，可用  <a href="builtin.html#mapnew()">mapnew()</a>  代替  <a href="builtin.html#map()">map()</a> 。它会创建新列表，未指定类型时
+Vim 会自动推导其类型。下例分别展示了推导出的和显式声明的类型:
+<code class="example"></code>
+<code class="example">        vim9script</code>
+<code class="example">        var mylist = [0, 1]</code>
+<code class="example">        var infer = mylist-&gt;mapnew((i, _) =&gt; $"item {i}")</code>
+<code class="example">        echo [infer, infer-&gt;typename()]</code>
+<code class="example">        var declare: list&lt;string&gt; = mylist-&gt;mapnew((i, _) =&gt; $"item {i}")</code>
+<code class="example">        echo [declare, declare-&gt;typename()]</code>
+
+这里的关键概念是，带有已声明或推导得到类型的变量，不能随着包含该变量的容器类型
+改变而改变。不过，下面情况可以接受类型的 "改变":
+  - 使用容器常量 (不和任何变量绑定)，或者
+  - 使用  <a href="builtin.html#copy()">copy()</a>  或  <a href="builtin.html#deepcopy()">deepcopy()</a>  的方法链式调用。
+这两种情况在下例中都有所展示:
+<code class="example"></code>
+<code class="example">        vim9script</code>
+<code class="example">        # 列表常量</code>
+<code class="example">        echo [1, 2]-&gt;map((_, v) =&gt; $"#{v}")</code>
+<code class="example">        echo [1, 2]-&gt;map((_, v) =&gt; $"#{v}")-&gt;typename()</code>
+<code class="example">        # 用 deepcopy() 的方法链式调用</code>
+<code class="example">        var mylist = [1, 2]</code>
+<code class="example">        echo mylist-&gt;deepcopy()-&gt;map((_, v) =&gt; $"#{v}")</code>
+<code class="example">        echo mylist-&gt;deepcopy()-&gt;map((_, v) =&gt; $"#{v}")-&gt;typename()</code>
+<code class="example">        echo mylist</code>
+
+这里背后的逻辑是，列表被传递和修改时，如果类型已被声明或推导，必须保证已经声
+明/推导得到的类型保持不变，这样才能依靠类型来匹配已声明的类型。而对列表常量或
+被完整复制的列表，不需要类型安全，因为原先的列表未被修改 (如果上例中 "echo
+mylist" 所示)。
+
+如果项目类型未声明而被推导为 "<code class="special">&lt;any&gt;</code>"，即使之后所有的项目变成了相同类型，推导类
+型不会改变。不过，使用  <a href="builtin.html#mapnew()">mapnew()</a>  时，新的推导会使新列表正确反映新类型。
+例如:
+<code class="example"></code>
+<code class="example">        vim9script</code>
+<code class="example">        # list&lt;any&gt;</code>
+<code class="example">        var mylist = [1, '2']                   # 混合类型，也就是 list&lt;any&gt;</code>
+<code class="example">        echo (mylist, mylist-&gt;typename())       # ([1, '2'], 'list&lt;any&gt;')</code>
+<code class="example">        mylist-&gt;map((_, v) =&gt; $"item {v}")      # 所有值都成了字符串类型</code>
+<code class="example">        echo (mylist, mylist-&gt;typename())       # 都是字符串，但还是 list&lt;any&gt;</code>
+<code class="example">        # mapnew()</code>
+<code class="example">        var newlist = mylist-&gt;mapnew((_, v) =&gt; v)</code>
+<code class="example">        echo (newlist, newlist-&gt;typename())     # newlist 变成了 list&lt;string&gt;</code>
+
+ <a href="builtin.html#extend()">extend()</a>  和  <a href="builtin.html#extendnew()">extendnew()</a>  情况也类似，同样地，前者可用列表常量，所以下例没问
+题:
+<code class="example"></code>
+<code class="example">        vim9cmd echo [1, 2]-&gt;extend(['3'])      # [1, 2, 3]</code>
+
+但下例不行:
+<code class="example"></code>
+<code class="example">        vim9script</code>
+<code class="example">        var mylist: list&lt;number&gt; = [1, 2]</code>
+<code class="example">        echo mylist-&gt;extend(['3'])         # E1013: 参数 2: 类型不匹配...</code>
+
+要扩充类型确定的已有列表，必须用  <a href="builtin.html#extendnew()">extendnew()</a> ，除非扩充内容和列表的现有类型匹
+配 (也包括 "any")。例如，要先扩充一个相同类型的项目，再扩充一个不同类型的项
+目，可用:
+<code class="example"></code>
+<code class="example">        vim9script</code>
+<code class="example">        var mylist: list&lt;number&gt; = [1, 2]</code>
+<code class="example">        mylist-&gt;extend([3])</code>
+<code class="example">        echo mylist-&gt;extendnew(['4'])      # [1, 2, 3, '4']</code>
+<code class="example"></code>
+                                                                <b class="vimtag"> <a name="E1158">E1158</a> </b>
+Vim9 脚本不支持  <a href="builtin.html#flatten()">flatten()</a> ，因为它的目的就是修改类型。即使对列表常量也是如此
+(这一点和  <a href="builtin.html#map()">map()</a>  和  <a href="builtin.html#extend()">extend()</a>  不同)。必须使用  <a href="builtin.html#flattennew()">flattennew()</a>  代替:
+<code class="example"></code>
+<code class="example">        vim9cmd [1, [2, 3]]-&gt;flatten()          # E1158: Vim9 中不能用 flatten</code>
+<code class="example">        vim9cmd echo [1, [2, 3]]-&gt;flattennew()  # [1, 2, 3]</code>
+
+赋值给指定参数的函数引用  (见  <a href="vim9.html#vim9-func-declaration">vim9-func-declaration</a> ) 会严格检查参数的类型。
+下例可以正常工作:
+<code class="example"></code>
+<code class="example">        vim9script</code>
+<code class="example">        var F_name_age: func(string, number): string</code>
+<code class="example">        F_name_age = (n: string, a: number): string =&gt; $"Name: {n}, Age: {a}"</code>
+<code class="example">        echo F_name_age('Bob', 42)</code>
+
+而下例会报错  <a href="vim9.html#E1012">E1012</a>  (类型不匹配):
+<code class="example"></code>
+<code class="example">        vim9script</code>
+<code class="example">        var F_name_age: func(string, number): string</code>
+<code class="example">        F_name_age = (n: string, a: string): string =&gt; $"Name: {n}, Age: {a}"</code>
+
+可变数目参数必须使用相同类型，如下例所示:
+<code class="example"></code>
+<code class="example">        vim9script</code>
+<code class="example">        var Fproduct: func(...list&lt;number&gt;): number</code>
+<code class="example">        Fproduct = (...v: list&lt;number&gt;): number =&gt; reduce(v, (a, b) =&gt; a * b)</code>
+<code class="example">        echo Fproduct(3, 2, 4)  # 回显 24</code>
+
+<code class="special">&lt;any&gt;</code> 可用于需要混合类型的函数:
+<code class="example"></code>
+<code class="example">        vim9script</code>
+<code class="example">        var FlatSort: func(...list&lt;any&gt;): any</code>
+<code class="example">        FlatSort = (...v: list&lt;any&gt;) =&gt; flattennew(v)-&gt;sort('n')</code>
+<code class="example">        echo FlatSort(true, [[[5, 3], 2], 4])  # 回显 [true, 2, 3, 4, 5]</code>
+
+          <code class="note">注意</code>: 使用 <code class="special">&lt;any&gt;</code> 的匿名函数赋值给的函数引用不会跳过类型检查。函数引
+                用的声明类型仍然适用，如下例所示，如果类型不匹配，仍然会在运行
+                时或编译时报错:
+<code class="example"></code>
+<code class="example">                    vim9script</code>
+<code class="example">                    var FuncSN: func(string): number</code>
+<code class="example">                    FuncSN = (v: any): number =&gt; v-&gt;str2nr()</code>
+<code class="example">                    echo FuncSN('162')-&gt;nr2char()  # 回显 ¢</code>
+<code class="example">                    echo FuncSN(162)-&gt;nr2char())   # E1013 (运行时报错)</code>
+
+<code class="example">                    vim9script</code>
+<code class="example">                    var FuncSN: func(string): number</code>
+<code class="example">                    FuncSN = (v: any): number =&gt; v-&gt;str2nr()</code>
+<code class="example">                    def FuncSNfail(): void</code>
+<code class="example">                        echo FuncSN('162')-&gt;nr2char()  # 没有回显，因为 ...</code>
+<code class="example">                        echo FuncSN(162)-&gt;nr2char()    # 编译时报错</code>
+<code class="example">                    enddef</code>
+<code class="example">                    FuncSNfail()</code>
+
+没有指定参数的函数引用不进行参数类型检查。下例中 FlexArgs 第一次调用时接受字符
+串参数，第二次调用时接受列表参数:
+<code class="example"></code>
+<code class="example">        vim9script</code>
+<code class="example">        var FlexArgs: func: string</code>
+<code class="example">        FlexArgs = (s: string): string =&gt; $"It's countdown time {s}..."</code>
+<code class="example">        echo FlexArgs("everyone")</code>
+<code class="example">        FlexArgs = (...values: list&lt;string&gt;): string =&gt; join(values, ', ')</code>
+<code class="example">        echo FlexArgs('3', '2', '1', 'GO!')</code>
+
+
+                                <b class="vimtag"> <a name="E1211">E1211</a> </b> <b class="vimtag"> <a name="E1217">E1217</a> </b> <b class="vimtag"> <a name="E1218">E1218</a> </b> <b class="vimtag"> <a name="E1219">E1219</a> </b> <b class="vimtag"> <a name="E1220">E1220</a> </b>
+                                <b class="vimtag"> <a name="E1221">E1221</a> </b> <b class="vimtag"> <a name="E1222">E1222</a> </b> <b class="vimtag"> <a name="E1223">E1223</a> </b> <b class="vimtag"> <a name="E1224">E1224</a> </b> <b class="vimtag"> <a name="E1225">E1225</a> </b>
+                                <b class="vimtag"> <a name="E1226">E1226</a> </b> <b class="vimtag"> <a name="E1228">E1228</a> </b> <b class="vimtag"> <a name="E1235">E1235</a> </b> <b class="vimtag"> <a name="E1238">E1238</a> </b> <b class="vimtag"> <a name="E1251">E1251</a> </b>
+                                <b class="vimtag"> <a name="E1253">E1253</a> </b> <b class="vimtag"> <a name="E1256">E1256</a> </b> <b class="vimtag"> <a name="E1297">E1297</a> </b> <b class="vimtag"> <a name="E1298">E1298</a> </b> <b class="vimtag"> <a name="E1301">E1301</a> </b>
+                                <b class="vimtag"> <a name="E1528">E1528</a> </b> <b class="vimtag"> <a name="E1529">E1529</a> </b> <b class="vimtag"> <a name="E1530">E1530</a> </b> <b class="vimtag"> <a name="E1531">E1531</a> </b> <b class="vimtag"> <a name="E1534">E1534</a> </b>
+大多数内建函数会检查类型，以便查找错误。下面的单行  <a href="vim9.html#:vim9">:vim9</a>  调用内建函数的命令
+展示了许多类型检查相关的错误:
+<code class="example"></code>
+<code class="example">        vim9 9-&gt;list2blob()               # E1211: 参数 1 需要列表</code>
+<code class="example">        vim9 9-&gt;ch_close()                # E1217: 参数 1 需要通道或任务</code>
+<code class="example">        vim9 9-&gt;job_info()                # E1218: 参数 1 需要任务</code>
+<code class="example">        vim9 [9]-&gt;cos()                   # E1219: 参数 1 需要浮点数或整数</code>
+<code class="example">        vim9 {}-&gt;remove([])               # E1220: 参数 1 需要字符串或整数</code>
+<code class="example">        vim9 null_channel-&gt;ch_evalraw(9)  # E1221: 参数 1 需要字符串或 blob</code>
+<code class="example">        vim9 9-&gt;col()                     # E1222: 参数 1 需要字符串或列表</code>
+<code class="example">        vim9 9-&gt;complete_add()            # E1223: 参数 1 需要字符串或字典</code>
+<code class="example">        vim9 setbufline(9, 9, {})         # E1224: 参数 3 需要字符串或整数 ...</code>
+<code class="example">        vim9 9-&gt;count(9)                  # E1225: 参数 1 需要字符串、列表 ...</code>
+<code class="example">        vim9 9-&gt;add(9)                    # E1226: 参数 1 需要列表或 blob</code>
+<code class="example">        vim9 9-&gt;remove(9)                 # E1228: 参数 1 需要列表、字典或 ...</code>
+<code class="example">        vim9 getcharstr('9')              # E1235: 参数 1 需要布尔值或整数</code>
+<code class="example">        vim9 9-&gt;blob2list()               # E1238: 参数 1 需要 blob</code>
+<code class="example">        vim9 9-&gt;filter(9)                 # E1251: 参数 1 需要列表、元组、B...</code>
+<code class="example">        vim9 9-&gt;reverse()                 # E1253: 参数 1 需要字符串、列表 ...</code>
+<code class="example">        vim9 9-&gt;call(9)                   # E1256: 参数 1 需要字符串或函数</code>
+<code class="example">        vim9 null_dict-&gt;winrestview()     # E1297: 参数 1 需要非空字典</code>
+<code class="example">        vim9 {}-&gt;prop_add_list(null_list) # E1298: 参数 2 需要非空列表</code>
+<code class="example">        vim9 {}-&gt;repeat(9)                # E1301: 参数 1 需要字符串、数字 ...</code>
+<code class="example">        vim9 9-&gt;index(9)                  # E1528: 参数 1 需要列表、元组或 ...</code>
+<code class="example">        vim9 9-&gt;join()                    # E1529: 参数 1 需要列表或元组</code>
+<code class="example">        vim9 9-&gt;max()                     # E1530: 参数 1 需要列表、元组或字典</code>
+<code class="example">        vim9 9-&gt;get(9)                    # E1531: get() 的参数必须是列表、...</code>
+<code class="example">        vim9 9-&gt;tuple2list()              # E1534: 参数 1 需要元组</code>
+
+保留作将来使用:                                 <b class="vimtag"> <a name="E1227">E1227</a> </b> <b class="vimtag"> <a name="E1250">E1250</a> </b> <b class="vimtag"> <a name="E1252">E1252</a> </b>
+        E1227: 参数 %d 需要列表或字典
+        E1250: %s 的参数必须是列表、字符串、字典或 blob
+        E1252: 参数 %d 需要字符串、列表或 blob
+
+
+<code class="section">变量种类、缺省和 null 处理 </code>
+                                        <b class="vimtag"> <a name="variable-categories">variable-categories</a> </b> <b class="vimtag"> <a name="null-variables">null-variables</a> </b>
+变量有以下三个种类:
+        原始类型        number、float、boolean
+        容器类型        string、blob、list、tuple、dict
+        特殊类型        function、job、channel、user-defined-object
+
+声明没有初始块的变量时，必须显式提供类型。每个种类有不同的缺省初始块语法。
+
+原始类型缺省值为类型特定的初始值。该初始值的  <a href="builtin.html#empty()">empty()</a>  值为真，但不等于
+ <a href="vim9.html#null">null</a> :
+<code class="example"></code>
+<code class="example">    vim9script</code>
+<code class="example">    var n: number | echo [n, n-&gt;empty(), n == null]  # [0, 1, false]</code>
+<code class="example">    var f: float  | echo [f, f-&gt;empty(), f == null]  # [0.0, 1, false]</code>
+<code class="example">    var b: bool   | echo [b, b-&gt;empty(), b == null]  # [false, 1, false]</code>
+
+容器类型缺省值为空容器。只有字符串类型的缺省值等于  <a href="vim9.html#null">null</a> :
+<code class="example"></code>
+<code class="example">    vim9script</code>
+<code class="example">    var s: string       | echo [s, s-&gt;empty(), s == null]  # ['', 1, true]</code>
+<code class="example">    var z: blob         | echo [z, z-&gt;empty(), z == null]  # [0z, 1, false]</code>
+<code class="example">    var l: list&lt;string&gt; | echo [l, l-&gt;empty(), l == null]  # [[], 1, false]</code>
+<code class="example">    var t: tuple&lt;any&gt;   | echo [t, t-&gt;empty(), t == null]  # [(), 1, false]</code>
+<code class="example">    var d: dict&lt;number&gt; | echo [d, d-&gt;empty(), d == null]  # [{}, 1, false]</code>
+
+特殊类型缺省值为  <a href="vim9.html#null">null</a> :
+<code class="example"></code>
+<code class="example">    vim9script</code>
+<code class="example">    var F: func    | echo [F, F == null]  # [function(''), true]</code>
+<code class="example">    var j: job     | echo [j, j == null]  # ['no process', true]</code>
+<code class="example">    var c: channel | echo [c, c == null]  # ['channel fail', true]</code>
+<code class="example">    class Class</code>
+<code class="example">    endclass</code>
+<code class="example">    var o: Class   | echo [o, o == null]  # [object of [unknown], true]</code>
+<code class="example">    enum Enum</code>
+<code class="example">    endenum</code>
+<code class="example">    var e: Enum    | echo [e, e == null]  # [object of [unknown], true]</code>
+
+          <code class="note">备注</code>:  <a href="builtin.html#empty()">empty()</a>  说明了作业、通道和对象类型何时为空。
+
+Vim 没有你熟悉的 null 值；但它有若干预定义的 null_<code class="special">&lt;type&gt;</code> 值，如
+ <a href="vim9.html#null_string">null_string</a> 、 <a href="vim9.html#null_list">null_list</a> 、 <a href="vim9.html#null_job">null_job</a> 。原始类型则没有相应的 null_<code class="special">&lt;type&gt;</code>。
+null_<code class="special">&lt;type&gt;</code> 的典型用法有:
+- 用于清除变量，释放其资源，
+- 用于作为函数定义里的参数缺省值 (例见  <a href="vim9.html#null_blob">null_blob</a> )，或
+- 赋值给容器或特殊类型变量，用于之后和 null 作比较 (例见  <a href="vim9.html#null-compare">null-compare</a> )。
+
+对于像  <a href="channel.html#job">job</a>  这样的特殊类型变量而言，null_<code class="special">&lt;type&gt;</code> 可用于清理资源。例如:
+<code class="example"></code>
+<code class="example">        vim9script</code>
+<code class="example">        var mydate: list&lt;string&gt;</code>
+<code class="example">        def Date(channel: channel, msg: string): void</code>
+<code class="example">            mydate-&gt;add(msg)</code>
+<code class="example">        enddef</code>
+<code class="example">        var myjob = job_start([&amp;shell, &amp;shellcmdflag, 'date'], {out_cb: Date})</code>
+<code class="example">        echo [myjob, myjob-&gt;job_status()]</code>
+<code class="example">        sleep 2</code>
+<code class="example">        echo $"当前日期时间是 {mydate-&gt;join('')}"</code>
+<code class="example">        echo [myjob, myjob-&gt;job_status()]</code>
+<code class="example">        myjob = null_job  # 清除变量；并释放作业资源。</code>
+<code class="example">        echo myjob</code>
+
+对于容器类型变量而言，将空容器值赋给变量也可以用来清理资源。例如:
+<code class="example"></code>
+<code class="example">        vim9script</code>
+<code class="example">        var perfect: list&lt;number&gt; = [1, 4]</code>
+<code class="example">        perfect-&gt;extend([9, 16, 25])</code>
+<code class="example">        perfect = []</code>
+<code class="example">        echo perfect</code>
+<code class="example"></code>
+使用空容器而不是 null_<code class="special">&lt;type&gt;</code> 来清除容器类型变量可以避免  <a href="vim9.html#null-anomalies">null-anomalies</a>  描述
+的 null 的复杂性。
+
+容器类型变量和特殊类型变量使用不同的初始块语法。对于容器类型而言:
+  - 未初始化的容器类型变量缺省为空，但不等于  <a href="vim9.html#null">null</a> (未初始化的字符串除
+    外)
+  - 用 []、()、<code class="special">{}</code>、""、或 0z 初始化的容器为空，但不等于  <a href="vim9.html#null">null</a> 。
+  - 用 null_<code class="special">&lt;type&gt;</code> 初始化的容器缺省为空，且该值等于  <a href="vim9.html#null">null</a> 。
+
+下例中，未初始化的列表 ("lu") 和 [] 初始化的列表 ("li") 是等价的，也无法区分，
+而 "ln" 是 null 容器，它与空容器相似但并不等价 (见  <a href="vim9.html#null-anomalies">null-anomalies</a> )。
+<code class="example"></code>
+<code class="example">        vim9script</code>
+<code class="example">        # 未初始化: 空容器，不等于 null</code>
+<code class="example">        var lu: list&lt;any&gt;</code>
+<code class="example">        echo ['lu', $"empty={lu-&gt;empty()}", $"null={lu == null}"]</code>
+<code class="example">        # 已初始化: 空容器，不等于 null</code>
+<code class="example">        var li: list&lt;any&gt; = []</code>
+<code class="example">        echo ['li', $"empty={li-&gt;empty()}", $"null={li == null}"]</code>
+<code class="example">        # 已初始化: 空容器，等于 null</code>
+<code class="example">        var ln: list&lt;any&gt; = null_list</code>
+<code class="example">        echo ['ln', $"empty={ln-&gt;empty()}", $"null={ln == null}"]</code>
+
+特殊类型变量缺省等于 null。下例中作业的不同初始化方式等价且无法区分:
+<code class="example"></code>
+<code class="example">        vim9script</code>
+<code class="example">        var j1: job</code>
+<code class="example">        var j2: job = null_job</code>
+<code class="example">        var j3 = null_job</code>
+<code class="example">        echo (j1 == j2) == (j2 == j3)  # true (等价，无法区分)</code>
+
+声明列表、元组或字典时，如果项目类型未指定且无法推导，类型会缺省判定为
+"any":
+<code class="example"></code>
+<code class="example">        vim9script</code>
+<code class="example">        var [t1, t2] = [(), null_tuple]</code>
+<code class="example">        echo $'t1 是 {t1-&gt;typename()} 而 t2 也是 {t2-&gt;typename()}'</code>
+
+元组和函数 (或者偏函数) 还有若干不同的声明方式。见  <a href="vim9.html#tuple-type">tuple-type</a> 、
+ <a href="vim9.html#variadic-tuple">variadic-tuple</a>  和  <a href="vim9.html#vim9-func-declaration">vim9-func-declaration</a> 。
+
+                                                <b class="vimtag"> <a name="null-compare">null-compare</a> </b>
+对于常见的和 null 比较的语法，如果要求空容器和 null 容器不相等，比较时不要使用
+null_<code class="special">&lt;type&gt;</code>。这是因为，Vim9 脚本里，虽然 null_<code class="special">&lt;type&gt;</code> ==  <a href="vim9.html#null">null</a> ，但是，将:
+
+  - 空容器和  <a href="vim9.html#null">null</a>  比较会返回  <a href="vim9.html#false">false</a> ，但将
+  - 空容器和 null_<code class="special">&lt;type&gt;</code> 比较会返回  <a href="vim9.html#true">true</a> 。
+
+所以，请和  <a href="vim9.html#null">null</a>  相比较，而不是 null_<code class="special">&lt;type&gt;</code>。示例:
+<code class="example"></code>
+<code class="example">        vim9script</code>
+<code class="example">        var bonds: dict&lt;list&lt;string&gt;&gt; = {g: ['007', '008'], o: ['007', '009']}</code>
+<code class="example">        def Search(query: string): list&lt;string&gt;</code>
+<code class="example">            return query == "\r" ? null_list : bonds-&gt;get(query, [])</code>
+<code class="example">        enddef</code>
+<code class="example">        echo "金手指 (g) 还是八爪女 (o)?: "</code>
+<code class="example">        const C: string = getcharstr()</code>
+<code class="example">        var result: list&lt;string&gt; = C-&gt;Search()</code>
+<code class="example">        if result == null  # &lt;&lt;&lt; _此处不要使用_ null_list！</code>
+<code class="example">            echo "错误: 没有输入"</code>
+<code class="example">        else</code>
+<code class="example">            echo result-&gt;empty() ? $"没有 '{C}' 的匹配" : $"{result}"</code>
+<code class="example">        endif</code>
+
+          <code class="note">备注</code>: 使用 "result == null_list" 而非 "result == null" 会无法区分错
+                误 (未输入任何选择) 和合法 (但找不到匹配) 的结果，因为
+                [] == null_list 而 [] != null。
+
+概念上，可以将 null_<code class="special">&lt;type&gt;</code> 构造想像为通用的  <a href="vim9.html#null">null</a>  容器和有类型的  <code class="badlink">empty</code>  容器
+的一种混合/桥梁，兼有两种属性。下一小节会给出关于比较结果的更多细节。
+
+                                        <b class="vimtag"> <a name="null-details">null-details</a> </b> <b class="vimtag"> <a name="null-anomalies">null-anomalies</a> </b>
+本小节描述使用 null 和 null_<code class="special">&lt;type&gt;</code> 的问题；下面列举 null 比较各种可能的结果。
+有些情况下，如果熟悉了 vim9 的 null 语法，程序员还是可以选择使用 null_<code class="special">&lt;type&gt;</code>
+来进行比较和/或用于其他情景。
+
+在文档的其他地方有说过: "null 值和空值处理方式通常相同，但不绝对”。例如，不能
+在 null 容器上添加元素:
+<code class="example"></code>
+<code class="example">        vim9script</code>
+<code class="example">        var le: list&lt;any&gt; = []</code>
+<code class="example">        le-&gt;add('Okay')         # le 现在是 ['Okay']</code>
+<code class="example">        var ln = null_list</code>
+<code class="example">        ln-&gt;add("E1130")        # E1130: 不能加到 null 列表</code>
+
+如同  <a href="vim9.html#null-compare">null-compare</a>  已经解释过的， <a href="vim9.html#null">null</a> 、null_<code class="special">&lt;type&gt;</code> 和  <code class="badlink">empty</code>  容器三者之间
+不满足传递关系。下例简单回顾一下:
+<code class="example"></code>
+<code class="example">        vim9cmd echo (null_dict == {}, null_dict == null, {} != null)</code>
+
+唯一的例外是未初始化的字符串。它等于  <a href="vim9.html#null">null</a>  (和  <a href="vim9.html#null_string">null_string</a>  是同一实例)。
+<a href="options.html#'is'">'is'</a> 操作符 ( <a href="eval.html#expr-is">expr-is</a> ) 可用于判断字符串是否未初始化:
+<code class="example"></code>
+<code class="example">        vim9script</code>
+<code class="example">        var s: string</code>
+<code class="example">        echo s == null_string           # true</code>
+<code class="example">        echo s is null_string           # true (相同实例)</code>
+<code class="example">        echo s == null                  # true (可能意想不到)</code>
+<code class="example">        echo s is null                  # false (并非相同实例)</code>
+
+其它容器类型的行为则有所不同，用 <a href="options.html#'is'">'is'</a> 和相应的 null_<code class="special">&lt;type&gt;</code> 比较时，会返回
+ <a href="vim9.html#false">false</a> :
+<code class="example"></code>
+<code class="example">        vim9script</code>
+<code class="example">        var d: dict&lt;any&gt;</code>
+<code class="example">        echo d == null_dict             # true</code>
+<code class="example">        echo d is null_dict             # false (并非相同实例)</code>
+<code class="example">        echo d == null                  # false (意料之中)</code>
+<code class="example">        echo d is null                  # false (并非相同实例)</code>
+
+这里关键的区别是，未初始化的字符串的实现是  <a href="vim9.html#null_string">null_string</a> ，而未初始化的列表、字
+典、元组或 blob 的实现是空容器 (分别是 []、<code class="special">{}</code>、() 和 0z)。所以，这些类型的未初
+始化值和它们相应的 null_<code class="special">&lt;type&gt;</code> 相等但并非相同实例，如下例所示:
+<code class="example"></code>
+<code class="example">        vim9script</code>
+<code class="example">        var t: tuple&lt;any&gt;</code>
+<code class="example">        echo t == null_tuple            # true</code>
+<code class="example">        echo t is null_tuple            # false</code>
+<code class="example"></code>
+不过，用 null_<code class="special">&lt;type&gt;</code> 初始化的变量不仅和 null_<code class="special">&lt;type&gt;</code> 相等，也和 null 相等。
+示例:
+<code class="example"></code>
+<code class="example">        vim9script</code>
+<code class="example">        var t: tuple&lt;any&gt; = null_tuple</code>
+<code class="example">        echo t == null_tuple            # true</code>
+<code class="example">        echo t is null_tuple            # true</code>
+<code class="example">        echo t == null                  # true</code>
+
+未初始化的容器类型变量都不等于 null，只有未初始化的字符串除外，这一点，上面已
+有解释。所以，下例都会回显  <a href="vim9.html#true">true</a> :
+<code class="example"></code>
+<code class="example">        vim9script</code>
+<code class="example">        var b: blob             | echo b != null</code>
+<code class="example">        var d: dict&lt;any&gt;        | echo d != null</code>
+<code class="example">        var l: list&lt;any&gt;        | echo l != null</code>
+<code class="example">        var t: tuple&lt;any&gt;       | echo t != null</code>
+<code class="example">        var s: string           | echo s == null</code>
+<code class="example"></code>
+未初始化的特殊类型变量都等于 null，所以，下例都会回显  <a href="vim9.html#true">true</a> :
+<code class="example"></code>
+<code class="example">        vim9script</code>
+<code class="example">        var c: channel          | echo c == null</code>
+<code class="example">        var F: func             | echo F == null</code>
+<code class="example">        var j: job              | echo j == null</code>
+<code class="example">        class Class</code>
+<code class="example">        endclass</code>
+<code class="example">        var nc: Class           | echo nc == null</code>
+<code class="example">        enum Enum</code>
+<code class="example">        endenum</code>
+<code class="example">        var ne: Enum            | echo ne == null</code>
+
+          <code class="note">备注</code>: 像作业这样的特殊类型变量缺省为 null，所以它们没有对应的空值。
+
+用空值初始化的容器类型变量等于 null_<code class="special">&lt;type&gt;</code>，所以，下例都会返回  <a href="vim9.html#true">true</a> :
+<code class="example"></code>
+<code class="example">        vim9script</code>
+<code class="example">        var s: string = ""     | echo s == null_string</code>
+<code class="example">        var b: blob = 0z       | echo b == null_blob</code>
+<code class="example">        var l: list&lt;any&gt; = []  | echo l == null_list</code>
+<code class="example">        var t: tuple&lt;any&gt; = () | echo t == null_tuple</code>
+<code class="example">        var d: dict&lt;any&gt; = {}  | echo d == null_dict</code>
+
+不过，用空值初始化的容器类型变量不等于 null，所以，下例都会返回  <a href="vim9.html#true">true</a> :
+<code class="example"></code>
+<code class="example">        vim9script</code>
+<code class="example">        var s: string = ""     | echo s != null</code>
+<code class="example">        var b: blob = 0z       | echo b != null</code>
+<code class="example">        var l: list&lt;any&gt; = []  | echo l != null</code>
+<code class="example">        var t: tuple&lt;any&gt; = () | echo t != null</code>
+<code class="example">        var d: dict&lt;any&gt; = {}  | echo d != null</code>
+
+
+</section><hr class="doubleline" /><section class=inner>
+<h4></h4>                                                <b class="vimtag"> <a name="generic-functions">generic-functions</a> </b>
+5. 泛型函数
+
+泛型函数允许使用相同的函数但带不同的类型参数，而保留对参数和返回值的类型检查。
+这样可以提供类型安全性和代码重用性。
+
+<code class="section">声明</code>
+                                                <b class="vimtag"> <a name="generic-function-declaration">generic-function-declaration</a> </b>
+                                                <b class="vimtag"> <a name="E1553">E1553</a> </b> <b class="vimtag"> <a name="E1554">E1554</a> </b>
+泛型函数用紧跟函数名后的尖括号 "&lt;" 和 "&gt;" 里的类型参数声明其类型变量。多种类型
+名以逗号分隔:
+<code class="example"></code>
+<code class="example">        def[!] {函数名}&lt;{类型} [, {类型}]&gt;([参数])[: {返回类型}]</code>
+<code class="example">            {函数体}</code>
+<code class="example">        enddef</code>
+                                                <b class="vimtag"> <a name="generic-function-example">generic-function-example</a> </b>
+然后在函数签名和函数体里，这些类型参数可以和任何其他类型一样被使用。下例把两个
+列表组合为元组的列表:
+<code class="example"></code>
+<code class="example">        vim9script</code>
+<code class="example">        def Zip&lt;T, U&gt;(first: list&lt;T&gt;, second: list&lt;U&gt;): list&lt;tuple&lt;T, U&gt;&gt;</code>
+<code class="example">            const LEN: number = ([first-&gt;len(), second-&gt;len()])-&gt;min()</code>
+<code class="example">            final result: list&lt;tuple&lt;T, U&gt;&gt; = []</code>
+<code class="example">            for i in range(LEN)</code>
+<code class="example">                result-&gt;add((first[i], second[i]))</code>
+<code class="example">            endfor</code>
+<code class="example">            return result</code>
+<code class="example">        enddef</code>
+<code class="example">        var n: list&lt;number&gt; = [61, 62, 63]</code>
+<code class="example">        var s: list&lt;string&gt; = ['a', 'b', 'c']</code>
+<code class="example">        echo $"Zip example #1: {Zip&lt;number, string&gt;(n, s)}"</code>
+<code class="example">        echo $"Zip example #2: {Zip&lt;string, number&gt;(s, n)}"</code>
+
+                                                <b class="vimtag"> <a name="type-variable-naming">type-variable-naming</a> </b> <b class="vimtag"> <a name="E1552">E1552</a> </b>
+                                                <b class="vimtag"> <a name="type-parameter-naming">type-parameter-naming</a> </b>
+如上例所示，一般惯例是，类型变量使用单个大写字母 (如 T、U、A 等等)。虽然可以有
+多于一个字母，但必须以大写字母开头。下例中，"Ok" 合法，但 "n" 不是:
+<code class="example"></code>
+<code class="example">        vim9script</code>
+<code class="example">        def MyFail&lt;Ok, n&gt;(): void</code>
+<code class="example">        enddef</code>
+<code class="example">        # E1552: Type variable name must start with an uppercase letter: n...</code>
+
+                                                <b class="vimtag"> <a name="E1558">E1558</a> </b> <b class="vimtag"> <a name="E1560">E1560</a> </b>
+函数可以必须作为泛型函数或常规函数之一来声明和使用 - 但不能同时是两者。下面的
+Vim9 脚本显示这些错误:
+<code class="example"></code>
+<code class="example">        vim9script</code>
+<code class="example">        My1558&lt;number&gt;()</code>
+<code class="example">        # E1558: Unknown generic function: My1558</code>
+
+<code class="example">        vim9script</code>
+<code class="example">        def My1560(): void</code>
+<code class="example">        enddef</code>
+<code class="example">        My1560&lt;string&gt;()</code>
+<code class="example">        # E1560: Not a generic function: My1560</code>
+
+                                                <b class="vimtag"> <a name="E1561">E1561</a> </b>
+类型参数名不能和其他标识符冲突:
+<code class="example"></code>
+<code class="example">        vim9script</code>
+<code class="example">        def My1561&lt;D, E, D&gt;(): D</code>
+<code class="example">        enddef</code>
+<code class="example">        # E1561: Duplicate type variable name: D</code>
+<code class="example"></code>
+<code class="example">        vim9script</code>
+<code class="example">        enum E</code>
+<code class="example">          Yes, No</code>
+<code class="example">        endenum</code>
+<code class="example">        def My1041&lt;E&gt;(): E</code>
+<code class="example">        enddef</code>
+<code class="example">        # E0141: Redefining script item "E"</code>
+
+
+<code class="section">调用泛型函数</code>
+                                                <b class="vimtag"> <a name="generic-function-call">generic-function-call</a> </b>
+要调用泛型函数，在函数名和参数列表之间的 "&lt;" 和 "&gt;" 里指定具体类型:
+<code class="example"></code>
+<code class="example">        MyFunc&lt;number, string, list&lt;number&gt;&gt;()</code>
+
+        <code class="note">注意</code>: 本小节有几个可用的示例，可以直接执行，包括
+               <a href="vim9.html#generic-function-example">generic-function-example</a> 。
+
+                                        <b class="vimtag"> <a name="E1555">E1555</a> </b> <b class="vimtag"> <a name="E1556">E1556</a> </b> <b class="vimtag"> <a name="E1557">E1557</a> </b> <b class="vimtag"> <a name="E1559">E1559</a> </b>
+传递给函数的类型实参数目必须和声明中类型参数的数目匹配。不允许空类型列表。
+示例:
+<code class="example"></code>
+<code class="example">        vim9script</code>
+<code class="example">        def My1555&lt;&gt;(): void</code>
+<code class="example">        enddef</code>
+<code class="example">        # E1555: Empty type list specified for generic function ...</code>
+
+<code class="example">        vim9script</code>
+<code class="example">        def My1556&lt;T&gt;(): void</code>
+<code class="example">        enddef</code>
+<code class="example">        My1556&lt;bool, bool&gt;()</code>
+<code class="example">        # E1556: Too many types specified for generic function ...</code>
+
+<code class="example">        vim9script</code>
+<code class="example">        def My1557&lt;T, U&gt;(): void</code>
+<code class="example">        enddef</code>
+<code class="example">        My1557&lt;bool&gt;()</code>
+<code class="example">        # E1557: Not enough types specified for generic function ...</code>
+
+<code class="example">        vim9script</code>
+<code class="example">        def My1559&lt;T&gt;(): T</code>
+<code class="example">        enddef</code>
+<code class="example">        My1559()</code>
+<code class="example">        # Vim(eval):E1559: Type arguments missing for generic function ...</code>
+
+任何 Vim9 类型 ( <a href="vim9.html#vim9-types">vim9-types</a> ) 都可用于泛型函数的具体类型。
+
+以下各处不接受空格:
+- 函数名和 "&lt;" 之间 ( <a href="vim9.html#E1068">E1068</a> )
+- "&gt;" 和左括号 "(" 之间 ( <a href="vim9.html#E1068">E1068</a> )，或
+- "&lt;" 和 "&gt;" 之间，分隔类型的逗号之后所需的空格除外 ( <a href="vim9.html#E1202">E1202</a> )。
+
+和常规函数一样，泛型函数可被导出和导入。见  <a href="vim9.html#:export">:export</a>  和  <a href="vim9.html#:import">:import</a> 。
+
+泛型函数可在另一个常规或泛型函数里定义。示例:
+<code class="example">        vim9script</code>
+<code class="example">        def Outer(): void</code>
+<code class="example">          # 返回列表的首个项目，或者缺省值</code>
+<code class="example">          def FirstOrDefault&lt;T, U&gt;(lst: list&lt;T&gt;, default: U): any</code>
+<code class="example">            return lst-&gt;len() &gt; 0 ? lst[0] : default</code>
+<code class="example">          enddef</code>
+<code class="example">          echo FirstOrDefault&lt;string, bool&gt;(['B', 'C'], false)  # 回显 B</code>
+<code class="example">          echo FirstOrDefault&lt;number, number&gt;([], 42)           # 回显 42</code>
+<code class="example">        enddef</code>
+<code class="example">        Outer()</code>
+
+
+<code class="section">使用类型变量作为类型参数 </code>
+
+类型变量也可被传递为类型参数。例如:
+<code class="example"></code>
+<code class="example">        vim9script</code>
+<code class="example">        # T 声明为类型参数</code>
+<code class="example">        # 它可用作 'value' 参数类型和返回值类型</code>
+<code class="example">        def Id&lt;T&gt;(value: T): T</code>
+<code class="example">            return value</code>
+<code class="example">        enddef</code>
+<code class="example">        # U 声明为类型参数</code>
+<code class="example">        # 它可用作 'value' 参数类型和返回值类型</code>
+<code class="example">        def CallId&lt;U&gt;(value: U): U</code>
+<code class="example">            # U 是类型变量，可被传递/用作类型参数</code>
+<code class="example">            return Id&lt;U&gt;(value)</code>
+<code class="example">        enddef</code>
+<code class="example">        echo CallId&lt;string&gt;('I am') .. ' ' .. CallId&lt;number&gt;(42)</code>
+<code class="example"></code>
+这可用于像字典列表或像下例那样的列表字典这样的复杂数据结构:
+<code class="example"></code>
+<code class="example">        vim9script</code>
+<code class="example">        def Flatten&lt;T&gt;(x: list&lt;list&lt;T&gt;&gt;): list&lt;T&gt;</code>
+<code class="example">            final result: list&lt;T&gt; = []</code>
+<code class="example">            for inner in x</code>
+<code class="example">                result-&gt;extend(inner)</code>
+<code class="example">            endfor</code>
+<code class="example">            return result</code>
+<code class="example">        enddef</code>
+<code class="example">        const ENGLISH: list&lt;dict&lt;string&gt;&gt; = [{1: 'one'}, {2: 'two'}]</code>
+<code class="example">        const MANDARIN: list&lt;dict&lt;string&gt;&gt; = [{1: '壹'}, {2: '贰'}]</code>
+<code class="example">        const ARABIC_N: list&lt;dict&lt;number&gt;&gt; = [{1: 1}, {2: 2}]</code>
+<code class="example">        echo Flatten&lt;dict&lt;string&gt;&gt;([ENGLISH, MANDARIN])</code>
+<code class="example">        echo Flatten&lt;dict&lt;any&gt;&gt;([ENGLISH, ARABIC_N])</code>
+
+在 "Flatten<code class="special">&lt;T&gt;</code>" 里，"T" 是声明的类型参数。而在函数的其他地方，"T" 是引用该类型
+参数的类型变量。
+
+
+<code class="section">泛型类方法</code>
+
+Vim9 类方法可以是泛型函数:
+<code class="example"></code>
+<code class="example">        vim9script</code>
+<code class="example">        class Config</code>
+<code class="example">            var settings: dict&lt;any&gt;</code>
+<code class="example">            def Get&lt;T&gt;(key: string): T</code>
+<code class="example">                return this.settings[key]</code>
+<code class="example">            enddef</code>
+<code class="example">        endclass</code>
+<code class="example">        var c: Config = Config.new({timeout: 30, debug: true})</code>
+<code class="example">        echo c.Get&lt;number&gt;('timeout')</code>
+<code class="example">        echo c.Get&lt;bool&gt;('debug')</code>
+
+                                                <b class="vimtag"> <a name="E1432">E1432</a> </b> <b class="vimtag"> <a name="E1433">E1433</a> </b> <b class="vimtag"> <a name="E1434">E1434</a> </b>
+基类的泛型类方法可被子类的泛型方法覆盖。两个方法的类型变量数量必须一致。而已具
+体化的类方法则不能被泛型方法覆盖，反之亦然。
+
+
+<code class="section">泛型函数引用</code>
+
+函数引用 ( <a href="eval.html#Funcref">Funcref</a> ) 可为泛型函数。这样可以创建对应指定类型的函数工厂:
+<code class="example"></code>
+<code class="example">        vim9script</code>
+<code class="example">        # 匹配字符串里的指定字符或匹配列表里的字符十进制值。</code>
+<code class="example">        # 注意: '*' 的十进制值 是 42 (U+002A)</code>
+<code class="example">        var c: string = "*"</code>
+<code class="example">        var char_dec: tuple&lt;string, string&gt; = (c, c-&gt;char2nr()-&gt;string())</code>
+<code class="example">        def Matcher&lt;T&gt;(pattern: string): func(T): bool</code>
+<code class="example">            return (value: T): bool =&gt; match(value, pattern) &gt;= 0</code>
+<code class="example">        enddef</code>
+<code class="example">        var StringMatch = Matcher&lt;string&gt;(char_dec[0])</code>
+<code class="example">        echo "*+"-&gt;StringMatch()                            # true (有 *)</code>
+<code class="example">        echo ",-"-&gt;StringMatch()                            # false</code>
+<code class="example">        var ListMatch = Matcher&lt;list&lt;number&gt;&gt;(char_dec[1])</code>
+<code class="example">        echo [42, 43]-&gt;ListMatch()                          # true (有 42)</code>
+<code class="example">        echo [44, 45]-&gt;ListMatch()                          # false</code>
+
+
+<code class="section">编译和反汇编泛型函数</code>
+
+ <a href="vim9.html#:defcompile">:defcompile</a>  命令可用于编译泛型函数，须指定具体类型的列表:
+<code class="example"></code>
+<code class="example">        defcompile MyFunc&lt;number, list&lt;number&gt;, dict&lt;string&gt;&gt;</code>
+
+ <a href="vim9.html#:disassemble">:disassemble</a>  命令可用于列出泛型函数生成的汇编指令列表:
+<code class="example"></code>
+<code class="example">        disassemble MyFunc&lt;string, dict&lt;string&gt;&gt;</code>
+<code class="example">        disassemble MyFunc&lt;number, list&lt;blob&gt;&gt;</code>
+
+
+<code class="section">限制和未来计划</code>
+
+目前，Vim 不支持:
+   - 类型变量的类型推导: 调用泛型函数时所有的类型必须显式指定。
+   - 类型约束: 类型变量不能限定为指定的类或界面 (例如，
+     `T extends SomeInterface`)。
+   - 缺省类型参数: 提供类型参数未显式指定时的的缺省类型。
+
+</section><hr class="doubleline" /><section class=inner>
+<h4></h4>6. 命名空间、导入和导出
+                                <b class="vimtag"> <a name="vim9script">vim9script</a> </b> <b class="vimtag"> <a name="vim9-export">vim9-export</a> </b> <b class="vimtag"> <a name="vim9-import">vim9-import</a> </b>
+
+可编写 Vim9 脚本，被其它脚本导入。具体地说，有意地导出若干项目，使之被其它脚本
+所用。导出项目的脚本被其它脚本导入，后者就可以使用那些导出项目了。导出脚本的其
+余项目依然局部于脚本而不能被导入脚本访问。
+
+此机制的存在是为了编写被其它脚本执行 (导入) 的脚本，同时保证其它脚本只能访问你
+要它们访问的项目。这也避免了使用全局命名空间，后者有名字冲突的风险。比如当有两
+个功能相近的插件的时候。
+
+可显式使用全局命名空间来作弊。这只应该用于真正需要全局的情况。
+
+
+<code class="section">命名空间 </code>
+                                                        <b class="vimtag"> <a name="vim9-namespace">vim9-namespace</a> </b>
+为了识别可导入的文件，文件出现的第一个语句必须是  <a href="vim9.html#vim9script">vim9script</a>  语句 ( <a href="vim9.html#vim9-mix">vim9-mix</a> 
+介绍一个例外)。它告知 Vim 脚本在自己的命名空间而不是全局命名空间里被解释。如果
+文件这样开始:
+<code class="example">        vim9script</code>
+<code class="example">        var myvar = 'yes'</code>
+那么 "myvar" 只存在于此文件中。如果没有  <a href="vim9.html#vim9script">vim9script</a> ，其它脚本和函数可用
+ <code class="badlink">g:myvar</code>  进行访问。
+                                                        <b class="vimtag"> <a name="E1101">E1101</a> </b>
+文件级别的变量和老式脚本里的局部 "s:" 变量非常类似，但省略 "s:"。而且不能被删
+除。
+
+和以前一样，Vim9 脚本中仍然可用全局 "g:" 命名空间。还有 "w:"、"b:" 和 "t:" 命
+名空间。它们的共同点是变量不声明，没有特定类型且可以删除。 <b class="vimtag"> <a name="E1304">E1304</a> </b>
+
+ <a href="repeat.html#:vim9script">:vim9script</a>  一个副作用是 <a href="options.html#'cpoptions'">'cpoptions'</a> 选项设为 Vim 缺省值，类似于:
+<code class="example">        :set cpo&amp;vim</code>
+其中一个效果是  <a href="repeat.html#line-continuation">line-continuation</a>  总是打开。
+脚本结束时则会恢复 <a href="options.html#'cpoptions'">'cpoptions'</a> 原先的值，在脚本里增加或删除的标志位也会从原先
+的值里进行相应的增删，以达到相同效果。标志位的顺序可能会变化。
+这不适用于启动时执行的  <a href="starting.html#vimrc">vimrc</a>  文件。
+
+                                                        <b class="vimtag"> <a name="vim9-mix">vim9-mix</a> </b>
+有一个办法可以在一个脚本文件里同时使用老式和 Vim9 语法:
+<code class="example"></code>
+<code class="example">        " 这里是 _老式 Vim 脚本_ 注释</code>
+<code class="example">        if !has('vim9script')</code>
+<code class="example">           " 这里是 _老式 Vim 脚本_ 注释/命令</code>
+<code class="example">           finish</code>
+<code class="example">        endif</code>
+<code class="example">        vim9script</code>
+<code class="example">        # 从这里开始是 _Vim9 脚本_ 注释/命令</code>
+<code class="example">        echowindow $"has('vim9script') == {has('vim9script')}"</code>
+
+这样就可以编写脚本，在可能的情况下利用 Vim9 脚本的语法，但能防止在 Vim 版本不
+支持 'vim9script' 时，执行该命令导致出错。
+
+<code class="note">注意</code> Vim9 语法 在 Vim 9 之前有过改变，所以使用正确语法的脚本 (如 "import from"
+而不是 "import") 可能会报错。如果不想如此，检查  <a href="eval.html#v:version">v:version</a>  &gt;= 900 会更安全些
+(因为 Vim 8.2 补丁 3965 就会使 "has('vim9script')" 返回  <a href="eval.html#v:true">v:true</a> )。有时检查更
+晚版本会更谨慎些。Vim9 脚本的特性集会继续增长，例如，如果使用了元组 (在 Vim
+9.1 补丁 1232 引入)，更好的条件是:
+<code class="example"></code>
+<code class="example">        if !has('patch-9.1.1232')</code>
+<code class="example">          echowindow $"Fail: Vim 没有补丁 9.1.1232"</code>
+<code class="example">          finish</code>
+<code class="example">        endif</code>
+<code class="example">        vim9script</code>
+<code class="example">        echowindow $"Pass: 版本号 {v:versionlong}。继续中 ..."</code>
+
+不管使用哪种 vim 混合条件，只能有两种方法可以工作:
+    1. "if" 语句计算为假，跳过直到  <code class="badlink">endif</code>  部分为止的命令， <a href="vim9.html#vim9script">vim9script</a>  是第一
+       个真正执行的命令。
+    2. "if" 语句计算为真，执行直到  <code class="badlink">endif</code>  部分为止的命令，而  <code class="badlink">finish</code>  在到达
+        <a href="vim9.html#vim9script">vim9script</a>  前退出。
+
+
+<code class="section">导出 </code>
+                                                        <b class="vimtag"> <a name=":export">:export</a> </b> <b class="vimtag"> <a name=":exp">:exp</a> </b>
+可以这样导出项目:
+<code class="example">        export const EXPORTED_CONST = 1234</code>
+<code class="example">        export var someValue = ...</code>
+<code class="example">        export final someValue = ...</code>
+<code class="example">        export const someValue = ...</code>
+<code class="example">        export def MyFunc() ...</code>
+<code class="example">        export class MyClass ...</code>
+<code class="example">        export interface MyClass ...</code>
+<code class="example">        export enum MyEnum ...</code>
+                                                        <b class="vimtag"> <a name="E1043">E1043</a> </b> <b class="vimtag"> <a name="E1044">E1044</a> </b>
+就像这里暗示的，只能导出常数、变量、 <a href="vim9.html#:def">:def</a>  函数、类、界面和枚举。
+
+                                                        <b class="vimtag"> <a name="E1042">E1042</a> </b>
+ <a href="vim9.html#:export">:export</a>  只能用于 Vim9 脚本的脚本级别。
+
+
+<code class="section">导入 </code>
+                                <b class="vimtag"> <a name=":import">:import</a> </b> <b class="vimtag"> <a name=":imp">:imp</a> </b> <b class="vimtag"> <a name="E1094">E1094</a> </b> <b class="vimtag"> <a name="E1047">E1047</a> </b> <b class="vimtag"> <a name="E1262">E1262</a> </b>
+                                <b class="vimtag"> <a name="E1048">E1048</a> </b> <b class="vimtag"> <a name="E1049">E1049</a> </b> <b class="vimtag"> <a name="E1053">E1053</a> </b> <b class="vimtag"> <a name="E1071">E1071</a> </b> <b class="vimtag"> <a name="E1088">E1088</a> </b> <b class="vimtag"> <a name="E1236">E1236</a> </b>
+导出项目可在另一个脚本里被导入。导入语法有两种形式。简单形式:
+<code class="example">        import {filename}</code>
+
+<code class="special">{filename}</code> 是计算结果为字符串的表达式。此形式里的文件名必须以 ".vim" 结尾，
+".vim" 之前的部分会成为该命名空间的脚本局部名。例如:
+<code class="example">        import "myscript.vim"</code>
+
+这使得 "myscript.vim" 里的所有导出项目都可用 "myscript.item" 的形式访问。
+                                                <b class="vimtag"> <a name=":import-as">:import-as</a> </b> <b class="vimtag"> <a name="E1257">E1257</a> </b> <b class="vimtag"> <a name="E1261">E1261</a> </b>
+如果名字太长或有二义性，以下形式可用于指定别名:
+<code class="example">        import {longfilename} as {name}</code>
+
+这里 <code class="special">{name}</code> 成为代表被导入命名空间的特定的脚本局部名。因此 <code class="special">{name}</code> 必须由字母、
+数位和 "_" 组成，就像  <a href="eval.html#internal-variables">internal-variables</a>  那样。<code class="special">{longfilename}</code> 表达式的计算结
+果必须为文件名。例如:
+<code class="example">        import "thatscript.vim.v2" as that</code>
+                                                <b class="vimtag"> <a name="E1060">E1060</a> </b> <b class="vimtag"> <a name="E1258">E1258</a> </b> <b class="vimtag"> <a name="E1259">E1259</a> </b> <b class="vimtag"> <a name="E1260">E1260</a> </b>
+这样你就可用 "that.item" 等等。可以自由选择名字 "that"。请用可以识别导入脚本的
+名字。避免命令名、命令修饰符和内建函数名，因为你选的名字会使那些被隐藏。最好不
+要用大写字母开头的名字，因为那样也可能会隐藏全局用户命令和函数。此外，也不能和
+脚本其它项目，如函数或变量名，重名。
+
+如果不想要带句号的名字，可为函数提供本地引用:
+<code class="example">        var LongFunc = that.LongFuncName</code>
+<code class="example"></code>
+对常量这样也可以:
+<code class="example">        const MAXLEN = that.MAX_LEN_OF_NAME</code>
+<code class="example"></code>
+对变量不可以，因为值会被复制一次，而修改变量会改变备份，而不是原先的变量。所
+以，只能用带句号的全名。
+
+ <a href="vim9.html#:import">:import</a>  不能在函数内使用。导入项目应该出现在脚本级别，且只能导入一次。
+
+ <code class="badlink">import</code>  之后的脚本名可以是:
+- 相对路径，以 "." 或 ".." 开始。这会找到相对于脚本文件自身所在位置的文件。可
+  用于把大型插件分割为几个文件。
+- 绝对路径，Unix 上以 "/" 开始，或 MS-Windows 上以 "D:/" 开始。很少用到。
+- 既非相对也不是绝对的路径。会在 <a href="options.html#'runtimepath'">'runtimepath'</a> 项目的 "import" 子目录中寻找。
+  名字通常较长且唯一，以避免载入错误的文件。
+- <code class="note">注意</code> 不使用 "after/import"。
+
+如果名字不以 ".vim" 结尾，必须使用 "as name" 的形式。
+
+Vim9 脚本文件一旦导入，结果会被缓冲，下次导入相同脚本时，会使用缓冲而不会再次
+读取文件。
+
+不能导入同一脚本两次，即使用两个不同的 "as" 名字也不行。
+
+使用导入名时，句号和项目名必须在同一行，中间不能断行:
+<code class="example">        echo that.</code>
+<code class="example">                name   # 出错！</code>
+<code class="example">        echo that</code>
+<code class="example">                .name  # 出错！</code>
+                                                <b class="vimtag"> <a name="import-map">import-map</a> </b>
+Vim9 脚本从另一个脚本导入函数时，用  <a href="map.html#%3CSID%3E">&lt;SID&gt;</a>  前缀可在映射里引用导入的函数:
+<code class="example">        noremap &lt;silent&gt; ,a :call &lt;SID&gt;name.Function()&lt;CR&gt;</code>
+<code class="example"></code>
+映射在定义时，"<code class="special">&lt;SID&gt;</code>name." 会被替换为 <code class="special">&lt;SNR&gt;</code> 和导入脚本的脚本 ID。
+更简单的方案是用  <a href="map.html#%3CScriptCmd%3E">&lt;ScriptCmd&gt;</a> :
+<code class="example">        noremap ,a &lt;ScriptCmd&gt;name.Function()&lt;CR&gt;</code>
+<code class="example"></code>
+<code class="note">注意</code> 这只适用于函数，不适用于变量。
+
+                                            <b class="vimtag"> <a name="import-legacy">import-legacy</a> </b> <b class="vimtag"> <a name="legacy-import">legacy-import</a> </b>
+ <a href="vim9.html#:import">:import</a>  也可用于老式 Vim 脚本。即使未给出 "s:" 前缀，导入命名空间仍然是脚本
+局部的。例如:
+<code class="example">        import "myfile.vim"</code>
+<code class="example">        call s:myfile.MyFunc()</code>
+<code class="example"></code>
+使用 "as name" 形式:
+import "otherfile.vim9script" as that
+        call s:that.OtherFunc()
+
+不过，不能直接解析命名空间本身:
+<code class="example">        import "that.vim"</code>
+<code class="example">        echo s:that</code>
+<code class="example">        " ERROR: E1060: Expected dot after name: s:that</code>
+
+这也影响老式映射上下文里  <a href="map.html#%3CSID%3E">&lt;SID&gt;</a>  的使用。因为  <a href="map.html#%3CSID%3E">&lt;SID&gt;</a>  只是函数的合法前缀而 <code class="emphasis">不</code> 
+是命名空间的，你不能用之在局部于脚本的命名空间里局限函数的作用域。因此，不要用
+ <a href="map.html#%3CSID%3E">&lt;SID&gt;</a>  函数前缀，而应用  <a href="map.html#%3CScriptCmd%3E">&lt;ScriptCmd&gt;</a> 。例如:
+<code class="example">        noremap ,a &lt;ScriptCmd&gt;:call s:that.OtherFunc()&lt;CR&gt;</code>
+
+
+                                                        <b class="vimtag"> <a name=":import-cycle">:import-cycle</a> </b>
+ <code class="badlink">import</code>  命令在见到时就会执行。如果脚本 A 导入脚本 B，而 B 已经 (直接或间接地)
+导入了 A，会跳过前者。A 在 "import B" 之后的项目此时尚处于未处理和未定义状态。
+所以，循环导入可以存在且不会直接报错，但 A 在 "import B" 之后的项目可能会因为
+未定义而出错。这不适用于自动载入导入，见下一小节。
+
+
+<code class="section">在自动载入脚本中导入 </code>
+                                        <b class="vimtag"> <a name="vim9-autoload">vim9-autoload</a> </b> <b class="vimtag"> <a name="import-autoload">import-autoload</a> </b>
+要有最佳的启动速度，应该尽量延迟脚本的载入直到实际需要为止。建议使用自动载入机
+制:
+                                                        <b class="vimtag"> <a name="E1264">E1264</a> </b>
+     1. 在插件中定义指向自动载入脚本导入的项目的用户命令、函数和/或映射。
+<code class="example"></code>
+<code class="example">        import autoload 'for/search.vim'</code>
+<code class="example">        command -nargs=1 SearchForStuff search.Stuff(&lt;f-args&gt;)</code>
+<code class="example"></code>
+        应放在 .../plugin/anyname.vim。"anyname.vim" 可自由选择其名字。现在就
+        可用 "SearchForStff" 命令了。
+
+         <a href="vim9.html#:import">:import</a>  的 "autoload" 参数意味着直到其中项目被实际用到，脚本暂缓载
+        入。这类脚本可在 <a href="options.html#'runtimepath'">'runtimepath'</a> 的 "autoload" 目录下找到，而不是
+        "import" 目录。此处，也可用相对或绝对名字，见下。
+
+     2. 主要代码放在自动载入脚本。
+<code class="example"></code>
+<code class="example">        vim9script</code>
+<code class="example">        export def Stuff(arg: string): void</code>
+<code class="example">          ...</code>
+<code class="example"></code>
+        放在 .../autoload/for/search.vim 里。
+
+        "search.vim" 脚本放在 "/autoload/for/" 目录下的效果是 "for#search#" 会
+        加在每个导出的项目之前。前缀由文件名获取，就像老式自动载入脚本里你会手
+        动做的一样。因而，上例中的导出函数可由 "for#search#Stuff" 获取，但通常
+        会用 `import autoload` 而不是直接用前缀 (在函数的编译过程中时如果遇到
+        此函数，后者有载入自动载入脚本的副作用)。
+
+        自动载入脚本中，可以根据需要分割功能和导入其它文件。这样可以在插件间分
+        享代码。
+
+在 <a href="options.html#'runtimepath'">'runtimepath'</a> 里的所有项目里搜索自动载入脚本颇耗时。如果插件知道脚本的位置
+的话，使用相对路径是常见的。这样可以避免搜索，会快很多。另一个优点是脚本名不需
+要是唯一的。也可用绝对路径。例如:
+<code class="example">        import autoload '../lib/implement.vim'</code>
+<code class="example">        import autoload MyScriptsDir .. '/lib/implement.vim'</code>
+<code class="example"></code>
+使用导入的自动载入脚本的映射在定义时，可用特殊键  <a href="map.html#%3CScriptCmd%3E">&lt;ScriptCmd&gt;</a> 。这使映射中的命
+令可以使用映射定义所在脚本的上下文。
+
+编译  <a href="vim9.html#:def">:def</a>  函数时，如果遇到自动载入脚本中的函数，不载入该脚本，直到  <a href="vim9.html#:def">:def</a>  函
+数被调用时才载入。这意味着只有在运行时才看到错误，因为参数和返回类型此时尚未
+知。但如果直接用带 '#' 字符的名字，那么 <code class="emphasis">确实会</code> 载入自动载入脚本。
+
+小心不要意外触发自动载入脚本的载入。例如，设置选项时如果用到函数名，要用字符串
+而非函数引用:
+<code class="example">        import autoload 'qftf.vim'</code>
+<code class="example">        &amp;quickfixtextfunc = 'qftf.Func'  # _不载入_自动载入脚本</code>
+<code class="example">        &amp;quickfixtextfunc = qftf.Func    # _载入_自动载入脚本</code>
+另一方面，需要报告错误的时候，应早点载入脚本。
+
+为测试用， <a href="testing.html#test_override()">test_override()</a>  函数使 `import autoload` 立即载入脚本，这样可以马
+上检查项目和类型，而无须等待实际使用它们的时候再检查:
+<code class="example">        test_override('autoload', 1)</code>
+之后要复位的话:
+<code class="example">        test_override('autoload', 0)</code>
+或者:
+<code class="example">        test_override('ALL', 0)</code>
+<code class="example"></code>
+<code class="example"></code>
+</section><hr class="doubleline" /><section class=inner>
+<h4></h4>7. 类和界面                                             <b class="vimtag"> <a name="vim9-classes">vim9-classes</a> </b>
+
+老式 Vim 脚本里字典可以通过加入函数作为成员，来用作某种形式的对象。但这很低
+效，需要作者自行确保所有的对象有正确的成员。见  <a href="eval.html#Dictionary-function">Dictionary-function</a> 。
+
+就像绝大多数流行的面向对象编程语言那样， <a href="vim9.html#Vim9">Vim9</a>  脚本可有类、对象、界面和枚举。
+因为牵涉大量功能，这些描述放在了单独的帮助文件里:  <a href="vim9class.html#vim9class.txt">vim9class.txt</a> 。
+
+
+</section><hr class="doubleline" /><section class=inner>
+<h4></h4>8. 理据                                                 <b class="vimtag"> <a name="vim9-rationale">vim9-rationale</a> </b>
+
+<code class="section">:def 命令 </code>
+
+插件作者一直要求有更快的 Vim 脚本。调查发现，继续保持原有的函数调用语义会使性
+能提高近乎不可能，因为涉及的函数调用、局部函数作用域的设置以及行的执行引起的负
+担。这里需要处理很多细节，比如错误信息和异常。创建用于 a: 和 l: 作用域的字典、
+a:000 列表和若干其它部分增加了太多不可避免的负担。
+
+因此定义新风格函数的  <a href="vim9.html#:def">:def</a>  方法应运而生，它接受使用不同语义的函数。多数功能不
+变，但有些部分有变化。经过考虑，这种定义函数的新方法是区别老式风格代码和 Vim9
+脚本代码的最佳方案。
+
+使用 "def" 定义函数来源于 Python。其它语言使用 "function"，这和老式的 Vim 脚本
+使用的有冲突。
+
+
+<code class="section">类型检查 </code>
+
+应在编译时尽可能地把 Vim 代码行编译为指令。延迟到运行时会使执行变慢，也意味着
+错误只能在后期才能发现。例如，如果遇到 "+" 字符时编译成通用的加法指令，在运行
+时，此指令必须检查参数类型并决定要执行的是哪种加法。如果类型是字典要抛出错误。
+如果类型已知为数值型，就可用 "数值相加" 指令，这会快很多。编译时可报错，而运行
+时就无需错误处理，因为两个数值相加几乎不会出错。
+
+    <code class="note">备注</code>: 稍为离题一下，唯一例外是整数溢出，如果结果超出了最大的整数值的话。例
+    如，加到 64-位带符号整数使结果大于 2^63:
+<code class="example"></code>
+<code class="example">        vim9script</code>
+<code class="example">        echo 9223372036854775807 + 1     # -9223372036854775808</code>
+<code class="example">        echo 2-&gt;pow(63)-&gt;float2nr() + 1  # -9223372036854775808</code>
+
+类型语法，包括使用 <code class="special">&lt;type&gt;</code> 用作复合类型，类似于 Java，因为容易理解，也广泛使
+用。类型名是 Vim 之前所用的加上新增的 "void" 和 "bool" 等类型。
+
+
+<code class="section">去除臃肿和怪异行为 </code>
+
+一旦决定  <a href="vim9.html#:def">:def</a>  函数可以和老式函数有不同的语法，我们就有自由去新增改进，使了解
+常用编程语言的用户对代码能更熟悉。换而言之: 删除只有 Vim 才采取的怪异行为。
+
+我们也可以去除臃肿，这里主要是指使 Vim 脚本和陈旧的 Vi 命令后向兼容的那些部
+分。
+
+例如:
+- 调用函数不再需要  <a href="userfunc.html#:call">:call</a> ，而计算表达式不再需要  <a href="eval.html#:eval">:eval</a> 。
+- 续行不再需要前导反斜杠，可以自动判断表达式何处终止。
+
+不过，这也意味有些部分需要改变:
+- 注释改用 # 而不是 " 开头，以避免和字符串混淆。这也很好，若干流行的语言也是如
+  此。
+- Ex 命令范围需要有冒号前导，以避免和表达式混淆 (单引号可以是字符串或位置标
+  记，"/" 可能是除法或搜索命令，等等)。
+
+目标是尽量减少差异。一个好的标准是如果不小心用了旧语法，很有可能你会得到错误信
+息。
+
+
+<code class="section">来自流行语言的语法和语义 </code>
+
+脚本作者抱怨 Vim 脚本语法和他们习惯使用的有出乎意外的差异。为了减少抱怨，使用
+流行的语言作为范例。与此同时，我们不想放弃老式的 Vim 脚本为人熟知的部分。
+
+有很多方面我们跟随 TypeScript。这是新近的语言，已得到广泛流行，且和 Vim 脚本有
+相似性。它也有静态类型 (总是有已知值类型的变量) 和动态类型 (在运行时可决定有不
+同类型的变量) 的混合。既然老式 Vim 脚本是动态类型的，许多现有功能 (尤其是内建
+函数) 依赖于这一点，而静态类型允许更快地执行，我们需要在 Vim9 脚本中支持两者的
+混合。
+
+我们无意完全照搬 TypeScript 语法和语义。只想借用可用于 Vim 的部分，使 Vim 用户
+可以开心地接受。TypeScript 是个复杂的语言，有它自己的历史，优点和缺点。关于缺
+点部分，可阅读此书: "JavaScript: The Good Parts"。或找找此文章 "TypeScript:
+the good parts" 并阅读 "Things to avoid" 一节。
+
+熟悉其它语言 (Java、Python 等等) 的人士可能会不喜欢或不理解 TypeScript 的其它
+一些部分。我们也试图避免那些部分。
+
+避免的 TypeScript 特定项目:
+- 重载 "+" 同时用于加法和字符串连接。这有违老式的 Vim 脚本，也经常引发错误。为
+  此原因，我们继续使用 ".." 用于字符串连接。Lua 也如此使用 ".."。这也方便把更
+  多值转换为字符串。
+- TypeScript 可用形如 "99 || <code class="badlink">'yes'</code>" 的表达式作为条件，但不能把该值赋给布尔型。
+  这不统一也很讨厌。Vim 识别带 &amp;&amp; 或 || 的表达式，并可以把结果用作布尔型。新增
+  了  <a href="eval.html#falsy-operator">falsy-operator</a>  支持使用缺省值的机制。
+- TypeScript 把空串当作假值，而空列表或字典当作真值。这不统一。Vim 中空列表和
+  字典也都当作假值。
+- TypeScript 有若干 "只读" 类型，其用途有限，因为类型转换可抹除其不可更改的性
+  质。Vim 则对值进行锁定，这更灵活，但只在运行时进行检查。
+- TypeScript 有复杂的 "import" 语句，这和 Vim 导入机制不匹配。可用更简单的机制
+  代替，以满足导入脚本只执行一次的要求。
+
+
+<code class="section">声明 </code>
+
+老式 Vim 脚本中，每个赋值都要用  <a href="eval.html#:let">:let</a>  语句，而 Vim9 中只需用之作声明。既有此
+不同，最好采用另一个命令:  <a href="vim9.html#:var">:var</a> 。它在很多语言中都有用到。语义或有些许不同，但
+都很容易把它识别为声明。
+
+用  <a href="eval.html#:const">:const</a>  来定义常量很常见，但语义有差别。有些语言只使变量本身不可变，而其它
+语言则使其值不可变。考虑到 "final" 在 Java 里使变量不可变已为人熟知，我们决定
+采用它来实现该语义。而  <a href="eval.html#:const">:const</a>  可用作使两者都不可变。这也用于老式 Vim 脚本
+里，含义近乎相同。
+
+最后，我们采用的和 Dart 十分类似:
+<code class="example">        :var name       # 可变的变量和值</code>
+<code class="example">        :final name     # 不可变的变量，可变的值</code>
+<code class="example">        :const name     # 不可变的变量和值</code>
+<code class="example"></code>
+因为老式和 Vim9 脚本会混合使用，全局变量也会共享，所以类型检查最好可选。另外，
+类型推断机制会在很多场合下不再需要对类型直接指定。TypeScript 语法最适合为声明
+加入类型:
+<code class="example">        var name: string          # 指定字符串类型</code>
+<code class="example">        ...</code>
+<code class="example">        name = 'John'</code>
+<code class="example">        const greeting = 'hello'  # 推断为字符串类型</code>
+<code class="example"></code>
+这是我们如何在声明在放入类型:
+<code class="example">        var mylist: list&lt;string&gt;</code>
+<code class="example">        final mylist: list&lt;string&gt; = ['foo']</code>
+<code class="example">        def Func(arg1: number, arg2: string): bool</code>
+<code class="example"></code>
+考虑过两种其它方案:
+    1. 把类型放在名字前，类似于 Dart:
+<code class="example">        var list&lt;string&gt; mylist</code>
+<code class="example">        final list&lt;string&gt; mylist = ['foo']</code>
+<code class="example">        def Func(number arg1, string arg2) bool</code>
+     2. 为类型放在变量名后，但不用冒号，类似于 Go:
+<code class="example">        var mylist list&lt;string&gt;</code>
+<code class="example">        final mylist list&lt;string&gt; = ['foo']</code>
+<code class="example">        def Func(arg1 number, arg2 string) bool</code>
+<code class="example"></code>
+第一种对用过 C 或 Java 的用户很熟悉。而第二种和第一种比起来没有任何好处，我们
+先排除第二种。
+
+因为使用了类型推断机制，如果可以从值中推断，类型可以省略。这意味着在  <code class="badlink">var</code>  后
+我们不知道是跟着类型还是名字。这使解析复杂化，不仅对 Vim，对人而言也是如此。另
+外，这样也没法使用和类型名重名的变量名，用 `var string string` 太混淆了。
+
+我们最终选择了用冒号分隔名字和类型的语法。它需要引入标点符号，但实际更易分辨声
+明的不同部分。
+
+
+<code class="section">表达式 </code>
+
+表达式计算已经和其它语言采用的方式很接近。有些细节有出入，有改进的空间。例如，
+布尔条件可以接受字符串，先把它转换为数值，并检查该值是否非零。这不符一般期望，
+经常引发错误，因为不以数值开头的文本会转换为零，也就被当作假值。如此，字符串用
+作条件时就经常会不报错就而被当作假值，这常产生混淆。
+
+Vim9 的类型检查更严格以防出错。需要使用条件时，例如用  <a href="eval.html#:if">:if</a>  命令或  <code class="badlink">||</code>  操作符
+的时候，只接受类似于布尔的值:
+        真:   <a href="vim9.html#true">true</a> 、 <a href="eval.html#v:true">v:true</a> 、 <code class="badlink">1</code> 、`0 &lt; 9`
+        假:  <a href="vim9.html#false">false</a> 、 <a href="eval.html#v:false">v:false</a> 、 <a href="motion.html#0">0</a> 、`0 &gt; 9`
+<code class="note">注意</code> 数值零为假，而数值一为真。这比绝大多数语言要宽一些。这是因为许多内建函数
+会返回这些值，而改变这一点得不偿失。用了一段时间后，现在效果看来不错。
+
+如用你有任何类型的值并希望把它当作布尔型来使用，使用  <a href="change.html#!!">!!</a>  操作符
+(见  <a href="eval.html#expr-!">expr-!</a> ):
+<code class="example"></code>
+<code class="example">        vim9script</code>
+<code class="example">        # 下面的值都为 true:</code>
+<code class="example">        echo [!!'text', !![1], !!{'x': 1}, !!1, !!1.1]</code>
+<code class="example">        # 下面的值都为 false:</code>
+<code class="example">        echo [!!'', !![], !!{}, !!0, !!0.0]</code>
+
+JavaScript 这样的语言中，我们有这样方便的构造:
+<code class="example">        GetName() || 'unknown'</code>
+不过，这和在使用条件的地方只接受布尔型有冲突。为此，引入 "??" 操作符:
+<code class="example">        GetName() ?? 'unknown'</code>
+这里，你在显式地表达自己的意愿，按值本身去使用，而不是用作布尔值。这叫作
+ <a href="eval.html#falsy-operator">falsy-operator</a> 。
+
+
+<code class="section">导入和导出 </code>
+
+老式 Vim 脚本的一个问题是所有函数和变量缺省都是全局的。可以使它们局部于脚本，
+但因而就不能为其它脚本所用。这就违背了软件包只能有选择性地导出项目，其它保持局
+部的概念。
+
+Vim9 脚本里支持和 JavaScript 导入导出非常相似的机制。这是已有的  <a href="repeat.html#:source">:source</a>  命令
+的变种，且工作方式符合人们期待:
+- 和所有的缺省都是全局相反，所有的都是局部于脚本的，有些被导出。
+- 导入脚本时显式列出要导入的符号，避免以后新增功能时的名字冲突和可能的失败。
+- 此机制允许编写大而长又有清晰 API 的脚本: 导出函数、变量和类。
+- 通过使用相对路径，同一包里导入的载入会更快，无需搜索许多目录。
+- 导入一旦使用，其中项目会被缓冲而避免了再次载入。
+- Vim 特定使事物局部于脚本的 "s:" 用法可以不需要了。
+
+(从 Vim9 或老式脚本里) 执行 Vim9 脚本时，只能使用全局定义的项目，而不是导出的
+项目。考虑过以下备选方案:
+- 所有导出项目成为局部于脚本的项目。这样没法控制什么项目有定义，有可能很快就会
+  有问题。
+- 使用导出项目成为全局项目。缺点是这样就不能避免全局空间的名字冲突。
+- 完全禁止 Vim9 脚本的执行，而必须使用  <a href="vim9.html#:import">:import</a> 。这样就很难用脚本进行测试，或
+  在命令行上执行脚本进行实验。
+<code class="note">注意</code> 也 <code class="emphasis">可以</code> 在老式 Vim 脚本中使用  <a href="vim9.html#:import">:import</a> ，见上。
+
+
+<code class="section">尽早编译函数 </code>
+
+函数在实际调用时或使用  <a href="vim9.html#:defcompile">:defcompile</a>  时才进行编译。为什么不尽早编译函数，以便
+尽快报告语法和类型错误呢？
+
+函数不能在遭遇时立刻编译，因为可能有之后定义的函数的前向引用。考虑定义函数 A、
+B 和 C，其中 A 调用 B，B 调用 C，而 C 又调用 A。这里不可能通过对函数重新排列来
+避免正向引用。
+
+一个替代方案是先扫描整个文件以定位项目并判断其类型，这样就能找到正向引用，然后
+再执行脚本并编译函数。这意味着脚本要解析两次，这会减慢速度，且脚本级别的某些条
+件，如检查某特性是否支持等等，会难于使用。有过这方面的尝试，但结果是不能很好地
+工作。
+
+也可以在脚本最后编译所有函数。这样做的缺点是如果函数从未被调用，仍然要承受其编
+译的开销。因为启动速度至关重要，绝大多数情况下最好延后处理，并在那时才报告语法
+和类型错误。如果确实希望早报告错误，譬如测试期间，在脚本结束处的  <a href="vim9.html#:defcompile">:defcompile</a> 
+命令可作救济。
+
+
+<code class="section">为什么不用已有的嵌入式语言？ </code>
+
+Vim 支持 Perl、Python、Lua、Tcl 和一些其它语言的接口。但由于种种原因，这些从未
+广泛使用过。Vim 9 设计时作了一个决定，降低这些接口的优先级，并集中在 Vim 脚本
+上。
+
+不过，插件作者可能对其它语言更加熟悉，想用已有的库或要提高性能。我们鼓励脚本作
+者使用任何语言编程并作为外部进程运行，使用作业和通道通信。我们可以想办法使之更
+加便捷。
+
+使用外部工具也有其不足。一种替代方案是把工具转换为 Vim 脚本。要尽量减少翻译的
+工作量，并且同时保持代码快速，需要支持工具使用的构造。因为 Vim9 脚本现在支持了
+类、对象、界面和枚举，这种做法现在更加可行。
+
+
+
+ vim:tw=78:ts=8:noet:ft=help:norl:
+</section>
+</article>
+<footer>
+Generated by vim2html
+</footer>
+</body>
+</html>

@@ -1,0 +1,1889 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8" />
+<!--[if lt IE 9]>
+  <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+<![endif]-->
+<title>VIM 中文用户手册: 编写 Vim 脚本</title>
+<link rel="stylesheet" href="vim-stylesheet.css" type="text/css" />
+<link rel="canonical" href="https://yianwillis.github.io/vimcdoc/doc/usr_41.html" />
+<script type="text/javascript" src="vimcdoc.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+</head>
+<body>
+<nav id=banner>
+<form action=tags.html target="tag_iframe">
+  <input type="text" name="tag" id="tag" placeholder="标签搜索">
+</form>
+<iframe name="tag_iframe" src=""></iframe>
+<a href="help.html">帮助总览</a> &middot;
+<hr/>
+<a href="quickref.html">快速参考</a> &middot;
+<a href="index.html">命令索引</a> &middot;
+<a href="eval.html#functions">函数列表</a> &middot;
+<a href="quickref.html#option-list">选项列表</a> &middot;
+<hr/>
+<a href="usr_toc.html">用户手册</a> &middot;
+<a href="help.html#reference_toc">参考手册</a> &middot;
+</nav>
+
+<header>
+<h2>usr_41</h2>
+</header>
+<article id=outer>
+<section class=inner>
+<b class="vimtag"> <a name="usr_41.txt">usr_41.txt</a> </b>    适用于 Vim 9.2 版本。  最近更新: 2025年12月
+
+                     <code class="vim">VIM 用户手册       by Bram Moolenaar</code>
+                                        <code class="vim">译者</code>: lang2、Willis
+
+                              编写 Vim 脚本
+
+
+Vim 脚本语言在很多地方用到，包括 vimrc 文件，语法文件，等等。本章讨论 Vim 脚本
+相关的知识。这样的内容有很多，所以本章也比较长。
+
+ <a href="usr_41.html#41.1">41.1</a>   简介
+ <a href="usr_41.html#41.2">41.2</a>   变量
+ <a href="usr_41.html#41.3">41.3</a>   表达式
+ <a href="usr_41.html#41.4">41.4</a>   条件语句
+ <a href="usr_41.html#41.5">41.5</a>   执行一个表达式
+ <a href="usr_41.html#41.6">41.6</a>   使用函数
+ <a href="usr_41.html#41.7">41.7</a>   定义一个函数
+ <a href="usr_41.html#41.8">41.8</a>   列表和字典
+ <a href="usr_41.html#41.9">41.9</a>   空白
+ <a href="usr_41.html#41.10">41.10</a>  续行
+ <a href="usr_41.html#41.11">41.11</a>  注释
+ <a href="usr_41.html#41.12">41.12</a>  文件格式
+
+        下一章:  <a href="usr_42.html#usr_42.txt">usr_42.txt</a>   添加新的菜单
+        前一章:  <a href="usr_40.html#usr_40.txt">usr_40.txt</a>   创建新的命令
+          目录:  <a href="usr_toc.html#usr_toc.txt">usr_toc.txt</a> 
+
+</section><hr class="doubleline" /><section class=inner>
+<h4><b class="vimtag"> <a name="41.1">41.1</a> </b>  简介                                    <b class="vimtag"> <a name="vim-script-intro">vim-script-intro</a> </b> <b class="vimtag"> <a name="script">script</a> </b></h4>
+先从一些术语的命名说起。Vim 脚本是 Vim 可以解释和执行的文件。这包括用 Vim 的脚
+本语言书写的文本，如 .vim 文件或 .vimrc 和 .gvimrc 这种配置文件。这些脚本可以
+定义函数、命令和设置，Vim 用来定制和扩展其行为。
+
+                                                <b class="vimtag"> <a name="vim-script-notation">vim-script-notation</a> </b>
+正确说法是 "Vim 脚本" (引用新的 Vim9 语言  <a href="vim9.html#Vim9-script">Vim9-script</a>  时可用 "Vim9 脚本")，
+在本文档里我们将用 "Vim 脚本" 来称呼 Vim 脚本语言。这种简写可以精简一下关于
+Vim 脚本编程的解释和讨论。
+
+Vim 插件是一个或多个 Vim 脚本的集合，随带着附加文件，如帮助文档，配置文件还有
+其他资源，设计用来为 Vim 增加特定的特性和功能。插件可以提供新命令，增强已有的
+能力，还有集成外部工具或服务进 Vim 环境。
+
+你最初接触到 Vim 脚本是在 vimrc 文件里。当 Vim 启动时它将读取该文件的内容并执
+行其中的命令。你可以在其中设置选项，定义映射，选择插件还有很多别的。你也可以在
+其中使用任何冒号命令 (以 ":" 开头的命令；这些命令有时也被称作 Ex 命令或命令行
+命令)。
+
+语法文件其实也是 Vim 脚本。专为某种文件类型设定选项的文件也是。一个很复杂的
+宏可以被单独的定义在一个 Vim 脚本文件中。你可以自己想到其它的应用。
+
+Vim 脚本有两种风格: 老式和  <a href="vim9.html#Vim9">Vim9</a> 。因为此帮助文件是为新手准备的，我们会教你更
+新更方便的  <a href="vim9.html#Vim9">Vim9</a>  语法。老式脚本是特别为 Vim 设计的，而  <a href="vim9.html#Vim9">Vim9</a>  脚本更像其它语
+言，如 JavaScript 和 TypeScript。
+
+要试试 Vim 脚本的最好办法是编辑一个脚本文件然后执行。基本上:
+<code class="example">        :edit test.vim</code>
+<code class="example">        [插入想要的脚本行]</code>
+<code class="example">        :w</code>
+<code class="example">        :source %</code>
+<code class="example"></code>
+让我们从一个简单的例子开始:
+<code class="example"></code>
+<code class="example">        vim9script</code>
+<code class="example">        var i = 1</code>
+<code class="example">        while i &lt; 5</code>
+<code class="example">          echo "count is" i</code>
+<code class="example">          i += 1</code>
+<code class="example">        endwhile</code>
+
+本例的输出是:
+
+<code class="section">        count is 1 </code>
+<code class="section">        count is 2 </code>
+<code class="section">        count is 3 </code>
+<code class="section">        count is 4 </code>
+
+第一行的 "vim9script" 命令明确了这是新的  <a href="vim9.html#Vim9">Vim9</a>  脚本文件。这对控制文件其余部分
+如何使用很重要。推荐放在头一行，包括在任何注释之前。
+                                                        <b class="vimtag"> <a name="vim9-declarations">vim9-declarations</a> </b>
+"var i = 1" 命令声明并初始化 "i" 变量。通常的用法是:
+<code class="example"></code>
+<code class="example">        var {变量} = {表达式}</code>
+<code class="example"></code>
+在例子中变量名是 "i" 而表达式是一个简单的数值 1。
+
+":while" 命令开始一个循环。通常的用法是:
+<code class="example"></code>
+<code class="example">        while {条件}</code>
+<code class="example">          {语句}</code>
+<code class="example">        endwhile</code>
+<code class="example"></code>
+只要条件为真， <code class="badlink">while</code>  和  <code class="badlink">endwhile</code>  包围的语句就会被执行。在例子中使用的条件是
+表达式 "i &lt; 5"。这个条件在变量 i 小于五时总是真的。
+        <code class="note">备注</code>:
+        如果你碰巧写了一个死循环语句，你可以用 <code class="keystroke">CTRL-C</code> 来终止 (在 MS-Windows
+        上使用 <code class="keystroke">CTRL-Break</code>)。
+
+ <code class="badlink">echo</code>  命令显示它的参数。在这个例子中的参数是字符串 "count is" 和变量 i 的值。
+因为开始时 i 的值是 1，所以将会显示:
+
+<code class="section">        count is 1 </code>
+
+接着是 `i += 1` 命令。该命令相当于 "i = i + 1"。在变量 i 上加一并将新的值赋给
+同一个变量。
+
+给出本例是为了解释命令，不过如果你真的要写这样一个循环，下面的表达更加简洁:
+<code class="example"></code>
+<code class="example">        for i in range(1, 4)</code>
+<code class="example">          echo $"count is {i}"</code>
+<code class="example">        endfor</code>
+<code class="example"></code>
+我们现在不解释  <code class="badlink">for</code> 、 <a href="builtin.html#range()">range()</a>  和  <code class="badlink">$"string"</code>  如何工作，一会儿再说。如果你没
+有耐心，点击这些链接。
+
+
+试 试 例 子
+
+可以直接试试这些帮助文件里的绝大数例子，不需要先把命令保存到文件里。比如，要试
+试上面的 "for" 循环例子，可以这么做:
+1. 把光标放在 "for" 上
+2. 用 "v" 启动可视模式
+3. 往下移到 "endfor"
+4. 按冒号和 "so"，然后回车
+
+按了冒号后会见到 ":'&lt;,'&gt;"，这代表了可视选择文本的范围。
+
+有些命令要确保在  <a href="vim9.html#Vim9">Vim9</a>  脚本里执行。键入命令通常使用老式脚本语法，比如下面导致
+E1004 错误的例子。要用  <a href="vim9.html#Vim9">Vim9</a>  语法，需要改改第四步:
+4. 按冒号和 "vim9 so"，然后回车
+
+"vim9" 是  <code class="badlink">vim9cmd</code>  的缩写，使后续的那个命令使用  <a href="vim9.html#Vim9">Vim9</a>  语法的命令修饰符。
+
+<code class="note">注意</code> 这套方法不适用于需要脚本上下文的示例。
+
+
+四 种 数 值
+
+数值可以是十进制，十六进制，八进制或者二进制的。
+
+以 "0x" 或 "0X" 开始的数值是十六进制的。例如 "0x1f" 代表十进制 31，而 "0x1234"
+是十进制 4660。
+
+以 "0o"、"0O" 开始的数值是八进制的。"017" 代表十进制 15。
+
+以 "0b" 或 "0B" 开始的数值是二进制的。例如 "0b101" 代表十进制 5。
+
+十进制就是由简单数位组成的数值。当心: 在老式脚本里不要在十进制数前添上零，那样
+该数值将会被作为八进制数对待！这是建议使用  <a href="vim9.html#Vim9">Vim9</a>  脚本的一个原因。
+
+ <code class="badlink">echo</code>  命令计算参数，如果是数值则总以十进制格式显示数值。例:
+<code class="example"></code>
+<code class="example">        :echo 0x7f 0o36</code>
+<code class="section">        127 30 </code>
+
+在一个数值前加上负号会将其变为负值。十六进制数、八进制数和二进制数亦然:
+<code class="example"></code>
+<code class="example">        echo -0x7f</code>
+<code class="section">        -127 </code>
+
+减号也用于减法操作。有时这会引起混淆。如果在两个数值前都放上负号，会报错:
+<code class="example"></code>
+<code class="example">        echo -0x7f -0o36</code>
+<code class="section">        E1004: White space required before and after '-' at "-0o36" </code>
+
+<code class="note">注意</code>: 如果不是在  <a href="vim9.html#Vim9">Vim9</a>  脚本里试这些命令而直接键入，假定使用老式脚本语法。因而
+echo 命令会把第二个负号看成是减法运算。要重现此错，在命令前加上  <code class="badlink">vim9cmd</code> :
+<code class="example"></code>
+<code class="example">        vim9cmd echo -0x7f -0o36</code>
+<code class="section">        E1004: White space required before and after '-' at "-0o36" </code>
+
+表达式中常常需要空白字符以增加表达式的易读性和避免错误。比如你会觉得上面的
+"-0o36" 会使数值变负，而实际上它被视为减法。
+
+如果真要使减号用作数值取负，用括号包围第二个表达式:
+<code class="example"></code>
+<code class="example">        echo -0x7f (-0o36)</code>
+<code class="section">        -127 -30 </code>
+
+</section><hr class="doubleline" /><section class=inner>
+<h4><b class="vimtag"> <a name="41.2">41.2</a> </b>  变量</h4>
+一个变量名可以由 ASCII 字符、数字和下划线组成。但是变量名不能以数字开始。以下
+是几个有效的变量名:
+
+        counter
+        _aap3
+        very_long_variable_name_with_dashes
+        CamelCaseName
+        LENGTH
+
+"foo.bar" 和 "6var" 都是无效的变量名。
+
+有些变量是全局的。要列出当前定义的所有全局变量可以用这个命令:
+<code class="example"></code>
+<code class="example">        :let</code>
+<code class="example"></code>
+你可以在任何地方使用全局变量。不过，太容易在两个不相关的脚本里使用相同的名字
+了。因此脚本里声明的变量都是局部于脚本的。例如，如果在 "script1.vim" 里有:
+<code class="example"></code>
+<code class="example">        vim9script</code>
+<code class="example">        var counter = 5</code>
+<code class="example">        echo counter</code>
+<code class="section">        5 </code>
+
+然后试图在 "script2.vim" 里用该变量:
+<code class="example"></code>
+<code class="example">        vim9script</code>
+<code class="example">        echo counter</code>
+<code class="section">        E121: Undefined variable: counter </code>
+
+使用脚本局部变量意味着它只能在同一脚本里改变，而不会被其它脚本影响。
+
+如果确实要在脚本间共享变量，使用 "g:" 前缀并直接赋值，不要用  <code class="badlink">var</code> 。使用特别名
+字以免出错。如在 "script1.vim" 里:
+<code class="example"></code>
+<code class="example">        vim9script</code>
+<code class="example">        g:mash_counter = 5</code>
+<code class="example">        echo g:mash_counter</code>
+<code class="section">        5 </code>
+
+现在在 "script2.vim" 里:
+<code class="example"></code>
+<code class="example">        vim9script</code>
+<code class="example">        echo g:mash_counter</code>
+<code class="section">        5 </code>
+
+全局变量也可以从命令行访问，例如键入:
+<code class="example">        echo g:mash_counter</code>
+这不适用于脚本局部变量。
+
+更多关于脚本局部变量可以在这里读到:  <a href="eval.html#script-variable">script-variable</a> 。
+
+还有很多其它类型的变量，参阅  <a href="eval.html#internal-variables">internal-variables</a> 。最常用的几类有:
+
+        b:name          缓冲区的局部变量
+        w:name          窗口的局部变量
+        g:name          全局变量 (也用于函数中)
+        v:name          Vim 预定义的变量
+
+
+删 除 变 量
+
+变量不仅仅可以在  <code class="badlink">let</code>  命令显示，同时也占用内存空间。为了删除全局变量，可以使
+用  <code class="badlink">unlet</code>  命令。例:
+<code class="example"></code>
+<code class="example">        :unlet g:counter</code>
+<code class="example"></code>
+这将删除 "g:counter" 这个全局变量并释放其占用的内存。如果你并不确定这个变量是
+否存在，但并不希望系统在它不存在时报错，可以在命令后添加 !:
+<code class="example"></code>
+<code class="example">        :unlet! g:counter</code>
+<code class="example"></code>
+ <a href="vim9.html#Vim9">Vim9</a>  脚本里不能  <code class="badlink">unlet</code>  脚本局部变量，只有老式脚本里可以。
+
+当一个脚本处理到结束时，它声明的局部变量不会自动被删除。脚本里定义的函数可以使
+用它们。例如:
+
+<code class="example">        vim9script</code>
+<code class="example">        var counter = 0</code>
+<code class="example">        def g:GetCount(): number</code>
+<code class="example">          counter += 1</code>
+<code class="example">          return counter</code>
+<code class="example">        enddef</code>
+<code class="example"></code>
+每次调用函数时，返回下一个计数:
+<code class="example">        :echo g:GetCount()</code>
+<code class="section">        1 </code>
+
+<code class="example">        :echo g:GetCount()</code>
+<code class="section">        2 </code>
+
+如果担心脚本局部变量占用了太多内存而且现在不需要了，把它设为空值或 null 值。例
+如:
+<code class="example">        var lines = readfile(...)</code>
+<code class="example">        ...</code>
+<code class="example">        lines = []</code>
+<code class="example"></code>
+<code class="note">注意</code>: 以下例子里， <a href="vim9.html#vim9script">vim9script</a>  行从略，这样我们可以更加关注实际相关的命令。但
+你自己仍要把它放在脚本文件里。
+
+
+字 符 串 变 量 和 常 量
+
+到目前为止我们只用到了数值作为变量的值。同样的我们可以使用字符串。这两种变量类
+型是 Vim 支持的基本类型。示例:
+<code class="example"></code>
+<code class="example">        var name = "Peter"</code>
+<code class="example">        echo name</code>
+<code class="section">        Peter </code>
+
+每个变量都有类型。如此例所示，类型常常是由赋值定义的。这叫类型推导。如果你这时
+还不想给变量值，就需要指定类型:
+<code class="example"></code>
+<code class="example">        var name: string</code>
+<code class="example">        var age: number</code>
+<code class="example">        if male</code>
+<code class="example">           name = "Peter"</code>
+<code class="example">           age = 42</code>
+<code class="example">        else</code>
+<code class="example">           name = "Elisa"</code>
+<code class="example">           age = 45</code>
+<code class="example">        endif</code>
+<code class="example"></code>
+如果你搞错了，试图用错误的类型赋值，会报错:
+<code class="example"></code>
+<code class="example">        age = "Peter"</code>
+<code class="section">        E1012: Type mismatch; expected number but got string </code>
+
+类型更多的内容见  <a href="usr_41.html#41.8">41.8</a> 。
+
+你需要使用字符串常量来为字符串变量赋值。字符串常量有两种。第一种是由双引号括起
+来的，我们已经看到过了。如果你想在这样的字符串内使用双引号，在之前加上反斜杠即
+可:
+<code class="example"></code>
+<code class="example">        var name = "he is \"Peter\""</code>
+<code class="example">        echo name</code>
+<code class="section">        he is "Peter" </code>
+
+如果你不想使用反斜杠，也可以用单引号括起字符串:
+<code class="example"></code>
+<code class="example">        var name = 'he is "Peter"'</code>
+<code class="example">        echo name</code>
+<code class="section">        he is "Peter" </code>
+
+所有的字符在单引号内都保持其本来面目。只有单引号本身例外: 输入两个你会得到一个
+单引号。因为反斜杠在其中也被作为其本身来对待，你无法使用它来改变其后的字符的意
+义:
+<code class="example"></code>
+<code class="example">        var name = 'P\e''ter'''</code>
+<code class="example">        echo name</code>
+<code class="section">        P\e<code class="badlink">'ter'</code> </code>
+
+在双引号括起来的字符串中可以使用特殊字符。这里有一些有用的例子:
+
+        \t              <code class="special">&lt;Tab&gt;</code>
+        \n              <code class="special">&lt;NL&gt;</code>，换行
+        \r              <code class="special">&lt;CR&gt;</code>，<code class="special">&lt;Enter&gt;</code>
+        \e              <code class="special">&lt;Esc&gt;</code>
+        \b              <code class="special">&lt;BS&gt;</code>，退格
+        \"              "
+        \\              \，反斜杠
+        \<code class="special">&lt;Esc&gt;</code>          <code class="special">&lt;Esc&gt;</code>
+        \<code class="special">&lt;C-W&gt;</code>          <code class="keystroke">CTRL-W</code>
+
+最后两个只是用来举例子的。"\<code class="special">&lt;name&gt;</code>" 的形式可以被用来表示特殊的键 "name"。
+
+在  <a href="eval.html#expr-quote">expr-quote</a>  中列出了全部的特殊字符。
+
+</section><hr class="doubleline" /><section class=inner>
+<h4><b class="vimtag"> <a name="41.3">41.3</a> </b>  表达式</h4>
+Vim 脚本支持相当标准的表达式处理。你可以在这里读到表达式的定义:
+ <a href="eval.html#expression-syntax">expression-syntax</a> 。这里我们只看看常用的几个。
+
+已经提到的那些数值，字符串和变量都属于表达式。因此任何可以使用表达式的地方，数
+值，字符串或变量都可以使用。其它基本的表达式有:
+
+        $NAME           环境变量
+        &amp;name           选项值
+        @r              寄存器内容
+
+例子:
+<code class="example"></code>
+<code class="example">        echo "The value of 'tabstop' is" &amp;ts</code>
+<code class="example">        echo "Your home directory is" $HOME</code>
+<code class="example">        if @a == 'text'</code>
+<code class="example"></code>
+&amp;name 这种形式也可以被用来暂时改变一个选项的值。例:
+<code class="example"></code>
+<code class="example">        var save_ic = &amp;ic</code>
+<code class="example">        set noic</code>
+<code class="example">        s/The Start/The Beginning/</code>
+<code class="example">        &amp;ic = save_ic</code>
+<code class="example"></code>
+这样既确保了在匹配 "The Start" 模式时 <a href="options.html#'ignorecase'">'ignorecase'</a> 选项是关闭的，同时也保留了
+用户原来的选项值。(另一个方法是在模式里加上 "\C"，见  <a href="pattern.html#%2F\C">/\C</a> 。)
+
+
+算 术
+
+我们把这些基本的东西都混合起来用就更有趣了。先来看看算术运算:
+
+        a + b           加
+        a - b           减
+        a * b           乘
+        a / b           除
+        a % b           余
+
+先乘除，后加减。例如:
+<code class="example"></code>
+<code class="example">        echo 10 + 5 * 2</code>
+<code class="section">        20 </code>
+
+括号内的先计算。这也没什么奇怪的。例如:
+<code class="example"></code>
+<code class="example">        echo (10 + 5) * 2</code>
+<code class="section">        30 </code>
+
+其 它
+
+用 ".." 可以把两个字符串连接起来 (见  <a href="eval.html#expr6">expr6</a> )。例如:
+<code class="example"></code>
+<code class="example">        echo "Name: " .. name</code>
+<code class="example">        Name: Peter</code>
+<code class="example"></code>
+一般的，当 "echo" 命令遇到多个参数时，会在它们之间加入空格。但上例中参数是一
+个表达式，所以不会有空格。
+
+如果不喜欢过多的连接，可用 $"string" 形式，花括号里接受表达式:
+<code class="example">        echo $"Name: {name}"</code>
+<code class="example"></code>
+详细描述见  <a href="eval.html#interpolated-string">interpolated-string</a> 。
+
+下面的条件表达式很显然是从 C 语言里借来的:
+
+        a ? b : c
+
+如果 "a" 为真用 "b"，否则用 "c"。例如:
+<code class="example"></code>
+<code class="example">        var nr = 4</code>
+<code class="example">        echo nr &gt; 5 ? "nr is big" : "nr is small"</code>
+<code class="section">        nr is small </code>
+
+在整个表达式被求值前，结构中的三部分总是先被求值的。因此你可以将其视为:
+<code class="example"></code>
+<code class="example">        (a) ? (b) : (c)</code>
+<code class="example"></code>
+还有准假值操作符:
+<code class="example">        echo name ?? "No name given"</code>
+见  <a href="eval.html#??">??</a> 。
+
+</section><hr class="doubleline" /><section class=inner>
+<h4><b class="vimtag"> <a name="41.4">41.4</a> </b>  条件语句</h4>
+ <code class="badlink">if</code>  命令在条件满足的前提下，执行其后直到  <code class="badlink">endif</code>  的所有语句。常用的形式为:
+
+        if <code class="special">{condition}</code>
+           <code class="special">{statements}</code>
+        endif
+
+语句 <code class="special">{statements}</code> 仅当表达式 <code class="special">{condition}</code> 为真或一时才被执行。不管是否执行，这
+些语句必须是有效的。否则 Vim 无法找到相应的  <code class="badlink">endif</code> 。
+
+你也可以使用  <code class="badlink">else</code> 。常用形式为:
+
+        if <code class="special">{condition}</code>
+           <code class="special">{statements}</code>
+        else
+           <code class="special">{statements}</code>
+        endif
+
+第二组 <code class="special">{statements}</code> 仅当条件不满足时被执行。
+
+最后还有  <code class="badlink">elseif</code> :
+
+        if <code class="special">{condition}</code>
+           <code class="special">{statements}</code>
+        elseif <code class="special">{condition}</code>
+           <code class="special">{statements}</code>
+        endif
+
+这种形式就像  <code class="badlink">else</code>  接着  <code class="badlink">if</code>  一样，但是少出现一个  <code class="badlink">endif</code> 。
+
+下面是一个有用的例子 (可以用在你的 vimrc 文件里): 它检查 <a href="options.html#'term'">'term'</a> 选项并根据
+不同的值做不同的操作:
+<code class="example"></code>
+<code class="example">        if &amp;term == "xterm"</code>
+<code class="example">          # "xterm" 对应的操作</code>
+<code class="example">        elseif &amp;term == "vt100"</code>
+<code class="example">          # vt100 终端对应的操作</code>
+<code class="example">        else</code>
+<code class="example">          # 其它终端对应在操作</code>
+<code class="example">        endif</code>
+<code class="example"></code>
+这里 "#" 开始的行是注释，下面会解释。
+
+
+逻 辑 操 作
+
+实际上我们在前面的几个例子中已经是用到了。下面是几个最常用的形式:
+
+        a == b          等于
+        a != b          不等于
+        a &gt;  b          大于
+        a &gt;= b          大于等于
+        a &lt;  b          小于
+        a &lt;= b          小于等于
+
+如果条件满足，结果为真，否则为假。例如:
+<code class="example"></code>
+<code class="example">        if v:version &gt;= 800</code>
+<code class="example">          echo "祝贺"</code>
+<code class="example">        else</code>
+<code class="example">          echo "你在使用旧的版本，升级！"</code>
+<code class="example">        endif</code>
+<code class="example"></code>
+这里 "v:version" 是 Vim 定义的变量，用来存放 Vim 的版本号。800 意为 8.0 版。
+8.1 版的值为 801。这对编写可以在不同版本的 Vim 上运行的脚本很有用。参阅
+ <a href="eval.html#v:version">v:version</a> 。也可以用  <a href="builtin.html#has()">has()</a>  检查特定的特性，还可以检查特定的补丁，见
+ <a href="builtin.html#has-patch">has-patch</a> 。
+
+对数值和字符串都可以做逻辑操作。两个字符串的算术差被用来比较它们的值。这个结果
+是通过字节值来计算的，对于某些语言，这样做的结果未必正确。
+
+比较一个字符串和一个数值会报错。
+
+对于字符串来说还有两种还有更有用的操作:
+
+        str =~ pat              匹配
+        str !~ pat              不匹配
+
+左边的 "str" 被当作一个字符串。右边的 "pat" 被当作一个匹配模式，正如做查找操作
+一样。例如:
+<code class="example"></code>
+<code class="example">        if str =~ " "</code>
+<code class="example">          echo "字符串包括空格"</code>
+<code class="example">        endif</code>
+<code class="example">        if str !~ '\.$'</code>
+<code class="example">          echo "字符串不以句号结尾"</code>
+<code class="example">        endif</code>
+<code class="example"></code>
+<code class="note">注意</code> 在匹配模式中用单引号是很有用的。因为匹配模式中通常有很多反斜杠，而反斜杠
+在双引号字符串中必须双写才有效。
+
+匹配是不定锚的，如果要匹配整个字符串，让模式以 "^" 开头，以 "$" 结尾。
+
+在做字符串比较时不使用 <a href="options.html#'ignorecase'">'ignorecase'</a> 选项。加上 "?" 表示忽略大小写。因此 "==?"
+比较两字符串是否相等，不计大小写。 <a href="eval.html#expr-%20%20">expr-==</a>  有一个完整的列表。
+
+
+循 环 详 述
+
+ <code class="badlink">while</code>  命令已经在前面提到了。还有另外两条语句可以在  <code class="badlink">while</code>  和  <code class="badlink">endwhile</code>  之
+间使用。
+
+        continue                跳回 while 循环的开始；继续循环
+        break                   跳至  <code class="badlink">endwhile</code> ；循环结束
+
+例:
+<code class="example"></code>
+<code class="example">        var counter = 1</code>
+<code class="example">        while counter &lt; 40</code>
+<code class="example">          if skip_number(counter)</code>
+<code class="example">            continue</code>
+<code class="example">          endif</code>
+<code class="example">          if last_number(counter)</code>
+<code class="example">            break</code>
+<code class="example">          endif</code>
+<code class="example">          sleep 50m</code>
+<code class="example">          ++counter</code>
+<code class="example">        endwhile</code>
+<code class="example"></code>
+ <code class="badlink">sleep</code>  命令使 Vim 小憩一下。"50m" 表示休息 50 毫秒。再举一个例子，`sleep 4`
+休息 4 秒。
+
+ <code class="badlink">continue</code>  和  <code class="badlink">break</code>  也可用在  <code class="badlink">for</code>  和  <code class="badlink">endfor</code>  之间。
+更多循环可以用  <code class="badlink">for</code>  命令实现，见下面的  <a href="usr_41.html#41.8">41.8</a> 。
+
+</section><hr class="doubleline" /><section class=inner>
+<h4><b class="vimtag"> <a name="41.5">41.5</a> </b>  执行一个表达式</h4>
+到目前为止，脚本内的语句都是由 Vim 直接运行的。用  <code class="badlink">execute</code>  命令可以执行一个表
+达式的结果。这是一个创建并执行命令的非常有效的方法。
+
+例如要跳转到一个由变量表示的标签:
+<code class="example"></code>
+<code class="example">        execute "tag " .. tag_name</code>
+<code class="example"></code>
+".." 被用来连接字符串 "tag " 和变量 "tag_name" 的值。假设 "tag_name" 的值为
+"get_cmd"，那么被将执行的命令将是:
+<code class="example"></code>
+<code class="example">        tag get_cmd</code>
+<code class="example"></code>
+ <code class="badlink">execute</code>  命令只能用来执行冒号命令。 <code class="badlink">normal</code>  命令可以用来执行普通模式命令。然
+而，它的参数只能是按表面意义解释的命令字符，不能是表达式。例如:
+<code class="example"></code>
+<code class="example">        normal gg=G</code>
+<code class="example"></code>
+"gg" 命令将跳转到第一行，"=" 操作符和 "G" 动作排版所有行。
+
+为了使  <code class="badlink">normal</code>  命令也可以带表达式，可以把  <code class="badlink">execute</code>  与其连起来使用。
+例:
+<code class="example"></code>
+<code class="example">        execute "normal " .. count .. "j"</code>
+<code class="example"></code>
+必须确保  <code class="badlink">normal</code>  的参数是一个完整的命令。否则，Vim 碰到参数的结尾就会中止
+其运行。例如，如果开始了删除操作符，必须给出动作命令。这样可以:
+<code class="example"></code>
+<code class="example">        normal d$</code>
+<code class="example"></code>
+这样不做任何事:
+<code class="example"></code>
+<code class="example">        normal d</code>
+<code class="example"></code>
+如果你开始了插入模式，即使不以 Esc 结束，还是会退出插入模式。这样可以插入
+"new text":
+<code class="example"></code>
+<code class="example">        execute "normal inew text"</code>
+<code class="example"></code>
+如果在插入文本后还要做点别的，需要退出插入模式:
+<code class="example"></code>
+<code class="example">        execute "normal inew text\&lt;Esc&gt;b"</code>
+<code class="example"></code>
+这将插入 "new text" 并把光标移到 "text" 的首字母上。<code class="note">注意</code> 这里使用了特殊键
+"\<code class="special">&lt;Esc&gt;</code>"。这样就避免了在你的脚本当中键入真正的 <code class="special">&lt;Esc&gt;</code> 字符。这时就可以看出
+ <code class="badlink">execute</code>  带双引号字符串的便利之处。
+
+如果你不想作为命令执行字符串，而想计算它作为表达式计算的结果，可以用 eval() 函
+数:
+<code class="example"></code>
+<code class="example">        var optname = "path"</code>
+<code class="example">        var optvalue = eval('&amp;' .. optname)</code>
+<code class="example"></code>
+"&amp;" 被加到 "path" 前面，这样传给 eval() 的参数成为 "&amp;path"。这时得到的返回值就
+是 <a href="options.html#'path'">'path'</a> 选项的值。
+
+</section><hr class="doubleline" /><section class=inner>
+<h4><b class="vimtag"> <a name="41.6">41.6</a> </b>  使用函数</h4>
+Vim 定义了大量的函数并通过这些函数提供了丰富的功能。本节将给出一些例子。你可以
+在下面的  <a href="usr_41.html#function-list">function-list</a>  找到一个完整的列表。
+
+一个函数调用时，参数列表要用括号括起来，并用逗号分割。例如:
+<code class="example"></code>
+<code class="example">        search("Date: ", "W")</code>
+<code class="example"></code>
+这将以 "Date: " 和 "W" 为参数调用 search() 函数。search() 函数的第一个参数是
+一个查找模式，第二个参数是一个标志。标志 "W" 表示查找操作遇到文件尾时不折返。
+
+ <a href="vim9.html#Vim9">Vim9</a>  脚本里使用  <code class="badlink">call</code>  命令与否可选。但老式脚本和命令行上这是必需的:
+<code class="example"></code>
+<code class="example">        call search("Date: ", "W")</code>
+<code class="example"></code>
+在一个表达式内也可以调用函数。例如:
+<code class="example"></code>
+<code class="example">        var line = getline(".")</code>
+<code class="example">        var repl = substitute(line, '\a', "*", "g")</code>
+<code class="example">        setline(".", repl)</code>
+<code class="example"></code>
+getline() 函数从当前缓冲区获取一行文本。其参数是行号。在本例中，"." 表示光标所
+在行。
+
+substitute() 函数的功能和  <a href="change.html#:substitute">:substitute</a>  命令相似。它的第一个参数 "line" 是要执
+行替换操作的源字符串。第二个参数 '\a' 是一个匹配模式，第三个参数 "*" 是替换字
+符串。最后一个参数 "g" 是一个标志位。
+
+setline() 函数将第一个参数表示的行的文本置为第二个参数表示的字符串。本例中光标
+所在的行被 substitute() 函数的结果所替换。因此这三条语句的效果等同于:
+<code class="example"></code>
+<code class="example">        :substitute/\a/*/g</code>
+<code class="example"></code>
+如果你在调用 substitute() 之前或之后有更多的事情要做的话，用函数的方式就会有价
+值了。
+
+
+函 数                                                   <b class="vimtag"> <a name="function-list">function-list</a> </b>
+
+Vim 提供的函数很多。这里我们以它们的用途分类列出。你可以在
+ <a href="builtin.html#builtin-function-list">builtin-function-list</a>  找到一个以字母顺序排列的列表。在函数名上使用 <code class="keystroke">CTRL-]</code> 可
+以跳转至该函数的详细说明。
+
+字符串操作:                                             <b class="vimtag"> <a name="string-functions">string-functions</a> </b>
+         <a href="builtin.html#nr2char()">nr2char()</a>              通过数值码值取得一个字符
+         <a href="builtin.html#list2str()">list2str()</a>             从数值列表取得字符字符串
+         <a href="builtin.html#char2nr()">char2nr()</a>              取得字符的数值码值
+         <a href="builtin.html#str2list()">str2list()</a>             从字符串取得数值列表
+         <a href="builtin.html#str2nr()">str2nr()</a>               把字符串转换为数值
+         <a href="builtin.html#str2float()">str2float()</a>            把字符串转换为浮点数
+         <a href="builtin.html#printf()">printf()</a>               根据 "%" 项目格式化字符串
+         <a href="builtin.html#escape()">escape()</a>               将字符串通过 '\' 转义
+         <a href="builtin.html#shellescape()">shellescape()</a>          转义字符串用于外壳命令
+         <a href="builtin.html#fnameescape()">fnameescape()</a>          转义 Vim 命令使用的文件名
+         <a href="builtin.html#tr()">tr()</a>                   把一组字符翻译成另一组
+         <a href="builtin.html#strtrans()">strtrans()</a>             将一个字符串变成可显示的格式
+         <a href="builtin.html#keytrans()">keytrans()</a>             把内部键值翻译为  <a href="map.html#:map">:map</a>  可接受的形式
+         <a href="builtin.html#tolower()">tolower()</a>              将一个字符串转换为小写
+         <a href="builtin.html#toupper()">toupper()</a>              将一个字符串转换为大写
+         <a href="builtin.html#charclass()">charclass()</a>            字符的类
+         <a href="builtin.html#match()">match()</a>                字符串中的模式匹配处
+         <a href="builtin.html#matchbufline()">matchbufline()</a>         缓冲区里模式的所有匹配
+         <a href="builtin.html#matchend()">matchend()</a>             字符串中的模式匹配结束处
+         <a href="builtin.html#matchfuzzy()">matchfuzzy()</a>           模糊匹配字符串列表中的一个字符串
+         <a href="builtin.html#matchfuzzypos()">matchfuzzypos()</a>        模糊匹配字符串列表中的一个字符串
+         <a href="builtin.html#matchstr()">matchstr()</a>             在一个字符串中匹配一个模式
+         <a href="builtin.html#matchstrlist()">matchstrlist()</a>         字符串列表中的模式的所有匹配
+         <a href="builtin.html#matchstrpos()">matchstrpos()</a>          字符串中满足匹配的模式和位置
+         <a href="builtin.html#matchlist()">matchlist()</a>            类似 matchstr()，同时返回子匹配
+         <a href="builtin.html#stridx()">stridx()</a>               子串在母串中第一次出现的地方
+         <a href="builtin.html#strridx()">strridx()</a>              子串在母串中最后一次出现的地方
+         <a href="builtin.html#strlen()">strlen()</a>               以字节计的字符串长度
+         <a href="builtin.html#strcharlen()">strcharlen()</a>           以字符计的字符串长度
+         <a href="builtin.html#strchars()">strchars()</a>             字符串里的字符数目
+         <a href="builtin.html#strwidth()">strwidth()</a>             字符串的显示长度
+         <a href="builtin.html#strdisplaywidth()">strdisplaywidth()</a>      字符串的显示长度，处理制表
+         <a href="builtin.html#setcellwidths()">setcellwidths()</a>        设置字符单元宽度覆盖
+         <a href="builtin.html#getcellwidths()">getcellwidths()</a>        取得字符单元宽度覆盖
+         <a href="builtin.html#getcellpixels()">getcellpixels()</a>        取得字符单元像素尺寸
+         <a href="builtin.html#reverse()">reverse()</a>              反转字符串里的字符顺序
+         <a href="builtin.html#substitute()">substitute()</a>           用一个字符串替换一个匹配的模式
+         <a href="builtin.html#submatch()">submatch()</a>             取得 ":s" 和 substitute() 匹配中指定的某个匹配
+         <a href="builtin.html#strpart()">strpart()</a>              用字节索引取得字符串的子串
+         <a href="builtin.html#strcharpart()">strcharpart()</a>          用字符索引获取字符串的子串
+         <a href="builtin.html#slice()">slice()</a>                在 Vim9 脚本中用字符索引获取字符串的切片
+         <a href="builtin.html#strgetchar()">strgetchar()</a>           用字符索引获取字符串里的字符
+         <a href="builtin.html#expand()">expand()</a>               展开特殊的关键字
+         <a href="builtin.html#expandcmd()">expandcmd()</a>            像  <a href="editing.html#:edit">:edit</a>  那样扩展命令
+         <a href="builtin.html#iconv()">iconv()</a>                转换文本编码格式
+         <a href="builtin.html#byteidx()">byteidx()</a>              字符串里字符的字节位置
+         <a href="builtin.html#byteidxcomp()">byteidxcomp()</a>          类似于 byteidx()，但计算组合字符
+         <a href="builtin.html#charidx()">charidx()</a>              字符串里字节的字符位置
+         <a href="builtin.html#utf16idx()">utf16idx()</a>             字符串里的字节的 UTF-16 索引
+         <a href="builtin.html#repeat()">repeat()</a>               重复字符串多次
+         <a href="builtin.html#eval()">eval()</a>                 计算字符串表达式
+         <a href="builtin.html#execute()">execute()</a>              执行 Ex 命令并获取输出
+         <a href="builtin.html#win_execute()">win_execute()</a>          类似于 execute()，但用于指定窗口
+         <a href="builtin.html#trim()">trim()</a>                 从字符串中删除字符
+         <a href="builtin.html#bindtextdomain()">bindtextdomain()</a>       设置消息查找翻译的基础路径
+         <a href="builtin.html#gettext()">gettext()</a>              查找消息翻译
+         <a href="builtin.html#ngettext()">ngettext()</a>             查找单数/复数的消息翻译
+         <a href="builtin.html#str2blob()">str2blob()</a>             转换字符串列表为 blob
+         <a href="builtin.html#blob2str()">blob2str()</a>             转换 blob 为字符串列表
+         <a href="builtin.html#items()">items()</a>                取得字符串的索引-字符组对的列表
+         <a href="builtin.html#uri_encode()">uri_encode()</a>           URI-编码字符串
+         <a href="builtin.html#uri_decode()">uri_decode()</a>           URI-解码字符串
+
+列表处理:                                               <b class="vimtag"> <a name="list-functions">list-functions</a> </b>
+         <a href="builtin.html#get()">get()</a>                  得到项目，错误索引不报错
+         <a href="builtin.html#len()">len()</a>                  列表的项目总数
+         <a href="builtin.html#empty()">empty()</a>                检查列表是否为空
+         <a href="builtin.html#insert()">insert()</a>               在列表某处插入项目
+         <a href="builtin.html#add()">add()</a>                  在列表后附加项目
+         <a href="builtin.html#extend()">extend()</a>               在列表后附加另一个列表
+         <a href="builtin.html#extendnew()">extendnew()</a>            创建新列表并附加项目
+         <a href="builtin.html#remove()">remove()</a>               删除列表里一或多个项目
+         <a href="builtin.html#copy()">copy()</a>                 建立列表的浅备份
+         <a href="builtin.html#deepcopy()">deepcopy()</a>             建立列表的完整备份
+         <a href="builtin.html#filter()">filter()</a>               删除列表的选定项目
+         <a href="builtin.html#map()">map()</a>                  改变每个列表项目
+         <a href="builtin.html#mapnew()">mapnew()</a>               为改变项目创建新列表
+         <a href="builtin.html#foreach()">foreach()</a>              在列表的项目上应用函数
+         <a href="builtin.html#reduce()">reduce()</a>               缩减列表为单一值
+         <a href="builtin.html#slice()">slice()</a>                获取列表的切片
+         <a href="builtin.html#sort()">sort()</a>                 给列表排序
+         <a href="builtin.html#reverse()">reverse()</a>              反转列表里的项目顺序
+         <a href="builtin.html#uniq()">uniq()</a>                 删除重复邻接项目的备份
+         <a href="builtin.html#split()">split()</a>                分割字符串成为列表
+         <a href="builtin.html#join()">join()</a>                 合并列表项目成为字符串
+         <a href="builtin.html#range()">range()</a>                返回数值序列的列表
+         <a href="builtin.html#string()">string()</a>               列表的字符串表示形式
+         <a href="builtin.html#call()">call()</a>                 调用函数，参数以列表形式提供
+         <a href="builtin.html#index()">index()</a>                列表里某值的索引
+         <a href="builtin.html#indexof()">indexof()</a>              列表里表达式计算值为真的索引
+         <a href="builtin.html#max()">max()</a>                  列表项目的最大值
+         <a href="builtin.html#min()">min()</a>                  列表项目的最小值
+         <a href="builtin.html#count()">count()</a>                计算列表里某值的出现次数
+         <a href="builtin.html#repeat()">repeat()</a>               重复列表多次
+         <a href="builtin.html#flatten()">flatten()</a>              展平列表
+         <a href="builtin.html#flattennew()">flattennew()</a>           展平列表的一个备份
+         <a href="builtin.html#items()">items()</a>                得到索引-值对的列表的列表
+
+元组处理:                                               <b class="vimtag"> <a name="tuple-functions">tuple-functions</a> </b>
+         <a href="builtin.html#copy()">copy()</a>                 建立元组的浅备份
+         <a href="builtin.html#count()">count()</a>                计算元组里某值的出现次数
+         <a href="builtin.html#deepcopy()">deepcopy()</a>             建立元组的完整备份
+         <a href="builtin.html#empty()">empty()</a>                检查元组是否为空
+         <a href="builtin.html#foreach()">foreach()</a>              在元组的项目上应用函数
+         <a href="builtin.html#get()">get()</a>                  得到项目，错误索引不报错
+         <a href="builtin.html#index()">index()</a>                元组里某值的索引
+         <a href="builtin.html#indexof()">indexof()</a>              元组里表达式计算值为真的索引
+         <a href="builtin.html#items()">items()</a>                得到索引-值对的元组的列表
+         <a href="builtin.html#join()">join()</a>                 合并元组项目成为字符串
+         <a href="builtin.html#len()">len()</a>                  元组的项目总数
+         <a href="builtin.html#list2tuple()">list2tuple()</a>           转换项目列表为元组
+         <a href="builtin.html#max()">max()</a>                  元组项目的最大值
+         <a href="builtin.html#min()">min()</a>                  元组项目的最小值
+         <a href="builtin.html#reduce()">reduce()</a>               缩减元组为单一值
+         <a href="builtin.html#repeat()">repeat()</a>               重复元组多次
+         <a href="builtin.html#reverse()">reverse()</a>              反转元组里的项目顺序
+         <a href="builtin.html#slice()">slice()</a>                获取元组的切片
+         <a href="builtin.html#string()">string()</a>               元组的字符串表示形式
+         <a href="builtin.html#tuple2list()">tuple2list()</a>           转换项目元组为列表
+
+字典处理:                                               <b class="vimtag"> <a name="dict-functions">dict-functions</a> </b>
+         <a href="builtin.html#get()">get()</a>                  得到项目，错误的键不报错
+         <a href="builtin.html#len()">len()</a>                  字典项目的总数
+         <a href="builtin.html#has_key()">has_key()</a>              检查某键是否出现在字典里
+         <a href="builtin.html#empty()">empty()</a>                检查字典是否为空
+         <a href="builtin.html#remove()">remove()</a>               删除字典的项目
+         <a href="builtin.html#extend()">extend()</a>               从一个字典增加项目到另一个字典
+         <a href="builtin.html#extendnew()">extendnew()</a>            创建新字典并附加项目
+         <a href="builtin.html#filter()">filter()</a>               删除字典的选定项目
+         <a href="builtin.html#map()">map()</a>                  改变每个字典项目
+         <a href="builtin.html#mapnew()">mapnew()</a>               为改变项目创建新字典
+         <a href="builtin.html#foreach()">foreach()</a>              在字典的项目上应用函数
+         <a href="builtin.html#keys()">keys()</a>                 得到字典的键列表
+         <a href="builtin.html#values()">values()</a>               得到字典的值列表
+         <a href="builtin.html#items()">items()</a>                得到字典的键-值组对的列表
+         <a href="builtin.html#copy()">copy()</a>                 建立字典的浅备份
+         <a href="builtin.html#deepcopy()">deepcopy()</a>             建立字典的完整备份
+         <a href="builtin.html#string()">string()</a>               字典的字符串表示形式
+         <a href="builtin.html#max()">max()</a>                  字典项目的最大值
+         <a href="builtin.html#min()">min()</a>                  字典项目的最小值
+         <a href="builtin.html#count()">count()</a>                计算字典里某值的出现次数
+
+浮点数计算:                                             <b class="vimtag"> <a name="float-functions">float-functions</a> </b>
+         <a href="builtin.html#float2nr()">float2nr()</a>             把浮点数转换为数值
+         <a href="builtin.html#abs()">abs()</a>                  绝对值 (也适用于数值)
+         <a href="builtin.html#round()">round()</a>                四舍五入
+         <a href="builtin.html#ceil()">ceil()</a>                 向上取整
+         <a href="builtin.html#floor()">floor()</a>                向下取整
+         <a href="builtin.html#trunc()">trunc()</a>                删除小数点后的值
+         <a href="builtin.html#fmod()">fmod()</a>                 除法的余数
+         <a href="builtin.html#exp()">exp()</a>                  指数
+         <a href="builtin.html#log()">log()</a>                  自然对数 (以 e 为底的对数)
+         <a href="builtin.html#log10()">log10()</a>                以 10 为底的对数
+         <a href="builtin.html#pow()">pow()</a>                  x 的 y 次方
+         <a href="builtin.html#sqrt()">sqrt()</a>                 平方根
+         <a href="builtin.html#sin()">sin()</a>                  正弦
+         <a href="builtin.html#cos()">cos()</a>                  余弦
+         <a href="builtin.html#tan()">tan()</a>                  正切
+         <a href="builtin.html#asin()">asin()</a>                 反正弦
+         <a href="builtin.html#acos()">acos()</a>                 反余弦
+         <a href="builtin.html#atan()">atan()</a>                 反正切
+         <a href="builtin.html#atan2()">atan2()</a>                反正切
+         <a href="builtin.html#sinh()">sinh()</a>                 双曲正弦
+         <a href="builtin.html#cosh()">cosh()</a>                 双曲余弦
+         <a href="builtin.html#tanh()">tanh()</a>                 双曲正切
+         <a href="builtin.html#isinf()">isinf()</a>                检查无穷
+         <a href="builtin.html#isnan()">isnan()</a>                检查非数
+
+Blob 操作:                                              <b class="vimtag"> <a name="blob-functions">blob-functions</a> </b>
+         <a href="builtin.html#blob2list()">blob2list()</a>            把 blob 转换为数值列表
+         <a href="builtin.html#list2blob()">list2blob()</a>            把数值列表转换为 blob
+         <a href="builtin.html#reverse()">reverse()</a>              反转 blob 里的数值顺序
+         <a href="builtin.html#index()">index()</a>                blob 里某值的索引
+         <a href="builtin.html#indexof()">indexof()</a>              blob 里表达式计算值为真的索引
+         <a href="builtin.html#items()">items()</a>                取得 blob 里索引-值组对的列表
+
+其它计算:                                               <b class="vimtag"> <a name="bitwise-function">bitwise-function</a> </b>
+         <a href="builtin.html#and()">and()</a>                  按位与
+         <a href="builtin.html#invert()">invert()</a>               按位取反
+         <a href="builtin.html#or()">or()</a>                   按位或
+         <a href="builtin.html#xor()">xor()</a>                  按位异或
+         <a href="builtin.html#sha256()">sha256()</a>               SHA-256 哈希
+         <a href="builtin.html#rand()">rand()</a>                 获取伪随机数
+         <a href="builtin.html#srand()">srand()</a>                初始化 rand() 使用的种子
+
+变量:                                                   <b class="vimtag"> <a name="var-functions">var-functions</a> </b>
+
+         <a href="builtin.html#instanceof()">instanceof()</a>           检查变量是否为给定类的一个实例
+         <a href="builtin.html#type()">type()</a>                 数值形式的变量类型
+         <a href="builtin.html#typename()">typename()</a>             文本形式的变量类型
+         <a href="builtin.html#islocked()">islocked()</a>             检查变量是否加锁
+         <a href="builtin.html#funcref()">funcref()</a>              返回指向函数的函数引用
+         <a href="builtin.html#function()">function()</a>             得到函数名对应的函数引用
+         <a href="builtin.html#getbufvar()">getbufvar()</a>            取得指定缓冲区中的变量值
+         <a href="builtin.html#setbufvar()">setbufvar()</a>            设定指定缓冲区中的变量值
+         <a href="builtin.html#getwinvar()">getwinvar()</a>            取得指定窗口的变量值
+         <a href="builtin.html#gettabvar()">gettabvar()</a>            取得指定标签页的变量值
+         <a href="builtin.html#gettabwinvar()">gettabwinvar()</a>         取得指定窗口和标签页的变量值
+         <a href="builtin.html#setwinvar()">setwinvar()</a>            设定指定窗口的变量值
+         <a href="builtin.html#settabvar()">settabvar()</a>            设定指定标签页的变量值
+         <a href="builtin.html#settabwinvar()">settabwinvar()</a>         设定指定窗口和标签页的变量值
+         <a href="builtin.html#garbagecollect()">garbagecollect()</a>       可能情况下释放内存
+
+光标和位置标记位置:                     <b class="vimtag"> <a name="cursor-functions">cursor-functions</a> </b> <b class="vimtag"> <a name="mark-functions">mark-functions</a> </b>
+         <a href="builtin.html#col()">col()</a>                  光标或位置标记所在的列
+         <a href="builtin.html#virtcol()">virtcol()</a>              光标或位置标记所在的屏幕列
+         <a href="builtin.html#line()">line()</a>                 光标或位置标记所在行
+         <a href="builtin.html#wincol()">wincol()</a>               光标所在窗口列
+         <a href="builtin.html#winline()">winline()</a>              光标所在窗口行
+         <a href="builtin.html#cursor()">cursor()</a>               置光标于 行/列 处
+         <a href="builtin.html#screencol()">screencol()</a>            得到光标的屏幕列
+         <a href="builtin.html#screenrow()">screenrow()</a>            得到光标的屏幕行
+         <a href="builtin.html#screenpos()">screenpos()</a>            文本字符的屏幕行与列
+         <a href="builtin.html#virtcol2col()">virtcol2col()</a>          屏幕上文本字符的字节索引
+         <a href="builtin.html#getcurpos()">getcurpos()</a>            得到光标位置
+         <a href="builtin.html#getpos()">getpos()</a>               得到光标、位置标记等的位置
+         <a href="builtin.html#setpos()">setpos()</a>               设置光标、位置标记等的位置
+         <a href="builtin.html#getmarklist()">getmarklist()</a>          全局/局部位置标记列表
+         <a href="builtin.html#byte2line()">byte2line()</a>            取得某字节位置所在行号
+         <a href="builtin.html#line2byte()">line2byte()</a>            取得某行之前的字节数
+         <a href="builtin.html#diff_filler()">diff_filler()</a>          得到一行之上的填充行数目
+         <a href="builtin.html#screenattr()">screenattr()</a>           得到屏幕行的属性
+         <a href="builtin.html#screenchar()">screenchar()</a>           得到屏幕行的字符代码
+         <a href="builtin.html#screenchars()">screenchars()</a>          得到屏幕行的多个字符代码
+         <a href="builtin.html#screenstring()">screenstring()</a>         得到屏幕行的字符字符串
+         <a href="builtin.html#charcol()">charcol()</a>              光标或位置标记的字符数
+         <a href="builtin.html#getcharpos()">getcharpos()</a>           得到光标位置标记等的字符位置
+         <a href="builtin.html#setcharpos()">setcharpos()</a>           设置光标位置标记等的字符位置
+         <a href="builtin.html#getcursorcharpos()">getcursorcharpos()</a>     得到光标的字符位置
+         <a href="builtin.html#setcursorcharpos()">setcursorcharpos()</a>     设置光标的字符位置
+
+操作当前缓冲区的文本:                                   <b class="vimtag"> <a name="text-functions">text-functions</a> </b>
+         <a href="builtin.html#getline()">getline()</a>              从缓冲区中取一行
+         <a href="builtin.html#getregion()">getregion()</a>            从缓冲区里得到区域文本
+         <a href="builtin.html#getregionpos()">getregionpos()</a>         从区域里得到位置列表
+         <a href="builtin.html#setline()">setline()</a>              替换缓冲区中的一行
+         <a href="builtin.html#append()">append()</a>               附加行或行的列表到缓冲区
+         <a href="builtin.html#indent()">indent()</a>               某行的缩进
+         <a href="builtin.html#cindent()">cindent()</a>              根据 C 缩进法则的某行的缩进
+         <a href="builtin.html#lispindent()">lispindent()</a>           根据 Lisp 缩进法则的某行的缩进
+         <a href="builtin.html#nextnonblank()">nextnonblank()</a>         查找下一个非空白行
+         <a href="builtin.html#prevnonblank()">prevnonblank()</a>         查找前一个非空白行
+         <a href="builtin.html#search()">search()</a>               查找模式的匹配
+         <a href="builtin.html#searchpos()">searchpos()</a>            寻找模式的匹配
+         <a href="builtin.html#searchcount()">searchcount()</a>          得到在光标前/后的匹配数目
+         <a href="builtin.html#searchpair()">searchpair()</a>           查找 start/skip/end 配对的另一端
+         <a href="builtin.html#searchpairpos()">searchpairpos()</a>        查找 start/skip/end 配对的另一端
+         <a href="builtin.html#searchdecl()">searchdecl()</a>           查找名字的声明
+         <a href="builtin.html#getcharsearch()">getcharsearch()</a>        返回字符搜索信息
+         <a href="builtin.html#setcharsearch()">setcharsearch()</a>        设置字符搜索信息
+
+操作另一个缓冲区文本:
+         <a href="builtin.html#getbufline()">getbufline()</a>           取得指定缓冲区的行列表
+         <a href="builtin.html#getbufoneline()">getbufoneline()</a>        取得指定缓冲区的一行
+         <a href="builtin.html#setbufline()">setbufline()</a>           替换指定缓冲区的一行
+         <a href="builtin.html#appendbufline()">appendbufline()</a>        给指定缓冲区附加行列表
+         <a href="builtin.html#deletebufline()">deletebufline()</a>        从指定缓冲区中删除多行
+
+                                        <b class="vimtag"> <a name="system-functions">system-functions</a> </b> <b class="vimtag"> <a name="file-functions">file-functions</a> </b>
+系统调用及文件操作:
+         <a href="builtin.html#glob()">glob()</a>                 展开通配符
+         <a href="builtin.html#globpath()">globpath()</a>             在几个路径中展开通配符
+         <a href="builtin.html#glob2regpat()">glob2regpat()</a>          转换 glob 模式到搜索模式
+         <a href="builtin.html#findfile()">findfile()</a>             在目录列表里查找文件
+         <a href="builtin.html#finddir()">finddir()</a>              在目录列表里查找目录
+         <a href="builtin.html#resolve()">resolve()</a>              找到一个快捷方式所指
+         <a href="builtin.html#fnamemodify()">fnamemodify()</a>          改变文件名
+         <a href="builtin.html#pathshorten()">pathshorten()</a>          缩短路径里的目录名
+         <a href="builtin.html#simplify()">simplify()</a>             简化路径，不改变其含义
+         <a href="builtin.html#executable()">executable()</a>           检查一个可执行程序是否存在
+         <a href="builtin.html#exepath()">exepath()</a>              可执行程序的完整路径
+         <a href="builtin.html#filereadable()">filereadable()</a>         检查一个文件可读与否
+         <a href="builtin.html#filewritable()">filewritable()</a>         检查一个文件可写与否
+         <a href="builtin.html#getfperm()">getfperm()</a>             得到文件权限
+         <a href="builtin.html#setfperm()">setfperm()</a>             设置文件权限
+         <a href="builtin.html#getftype()">getftype()</a>             得到文件类型
+         <a href="builtin.html#isabsolutepath()">isabsolutepath()</a>       检查目录是否是绝对目录
+         <a href="builtin.html#isdirectory()">isdirectory()</a>          检查一个目录是否存在
+         <a href="builtin.html#getfsize()">getfsize()</a>             取得文件大小
+         <a href="builtin.html#getcwd()">getcwd()</a>               取得当前工作路径
+         <a href="builtin.html#haslocaldir()">haslocaldir()</a>          检查当前窗口是否使用过  <a href="editing.html#:lcd">:lcd</a>  或  <a href="editing.html#:tcd">:tcd</a> 
+         <a href="builtin.html#tempname()">tempname()</a>             取得一个临时文件的名称
+         <a href="builtin.html#mkdir()">mkdir()</a>                建立新目录
+         <a href="builtin.html#chdir()">chdir()</a>                改变当前目录
+         <a href="builtin.html#delete()">delete()</a>               删除文件
+         <a href="builtin.html#rename()">rename()</a>               重命名文件
+         <a href="builtin.html#system()">system()</a>               得到字符串形式的外壳命令结果
+         <a href="builtin.html#systemlist()">systemlist()</a>           得到列表形式的外壳命令结果
+         <a href="builtin.html#environ()">environ()</a>              得到所有环境变量
+         <a href="builtin.html#getenv()">getenv()</a>               得到一个环境变量
+         <a href="builtin.html#setenv()">setenv()</a>               设置一个环境变量
+         <a href="builtin.html#hostname()">hostname()</a>             系统的名称
+         <a href="builtin.html#readfile()">readfile()</a>             读入文件到一个行列表
+         <a href="builtin.html#readblob()">readblob()</a>             读入文件到 Blob
+         <a href="builtin.html#readdir()">readdir()</a>              从目录得到文件名的列表
+         <a href="builtin.html#readdirex()">readdirex()</a>            从目录得到文件信息的列表
+         <a href="builtin.html#writefile()">writefile()</a>            把一个行列表或 blob 写到文件里
+         <a href="builtin.html#filecopy()">filecopy()</a>             把 <code class="special">{from}</code> 文件复制到 <code class="special">{to}</code>
+
+日期和时间:                             <b class="vimtag"> <a name="date-functions">date-functions</a> </b> <b class="vimtag"> <a name="time-functions">time-functions</a> </b>
+         <a href="builtin.html#getftime()">getftime()</a>             得到文件的最近修改时间
+         <a href="builtin.html#localtime()">localtime()</a>            得到以秒计的当前时间
+         <a href="builtin.html#strftime()">strftime()</a>             把时间转换为字符串
+         <a href="builtin.html#strptime()">strptime()</a>             把日期/时间字符串转换为时间
+         <a href="builtin.html#reltime()">reltime()</a>              得到准确的当前或者已经经过的时间
+         <a href="builtin.html#reltimestr()">reltimestr()</a>           把 reltime() 的结果转换为字符串
+         <a href="builtin.html#reltimefloat()">reltimefloat()</a>         把 reltime() 的结果转换为浮点数
+
+自动命令:                                       <b class="vimtag"> <a name="autocmd-functions">autocmd-functions</a> </b>
+         <a href="builtin.html#autocmd_add()">autocmd_add()</a>          新增一组自动命令和组
+         <a href="builtin.html#autocmd_delete()">autocmd_delete()</a>       删除一组自动命令和组
+         <a href="builtin.html#autocmd_get()">autocmd_get()</a>          返回自动命令的列表
+
+                        <b class="vimtag"> <a name="buffer-functions">buffer-functions</a> </b> <b class="vimtag"> <a name="window-functions">window-functions</a> </b> <b class="vimtag"> <a name="arg-functions">arg-functions</a> </b>
+缓冲区，窗口及参数列表:
+         <a href="builtin.html#argc()">argc()</a>                 参数列表项数
+         <a href="builtin.html#argidx()">argidx()</a>               参数列表中的当前位置
+         <a href="builtin.html#arglistid()">arglistid()</a>            得到参数列表的编号
+         <a href="builtin.html#argv()">argv()</a>                 从参数列表中取得一项
+         <a href="builtin.html#bufadd()">bufadd()</a>               给缓冲区列表增加文件
+         <a href="builtin.html#bufexists()">bufexists()</a>            检查缓冲区是否存在
+         <a href="builtin.html#buflisted()">buflisted()</a>            检查缓冲区是否存在并在列表内
+         <a href="builtin.html#bufload()">bufload()</a>              确保缓冲区已加载
+         <a href="builtin.html#bufloaded()">bufloaded()</a>            检查缓冲区是否存在并已加载
+         <a href="builtin.html#bufname()">bufname()</a>              取得某缓冲区名
+         <a href="builtin.html#bufnr()">bufnr()</a>                取得某缓冲区号
+         <a href="builtin.html#tabpagebuflist()">tabpagebuflist()</a>       得到标签页里的缓冲区列表
+         <a href="builtin.html#tabpagenr()">tabpagenr()</a>            得到标签页号
+         <a href="builtin.html#tabpagewinnr()">tabpagewinnr()</a>         类似于特定标签页里的 winnr()
+         <a href="builtin.html#winnr()">winnr()</a>                取得当前窗口的窗口号
+         <a href="builtin.html#bufwinid()">bufwinid()</a>             取得某缓冲区的窗口 ID
+         <a href="builtin.html#bufwinnr()">bufwinnr()</a>             取得某缓冲区的窗口号
+         <a href="builtin.html#winbufnr()">winbufnr()</a>             取得某窗口的缓冲区号
+         <a href="builtin.html#listener_add()">listener_add()</a>         新增改动监听器回调
+         <a href="builtin.html#listener_flush()">listener_flush()</a>       调用监听器回调
+         <a href="builtin.html#listener_remove()">listener_remove()</a>      删除监听器回调
+         <a href="builtin.html#win_findbuf()">win_findbuf()</a>          寻找包括某缓冲区的窗口
+         <a href="builtin.html#win_getid()">win_getid()</a>            取得窗口的窗口 ID
+         <a href="builtin.html#win_gettype()">win_gettype()</a>          取得窗口的类型
+         <a href="builtin.html#win_gotoid()">win_gotoid()</a>           转到指定 ID 的窗口
+         <a href="builtin.html#win_id2tabwin()">win_id2tabwin()</a>        给出窗口 ID 获取标签页号和窗口号
+         <a href="builtin.html#win_id2win()">win_id2win()</a>           把窗口 ID 转换为窗口号
+         <a href="builtin.html#win_move_separator()">win_move_separator()</a>   移动窗口的垂直分割符
+         <a href="builtin.html#win_move_statusline()">win_move_statusline()</a>  移动窗口的状态行
+         <a href="builtin.html#win_splitmove()">win_splitmove()</a>        移动窗口成为另一个窗口的分割
+         <a href="builtin.html#getbufinfo()">getbufinfo()</a>           获取缓冲区信息的列表
+         <a href="builtin.html#gettabinfo()">gettabinfo()</a>           获取标签页信息的列表
+         <a href="builtin.html#getwininfo()">getwininfo()</a>           获取窗口信息的列表
+         <a href="builtin.html#getchangelist()">getchangelist()</a>        获取改变列表项目的列表
+         <a href="builtin.html#getjumplist()">getjumplist()</a>          获取跳转列表项目的列表
+         <a href="builtin.html#swapfilelist()">swapfilelist()</a>         <a href="options.html#'directory'">'directory'</a> 里存在的交换文件的列表
+         <a href="builtin.html#swapinfo()">swapinfo()</a>             关于交换文件的信息
+         <a href="builtin.html#swapname()">swapname()</a>             取得缓冲区的交换文件路径
+
+命令行:                                         <b class="vimtag"> <a name="command-line-functions">command-line-functions</a> </b>
+         <a href="builtin.html#getcmdcomplpat()">getcmdcomplpat()</a>       得到当前命令行补全模式
+         <a href="builtin.html#getcmdcompltype()">getcmdcompltype()</a>      得到当前命令行补全类型
+         <a href="builtin.html#getcmdline()">getcmdline()</a>           得到当前命令行输入
+         <a href="builtin.html#getcmdprompt()">getcmdprompt()</a>         得到当前命令行提示符
+         <a href="builtin.html#getcmdpos()">getcmdpos()</a>            得到命令行里的光标位置
+         <a href="builtin.html#getcmdscreenpos()">getcmdscreenpos()</a>      得到命令行光标的屏幕位置
+         <a href="builtin.html#setcmdline()">setcmdline()</a>           设置当前命令行
+         <a href="builtin.html#setcmdpos()">setcmdpos()</a>            设置命令行里的光标位置
+         <a href="builtin.html#getcmdtype()">getcmdtype()</a>           得到当前命令行的类型
+         <a href="builtin.html#getcmdwintype()">getcmdwintype()</a>        返回当前命令行窗口类型
+         <a href="builtin.html#getcompletion()">getcompletion()</a>        命令行补全匹配的列表
+         <a href="builtin.html#getcompletiontype()">getcompletiontype()</a>    得到用于给定字符串的命令行补全的类型
+         <a href="builtin.html#fullcommand()">fullcommand()</a>          得到完整的命令名
+         <a href="builtin.html#cmdcomplete_info()">cmdcomplete_info()</a>     得到命令行补全信息
+
+快速修复和位置列表:                             <b class="vimtag"> <a name="quickfix-functions">quickfix-functions</a> </b>
+         <a href="builtin.html#getqflist()">getqflist()</a>            快速修复错误的列表
+         <a href="builtin.html#setqflist()">setqflist()</a>            修改快速修复列表
+         <a href="builtin.html#getloclist()">getloclist()</a>           位置列表项目的列表
+         <a href="builtin.html#setloclist()">setloclist()</a>           修改位置列表
+
+插入模式补全:                                   <b class="vimtag"> <a name="completion-functions">completion-functions</a> </b>
+         <a href="builtin.html#complete()">complete()</a>             设定要寻找的匹配
+         <a href="builtin.html#complete_add()">complete_add()</a>         加入要寻找的匹配
+         <a href="builtin.html#complete_check()">complete_check()</a>       检查补全是否被中止
+         <a href="builtin.html#complete_info()">complete_info()</a>        取得当前补全的信息
+         <a href="builtin.html#preinserted()">preinserted()</a>          检查文本是否插入在光标之后
+         <a href="builtin.html#pumvisible()">pumvisible()</a>           检查弹出菜单是否显示
+         <a href="builtin.html#pum_getpos()">pum_getpos()</a>           如果可见，弹出菜单的位置及大小
+
+折叠:                                           <b class="vimtag"> <a name="folding-functions">folding-functions</a> </b>
+         <a href="builtin.html#foldclosed()">foldclosed()</a>           检查某一行是否被折叠起来
+         <a href="builtin.html#foldclosedend()">foldclosedend()</a>        类似 foldclosed() 但同时返回最后一行
+         <a href="builtin.html#foldlevel()">foldlevel()</a>            检查某行的折叠级别
+         <a href="builtin.html#foldtext()">foldtext()</a>             产生折叠关闭时所显示的行
+         <a href="builtin.html#foldtextresult()">foldtextresult()</a>       得到关闭折叠显示的文本
+
+语法和高亮:                      <b class="vimtag"> <a name="syntax-functions">syntax-functions</a> </b> <b class="vimtag"> <a name="highlighting-functions">highlighting-functions</a> </b>
+         <a href="builtin.html#clearmatches()">clearmatches()</a>         清除  <a href="builtin.html#matchadd()">matchadd()</a>  和  <a href="pattern.html#:match">:match</a>  诸命令定义的所有
+                                匹配
+         <a href="builtin.html#getmatches()">getmatches()</a>           得到  <a href="builtin.html#matchadd()">matchadd()</a>  和  <a href="pattern.html#:match">:match</a>  诸命令定义的所有
+                                匹配
+         <a href="builtin.html#hlexists()">hlexists()</a>             检查高亮组是否存在
+         <a href="builtin.html#hlget()">hlget()</a>                取得高亮组属性
+         <a href="builtin.html#hlset()">hlset()</a>                设置高亮组属性
+         <a href="builtin.html#hlID()">hlID()</a>                 取得高亮组标示
+         <a href="builtin.html#synID()">synID()</a>                取得某位置的语法标示
+         <a href="builtin.html#synIDattr()">synIDattr()</a>            取得某语法标示的特定属性
+         <a href="builtin.html#synIDtrans()">synIDtrans()</a>           取得翻译后的语法标示
+         <a href="builtin.html#synstack()">synstack()</a>             取得指定位置的语法标示的列表
+         <a href="builtin.html#synconcealed()">synconcealed()</a>         取得和 (语法) 隐藏 (conceal) 相关的信息
+         <a href="builtin.html#diff_hlID()">diff_hlID()</a>            得到比较模式某个位置的高亮标示
+         <a href="builtin.html#matchadd()">matchadd()</a>             定义要高亮的模式 (一个 "匹配")
+         <a href="builtin.html#matchaddpos()">matchaddpos()</a>          定义要高亮的位置列表
+         <a href="builtin.html#matcharg()">matcharg()</a>             得到  <a href="pattern.html#:match">:match</a>  参数的相关信息
+         <a href="builtin.html#matchdelete()">matchdelete()</a>          删除  <a href="builtin.html#matchadd()">matchadd()</a>  或  <a href="pattern.html#:match">:match</a>  诸命令定义的匹配
+         <a href="builtin.html#setmatches()">setmatches()</a>           恢复  <a href="builtin.html#getmatches()">getmatches()</a>  保存的匹配列表
+
+拼写:                                           <b class="vimtag"> <a name="spell-functions">spell-functions</a> </b>
+         <a href="builtin.html#spellbadword()">spellbadword()</a>         定位光标所在或之后的错误拼写的单词
+         <a href="builtin.html#spellsuggest()">spellsuggest()</a>         返回建议的拼写校正列表
+         <a href="builtin.html#soundfold()">soundfold()</a>            返回 "发音相似" 的单词等价形式
+
+历史记录:                                       <b class="vimtag"> <a name="history-functions">history-functions</a> </b>
+         <a href="builtin.html#histadd()">histadd()</a>              在历史记录中加入一项
+         <a href="builtin.html#histdel()">histdel()</a>              从历史记录中删除一项
+         <a href="builtin.html#histget()">histget()</a>              从历史记录中提取一项
+         <a href="builtin.html#histnr()">histnr()</a>               取得某历史记录的最大索引号
+
+交互:                                           <b class="vimtag"> <a name="interactive-functions">interactive-functions</a> </b>
+         <a href="builtin.html#browse()">browse()</a>               显示文件查找器
+         <a href="builtin.html#browsedir()">browsedir()</a>            显示目录查找器
+         <a href="builtin.html#confirm()">confirm()</a>              让用户作出选择
+         <a href="builtin.html#getchar()">getchar()</a>              从用户那里取得一个字符输入
+         <a href="builtin.html#getcharstr()">getcharstr()</a>           从用户那里取得一个字符输入，以字符串形式返回
+         <a href="builtin.html#getcharmod()">getcharmod()</a>           取得最近键入字符的修饰符
+         <a href="builtin.html#getmousepos()">getmousepos()</a>          取得最近已知的鼠标位置
+         <a href="builtin.html#getmouseshape()">getmouseshape()</a>        取得最近已知的鼠标外型
+         <a href="builtin.html#echoraw()">echoraw()</a>              按原样输出字符
+         <a href="builtin.html#feedkeys()">feedkeys()</a>             把字符放到预输入队列中
+         <a href="builtin.html#input()">input()</a>                从用户那里取得一行输入
+         <a href="builtin.html#inputlist()">inputlist()</a>            让用户从列表里选择一个项目
+         <a href="builtin.html#inputsecret()">inputsecret()</a>          从用户那里取得一行输入，不回显
+         <a href="builtin.html#inputdialog()">inputdialog()</a>          从用户那里取得一行输入，使用对话框
+         <a href="builtin.html#inputsave()">inputsave()</a>            保存和清除预输入 (typeahead)
+         <a href="builtin.html#inputrestore()">inputrestore()</a>         恢复预输入 (译注: 参阅 input())
+
+GUI:                                            <b class="vimtag"> <a name="gui-functions">gui-functions</a> </b>
+         <a href="builtin.html#getfontname()">getfontname()</a>          得到当前使用的字体名
+         <a href="builtin.html#getwinpos()">getwinpos()</a>            Vim 窗口的位置
+         <a href="builtin.html#getwinposx()">getwinposx()</a>           Vim 窗口的 X 位置
+         <a href="builtin.html#getwinposy()">getwinposy()</a>           Vim 窗口的 Y 位置
+         <a href="builtin.html#balloon_show()">balloon_show()</a>         设置气泡的内容
+         <a href="builtin.html#balloon_split()">balloon_split()</a>        分割消息用于气泡的显示
+         <a href="builtin.html#balloon_gettext()">balloon_gettext()</a>      取得气泡中的文本
+
+Vim 服务器:                                     <b class="vimtag"> <a name="server-functions">server-functions</a> </b>
+         <a href="builtin.html#serverlist()">serverlist()</a>           返回服务器列表
+         <a href="builtin.html#remote_startserver()">remote_startserver()</a>   启动服务器
+         <a href="builtin.html#remote_send()">remote_send()</a>          向 Vim 服务器发送字符命令
+         <a href="builtin.html#remote_expr()">remote_expr()</a>          在 Vim 服务器内对一个表达式求值
+         <a href="builtin.html#server2client()">server2client()</a>        向一个服务器客户发送应答
+         <a href="builtin.html#remote_peek()">remote_peek()</a>          检查一个服务器是否已经应答
+         <a href="builtin.html#remote_read()">remote_read()</a>          从一个服务器读取应答
+         <a href="builtin.html#foreground()">foreground()</a>           将一个 Vim 窗口移至前台
+         <a href="builtin.html#remote_foreground()">remote_foreground()</a>    将一个 Vim 服务器窗口移至前台
+
+窗口大小和位置:                                 <b class="vimtag"> <a name="window-size-functions">window-size-functions</a> </b>
+         <a href="builtin.html#winheight()">winheight()</a>            取得某窗口的高度
+         <a href="builtin.html#winwidth()">winwidth()</a>             取得某窗口的宽度
+         <a href="builtin.html#win_screenpos()">win_screenpos()</a>        取得某窗口的屏幕位置
+         <a href="builtin.html#winlayout()">winlayout()</a>            取得标签页中窗口的布局
+         <a href="builtin.html#winrestcmd()">winrestcmd()</a>           恢复窗口大小的返回命令
+         <a href="builtin.html#winsaveview()">winsaveview()</a>          得到当前窗口的视图
+         <a href="builtin.html#winrestview()">winrestview()</a>          恢复保存的当前窗口的视图
+
+映射和菜单:                                     <b class="vimtag"> <a name="mapping-functions">mapping-functions</a> </b>
+         <a href="builtin.html#digraph_get()">digraph_get()</a>          取得  <a href="digraph.html#digraph">digraph</a> 
+         <a href="builtin.html#digraph_getlist()">digraph_getlist()</a>      取得所有的  <a href="digraph.html#digraph">digraph</a> 
+         <a href="builtin.html#digraph_set()">digraph_set()</a>          注册  <a href="digraph.html#digraph">digraph</a> 
+         <a href="builtin.html#digraph_setlist()">digraph_setlist()</a>      注册多个  <a href="digraph.html#digraph">digraph</a> 
+         <a href="builtin.html#hasmapto()">hasmapto()</a>             检查映射是否存在
+         <a href="builtin.html#mapcheck()">mapcheck()</a>             检查匹配的映射是否存在
+         <a href="builtin.html#maparg()">maparg()</a>               取得映射的右部 (rhs)
+         <a href="builtin.html#maplist()">maplist()</a>              取得所有映射的列表
+         <a href="builtin.html#mapset()">mapset()</a>               恢复映射
+         <a href="builtin.html#menu_info()">menu_info()</a>            取得菜单项目的信息
+         <a href="builtin.html#wildmenumode()">wildmenumode()</a>         检查 wildmode 是否激活
+         <a href="builtin.html#wildtrigger()">wildtrigger()</a>          开始通配扩展
+
+测试:                                       <b class="vimtag"> <a name="test-functions">test-functions</a> </b>
+         <a href="testing.html#assert_equal()">assert_equal()</a>         断言两个表达式的值相等
+         <a href="testing.html#assert_equalfile()">assert_equalfile()</a>     断言两个文件的内容相同
+         <a href="testing.html#assert_notequal()">assert_notequal()</a>      断言两个表达式的值不等
+         <a href="testing.html#assert_inrange()">assert_inrange()</a>       断言表达式在范围内
+         <a href="testing.html#assert_match()">assert_match()</a>         断言模式与值匹配
+         <a href="testing.html#assert_notmatch()">assert_notmatch()</a>      断言模式不与值匹配
+         <a href="testing.html#assert_false()">assert_false()</a>         断言表达式为假
+         <a href="testing.html#assert_true()">assert_true()</a>          断言表达式为真
+         <a href="testing.html#assert_exception()">assert_exception()</a>     断言命令抛出异常
+         <a href="testing.html#assert_beeps()">assert_beeps()</a>         断言命令会响铃
+         <a href="testing.html#assert_nobeep()">assert_nobeep()</a>        断言命令不会响铃
+         <a href="testing.html#assert_fails()">assert_fails()</a>         断言命令会失败
+         <a href="testing.html#assert_report()">assert_report()</a>        报告测试失败
+         <a href="testing.html#test_alloc_fail()">test_alloc_fail()</a>      使内存分配失败
+         <a href="testing.html#test_autochdir()">test_autochdir()</a>       启动时打开 <a href="options.html#'autochdir'">'autochdir'</a>
+         <a href="testing.html#test_override()">test_override()</a>        测试 Vim 内部的覆盖
+         <a href="testing.html#test_garbagecollect_now()">test_garbagecollect_now()</a>    立即清理内存
+         <a href="testing.html#test_garbagecollect_soon()">test_garbagecollect_soon()</a>   设置标志位以尽快清理内存
+         <a href="testing.html#test_getvalue()">test_getvalue()</a>        取得内部变量的值
+         <a href="testing.html#test_gui_event()">test_gui_event()</a>       生成 GUI 事件，用于测试
+         <a href="testing.html#test_ignore_error()">test_ignore_error()</a>    忽略指定的错误信息
+         <a href="testing.html#test_mswin_event()">test_mswin_event()</a>     生成 MS-Windows 事件
+         <a href="testing.html#test_null_blob()">test_null_blob()</a>       返回 null blob
+         <a href="testing.html#test_null_channel()">test_null_channel()</a>    返回 null 通道
+         <a href="testing.html#test_null_dict()">test_null_dict()</a>       返回 null 字典
+         <a href="testing.html#test_null_function()">test_null_function()</a>   返回 null 函数引用
+         <a href="testing.html#test_null_job()">test_null_job()</a>        返回 null 作业
+         <a href="testing.html#test_null_list()">test_null_list()</a>       返回 null 列表
+         <a href="testing.html#test_null_partial()">test_null_partial()</a>    返回 null 偏函数
+         <a href="testing.html#test_null_string()">test_null_string()</a>     返回 null 字符串
+         <a href="testing.html#test_null_tuple()">test_null_tuple()</a>      返回 null 元组
+         <a href="testing.html#test_settime()">test_settime()</a>         设置 Vim 内部使用的时间
+         <a href="testing.html#test_setmouse()">test_setmouse()</a>        设置鼠标位置
+         <a href="testing.html#test_feedinput()">test_feedinput()</a>       给输入缓冲区加入键序列
+         <a href="testing.html#test_option_not_set()">test_option_not_set()</a>  复位指定选项已设的标志位
+         <a href="testing.html#test_refcount()">test_refcount()</a>        返回表达式的引用计数
+         <a href="testing.html#test_srand_seed()">test_srand_seed()</a>      设置 srand() 的种子值
+         <a href="testing.html#test_unknown()">test_unknown()</a>         返回未知类型的值
+         <a href="testing.html#test_void()">test_void()</a>            返回 void 类型的值
+
+进程间通信:                                 <b class="vimtag"> <a name="channel-functions">channel-functions</a> </b>
+         <a href="channel.html#ch_canread()">ch_canread()</a>           检查是否有可读的内容
+         <a href="channel.html#ch_open()">ch_open()</a>              打开通道
+         <a href="channel.html#ch_close()">ch_close()</a>             关闭通道
+         <a href="channel.html#ch_close_in()">ch_close_in()</a>          关闭通道的 in 部分
+         <a href="channel.html#ch_read()">ch_read()</a>              从通道读取信息
+         <a href="channel.html#ch_readblob()">ch_readblob()</a>          从通道读取 blob
+         <a href="channel.html#ch_readraw()">ch_readraw()</a>           从通道读取未处理的信息
+         <a href="channel.html#ch_sendexpr()">ch_sendexpr()</a>          从通道读取 JSON 信息
+         <a href="channel.html#ch_sendraw()">ch_sendraw()</a>           向通道发送未处理的信息
+         <a href="channel.html#ch_evalexpr()">ch_evalexpr()</a>          通过通道计算表达式
+         <a href="channel.html#ch_evalraw()">ch_evalraw()</a>           通过通道计算未经处理的表达式
+         <a href="channel.html#ch_status()">ch_status()</a>            获取通道的状态
+         <a href="channel.html#ch_getbufnr()">ch_getbufnr()</a>          获取通道的缓冲区号
+         <a href="channel.html#ch_getjob()">ch_getjob()</a>            获取通道相关的作业
+         <a href="channel.html#ch_info()">ch_info()</a>              获取通道信息
+         <a href="channel.html#ch_log()">ch_log()</a>               在通道日志文件写下信息
+         <a href="channel.html#ch_logfile()">ch_logfile()</a>           设置通道日志文件
+         <a href="channel.html#ch_setoptions()">ch_setoptions()</a>        设置通道的选项
+         <a href="builtin.html#json_encode()">json_encode()</a>          把表达式编码为 JSON 字符串
+         <a href="builtin.html#json_decode()">json_decode()</a>          把 JSON 字符串解码为 Vim 类型
+         <a href="builtin.html#js_encode()">js_encode()</a>            把表达式编码为 JSON 字符串
+         <a href="builtin.html#js_decode()">js_decode()</a>            把 JSON 字符串解码为 Vim 类型
+         <a href="builtin.html#base64_encode()">base64_encode()</a>        编码 blob 为 base64 字符串
+         <a href="builtin.html#base64_decode()">base64_decode()</a>        从 base64 字符串里解码 blob
+         <a href="builtin.html#err_teapot()">err_teapot()</a>           报错 418 或 503
+
+作业:                                           <b class="vimtag"> <a name="job-functions">job-functions</a> </b>
+         <a href="channel.html#job_start()">job_start()</a>            启动作业
+         <a href="channel.html#job_stop()">job_stop()</a>             停止作业
+         <a href="channel.html#job_status()">job_status()</a>           获取作业状态
+         <a href="channel.html#job_getchannel()">job_getchannel()</a>       获取作业使用的通道
+         <a href="channel.html#job_info()">job_info()</a>             获取作业信息
+         <a href="channel.html#job_setoptions()">job_setoptions()</a>       设置作业选项
+
+标号:                                           <b class="vimtag"> <a name="sign-functions">sign-functions</a> </b>
+         <a href="sign.html#sign_define()">sign_define()</a>          定义或更新标号
+         <a href="sign.html#sign_getdefined()">sign_getdefined()</a>      取得已定义的标号列表
+         <a href="sign.html#sign_getplaced()">sign_getplaced()</a>       取得已放置的标号列表
+         <a href="sign.html#sign_jump()">sign_jump()</a>            跳转到标号
+         <a href="sign.html#sign_place()">sign_place()</a>           放置标号
+         <a href="sign.html#sign_placelist()">sign_placelist()</a>       放置一列标号
+         <a href="sign.html#sign_undefine()">sign_undefine()</a>        删除标号的定义
+         <a href="sign.html#sign_unplace()">sign_unplace()</a>         撤销标号的放置
+         <a href="sign.html#sign_unplacelist()">sign_unplacelist()</a>     撤销一列标号的放置
+
+终端窗口:                                       <b class="vimtag"> <a name="terminal-functions">terminal-functions</a> </b>
+         <a href="terminal.html#term_start()">term_start()</a>           打开终端窗口并运行作业
+         <a href="terminal.html#term_list()">term_list()</a>            获取终端缓冲区的列表
+         <a href="terminal.html#term_sendkeys()">term_sendkeys()</a>        给终端发送键击
+         <a href="terminal.html#term_wait()">term_wait()</a>            等待屏幕刷新
+         <a href="terminal.html#term_getjob()">term_getjob()</a>          获取终端相关联的作业
+         <a href="terminal.html#term_scrape()">term_scrape()</a>          获取终端屏幕的行
+         <a href="terminal.html#term_getline()">term_getline()</a>         获取终端的一行文本行
+         <a href="terminal.html#term_getattr()">term_getattr()</a>         获取属性 <code class="special">{what}</code> 的值
+         <a href="terminal.html#term_getcursor()">term_getcursor()</a>       获取终端的光标位置
+         <a href="terminal.html#term_getscrolled()">term_getscrolled()</a>     获取终端的滚动行数
+         <a href="terminal.html#term_getaltscreen()">term_getaltscreen()</a>    获取轮换屏幕标志位
+         <a href="terminal.html#term_getsize()">term_getsize()</a>         获取终端大小
+         <a href="terminal.html#term_getstatus()">term_getstatus()</a>       获取终端状态
+         <a href="terminal.html#term_gettitle()">term_gettitle()</a>        获取终端标题
+         <a href="terminal.html#term_gettty()">term_gettty()</a>          获取终端 tty 名
+         <a href="terminal.html#term_setansicolors()">term_setansicolors()</a>   设置 GUI 使用的 16 种 ANSI 颜色
+         <a href="terminal.html#term_getansicolors()">term_getansicolors()</a>   获取 GUI 使用的 16 种 ANSI 颜色
+         <a href="terminal.html#term_dumpdiff()">term_dumpdiff()</a>        显示两份屏幕截图的差异
+         <a href="terminal.html#term_dumpload()">term_dumpload()</a>        在窗口中载入终端屏幕截图
+         <a href="terminal.html#term_dumpwrite()">term_dumpwrite()</a>       把终端屏幕的内容写入文件
+         <a href="terminal.html#term_setkill()">term_setkill()</a>         设置停止终端中的作业的信号
+         <a href="terminal.html#term_setrestore()">term_setrestore()</a>      设置恢复终端的命令
+         <a href="terminal.html#term_setsize()">term_setsize()</a>         设置终端的大小
+         <a href="terminal.html#term_setapi()">term_setapi()</a>          设置终端 JSON API 函数名前缀
+
+弹出窗口:                                       <b class="vimtag"> <a name="popup-window-functions">popup-window-functions</a> </b>
+         <a href="popup.html#popup_create()">popup_create()</a>         在屏幕中央创建弹出
+         <a href="popup.html#popup_atcursor()">popup_atcursor()</a>       在光标位置正上方创建弹出，光标移开时关闭
+         <a href="popup.html#popup_beval()">popup_beval()</a>          在 v:beval_ 变量指定的位置，光标移开时关闭
+         <a href="popup.html#popup_notification()">popup_notification()</a>   用三秒钟显示通知
+         <a href="popup.html#popup_dialog()">popup_dialog()</a>         创建带填充和边框中间对齐的弹出
+         <a href="popup.html#popup_menu()">popup_menu()</a>           提示从列表中选择一个项目
+         <a href="popup.html#popup_hide()">popup_hide()</a>           临时隐藏弹出
+         <a href="popup.html#popup_show()">popup_show()</a>           显示之前隐藏的弹出
+         <a href="popup.html#popup_move()">popup_move()</a>           改变弹出的位置和大小
+         <a href="popup.html#popup_setoptions()">popup_setoptions()</a>     覆盖弹出的选项
+         <a href="popup.html#popup_settext()">popup_settext()</a>        替换弹出缓冲区的内容
+         <a href="popup.html#popup_setbuf()">popup_setbuf()</a>         设置弹出缓冲区
+         <a href="popup.html#popup_close()">popup_close()</a>          关闭一个弹出
+         <a href="popup.html#popup_clear()">popup_clear()</a>          关闭所有弹出
+         <a href="popup.html#popup_filter_menu()">popup_filter_menu()</a>    从一列项目中选择
+         <a href="popup.html#popup_filter_yesno()">popup_filter_yesno()</a>   等待直到按了 'y' 或 'n' 为止
+         <a href="popup.html#popup_getoptions()">popup_getoptions()</a>     取得弹出的当前选项
+         <a href="popup.html#popup_getpos()">popup_getpos()</a>         取得弹出的实际位置和大小
+         <a href="popup.html#popup_findecho()">popup_findecho()</a>       取得用于  <a href="eval.html#:echowindow">:echowindow</a>  的弹出的窗口 ID
+         <a href="popup.html#popup_findinfo()">popup_findinfo()</a>       取得弹出信息窗口的窗口 ID
+         <a href="popup.html#popup_findpreview()">popup_findpreview()</a>    取得弹出预览窗口的窗口 ID
+         <a href="popup.html#popup_list()">popup_list()</a>           取得所有的弹出窗口 ID 的列表
+         <a href="popup.html#popup_locate()">popup_locate()</a>         从弹出窗口的屏幕位置取得其窗口 ID
+
+定时器:                                         <b class="vimtag"> <a name="timer-functions">timer-functions</a> </b>
+         <a href="builtin.html#timer_start()">timer_start()</a>          建立定时器
+         <a href="builtin.html#timer_pause()">timer_pause()</a>          暂停或继续定时器
+         <a href="builtin.html#timer_stop()">timer_stop()</a>           停止定时器
+         <a href="builtin.html#timer_stopall()">timer_stopall()</a>        停止所有定时器
+         <a href="builtin.html#timer_info()">timer_info()</a>           获取定时器信息
+
+标签:                                           <b class="vimtag"> <a name="tag-functions">tag-functions</a> </b>
+         <a href="builtin.html#taglist()">taglist()</a>              得到匹配标签的列表
+         <a href="builtin.html#tagfiles()">tagfiles()</a>             得到标签文件的列表
+         <a href="builtin.html#gettagstack()">gettagstack()</a>          得到窗口的标签栈
+         <a href="builtin.html#settagstack()">settagstack()</a>          修改窗口的标签栈
+
+提示缓冲区:                                     <b class="vimtag"> <a name="promptbuffer-functions">promptbuffer-functions</a> </b>
+         <a href="builtin.html#prompt_getprompt()">prompt_getprompt()</a>     得到缓冲区的实际提示文本
+         <a href="builtin.html#prompt_setcallback()">prompt_setcallback()</a>   设置缓冲区的提示回调
+         <a href="builtin.html#prompt_setinterrupt()">prompt_setinterrupt()</a>  设置缓冲区的中断回调
+         <a href="builtin.html#prompt_setprompt()">prompt_setprompt()</a>     设置缓冲区的提示文本
+
+寄存器:                                         <b class="vimtag"> <a name="register-functions">register-functions</a> </b>
+         <a href="builtin.html#getreg()">getreg()</a>               取得寄存器内容
+         <a href="builtin.html#getreginfo()">getreginfo()</a>           取得寄存器信息
+         <a href="builtin.html#getregtype()">getregtype()</a>           取得寄存器类型
+         <a href="builtin.html#setreg()">setreg()</a>               设定寄存器内容及类型
+         <a href="builtin.html#reg_executing()">reg_executing()</a>        取得正在执行中的寄存器名
+         <a href="builtin.html#reg_recording()">reg_recording()</a>        取得正在记录中的突破口名
+
+文本属性:                                       <b class="vimtag"> <a name="text-property-functions">text-property-functions</a> </b>
+         <a href="textprop.html#prop_add()">prop_add()</a>             在给出位置上附属属性
+         <a href="textprop.html#prop_add_list()">prop_add_list()</a>        在多个位置上附属属性
+         <a href="textprop.html#prop_clear()">prop_clear()</a>           从一行或多行中删除所有属性
+         <a href="textprop.html#prop_find()">prop_find()</a>            搜索一个属性
+         <a href="textprop.html#prop_list()">prop_list()</a>            返回一行中所有属性的列表
+         <a href="textprop.html#prop_remove()">prop_remove()</a>          从一行中删除属性
+         <a href="textprop.html#prop_type_add()">prop_type_add()</a>        新增/定义属性类型
+         <a href="textprop.html#prop_type_change()">prop_type_change()</a>     改变类型的属性
+         <a href="textprop.html#prop_type_delete()">prop_type_delete()</a>     删除文本属性类型
+         <a href="textprop.html#prop_type_get()">prop_type_get()</a>        返回类型的属性
+         <a href="textprop.html#prop_type_list()">prop_type_list()</a>       返回所有属性类型的列表
+
+声音:                                                   <b class="vimtag"> <a name="sound-functions">sound-functions</a> </b>
+         <a href="builtin.html#sound_clear()">sound_clear()</a>          停止所有声音的播放
+         <a href="builtin.html#sound_playevent()">sound_playevent()</a>      播放一个事件的声音
+         <a href="builtin.html#sound_playfile()">sound_playfile()</a>       播放声音文件
+         <a href="builtin.html#sound_stop()">sound_stop()</a>           停止一个声音的播放
+
+杂项:                                           <b class="vimtag"> <a name="various-functions">various-functions</a> </b>
+         <a href="builtin.html#mode()">mode()</a>                 取得当前编辑状态
+         <a href="builtin.html#state()">state()</a>                取得当前繁忙状态
+         <a href="builtin.html#visualmode()">visualmode()</a>           最近一次使用过的可视模式
+         <a href="builtin.html#exists()">exists()</a>               检查变量，函数等是否存在
+         <a href="builtin.html#exists_compiled()">exists_compiled()</a>      类似 exists() 但在编译时检查
+         <a href="builtin.html#has()">has()</a>                  检查 Vim 是否支持某特性
+         <a href="builtin.html#changenr()">changenr()</a>             返回最近的改变号
+         <a href="builtin.html#cscope_connection()">cscope_connection()</a>    检查有无与 cscope 的连接
+         <a href="builtin.html#did_filetype()">did_filetype()</a>         检查某文件类型自动命令是否已经使用
+         <a href="builtin.html#diff()">diff()</a>                 比较两个字符串列表
+         <a href="builtin.html#eventhandler()">eventhandler()</a>         检查是否在一个事件处理程序内
+         <a href="builtin.html#getcellpixels()">getcellpixels()</a>        得到单元像素尺寸的列表
+         <a href="builtin.html#getpid()">getpid()</a>               得到 Vim 的进程号
+         <a href="builtin.html#getscriptinfo()">getscriptinfo()</a>        得到执行过的 Vim 脚本列表
+         <a href="builtin.html#getstacktrace()">getstacktrace()</a>        得到 Vim 脚本的当前栈追踪
+         <a href="builtin.html#getimstatus()">getimstatus()</a>          检查 IME 状态是否激活
+         <a href="builtin.html#interrupt()">interrupt()</a>            中断脚本执行
+         <a href="builtin.html#windowsversion()">windowsversion()</a>       得到 MS-Windows 版本
+         <a href="builtin.html#terminalprops()">terminalprops()</a>        终端属性
+
+         <a href="builtin.html#libcall()">libcall()</a>              调用一个外部库函数
+         <a href="builtin.html#libcallnr()">libcallnr()</a>            同上，但返回一个数值
+
+         <a href="builtin.html#undofile()">undofile()</a>             得到撤销文件名
+         <a href="builtin.html#undotree()">undotree()</a>             返回某缓冲区的撤销树的状态
+
+         <a href="builtin.html#shiftwidth()">shiftwidth()</a>           <a href="options.html#'shiftwidth'">'shiftwidth'</a> 的有效值
+
+         <a href="builtin.html#wordcount()">wordcount()</a>            获取缓冲区的字节/单词/字符计数
+
+         <a href="builtin.html#id()">id()</a>                   获取项目用于键的唯一字符串
+
+         <a href="builtin.html#luaeval()">luaeval()</a>              计算  <a href="if_lua.html#Lua">Lua</a>  表达式
+         <a href="builtin.html#mzeval()">mzeval()</a>               计算  <a href="if_mzsch.html#MzScheme">MzScheme</a>  表达式
+         <a href="builtin.html#perleval()">perleval()</a>             计算 Perl 表达式
+         <a href="builtin.html#py3eval()">py3eval()</a>              计算 Python 表达式
+         <a href="builtin.html#pyeval()">pyeval()</a>               计算 Python 表达式
+         <a href="builtin.html#pyxeval()">pyxeval()</a>              计算  <a href="if_pyth.html#python_x">python_x</a>  表达式
+         <a href="builtin.html#rubyeval()">rubyeval()</a>             计算  <a href="if_ruby.html#Ruby">Ruby</a>  表达式
+
+         <a href="builtin.html#debugbreak()">debugbreak()</a>           中断正在调试的程序
+
+         <a href="builtin.html#redraw_listener_add()">redraw_listener_add()</a>  新增重画监听器回调
+         <a href="builtin.html#redraw_listener_remove()">redraw_listener_remove()</a>     删除重画监听器回调
+
+MacVim 专用函数
+         <a href="builtin.html#showdefinition()">showdefinition()</a>       查找和显示给定字符串的定义
+
+</section><hr class="doubleline" /><section class=inner>
+<h4><b class="vimtag"> <a name="41.7">41.7</a> </b>  定义一个函数</h4>
+Vim 允许你定义自己的函数。基本的函数声明如下:
+<code class="example"></code>
+<code class="example">        def {name}({var1}, {var2}, ...): return-type</code>
+<code class="example">          {body}</code>
+<code class="example">        enddef</code>
+
+        <code class="note">注意</code>:
+        函数名必须以大写字母开始。
+
+让我们来定义一个返回两数中较小者的函数。从下面这一行开始:
+<code class="example"></code>
+<code class="example">        def Min(num1: number, num2: number): number</code>
+<code class="example"></code>
+这将告诉 Vim 这个函数名叫 "Min" 并且带两个数值参数: "num1" 和 "num2"，并返回一
+个数值。
+
+你要做的第一件事就是看看哪个数值小一些:
+  
+<code class="example">        if num1 &lt; num2</code>
+<code class="example"></code>
+我们把最小的数值赋给 smaller 变量:
+<code class="example"></code>
+<code class="example">        var smaller: number</code>
+<code class="example">        if num1 &lt; num2</code>
+<code class="example">          smaller = num1</code>
+<code class="example">        else</code>
+<code class="example">          smaller = num2</code>
+<code class="example">        endif</code>
+<code class="example"></code>
+"smaller" 是一个局部变量。声明为数值型，这样如果搞错 Vim 就会<code class="note">警告</code>。一个在函数
+内部使用的变量，除非被加上类似 "g:"、"w:" 或 "b:" 的前缀，都是局部变量。
+
+        <code class="note">备注</code>:
+        为了从一个函数内部访问一个全局变量你必须在前面加上 "g:"。因此在一个函
+        数内 "g:today" 表示全局变量 "today"，而 "today" 是另外一个仅用于该函数
+        或脚本内的局部变量。
+
+现在你可以使用  <code class="badlink">return</code>  语句来把最小的数值返回给调用者了。最后，你需要结束这个
+函数:
+<code class="example"></code>
+<code class="example">          return smaller</code>
+<code class="example">        enddef</code>
+<code class="example"></code>
+下面是这个函数完整的定义:
+<code class="example"></code>
+<code class="example">        def Min(num1: number, num2: number): number</code>
+<code class="example">          var smaller: number</code>
+<code class="example">          if num1 &lt; num2</code>
+<code class="example">            smaller = num1</code>
+<code class="example">          else</code>
+<code class="example">            smaller = num2</code>
+<code class="example">          endif</code>
+<code class="example">          return smaller</code>
+<code class="example">        enddef</code>
+<code class="example"></code>
+显然这个例子太繁琐了。用两个 return 命令可以简短一些:
+<code class="example"></code>
+<code class="example">        def Min(num1: number, num2: number): number</code>
+<code class="example">          if num1 &lt; num2</code>
+<code class="example">            return num1</code>
+<code class="example">          endif</code>
+<code class="example">          return num2</code>
+<code class="example">        enddef</code>
+<code class="example"></code>
+如果你还记得条件表达式，只需要一行就够了:
+<code class="example"></code>
+<code class="example">        def Min(num1: number, num2: number): number</code>
+<code class="example">          return num1 &lt; num2 ? num1 : num2</code>
+<code class="example">        enddef</code>
+<code class="example"></code>
+调用用户自定义函数的方式和调用内置函数完全一致。仅仅是函数名不同而已。上面的
+Min 函数可以这样来使用:
+<code class="example"></code>
+<code class="example">        echo Min(5, 8)</code>
+<code class="example"></code>
+只有这时函数才被 Vim 解析并执行。如果函数中有类似未定义的变量或函数之类的错
+误，你将得到一个错误信息。这些错误在定义函数时是不会被检测到的。要早点看到这些
+错误，可让 Vim 编译此脚本里的所有函数:
+<code class="example"></code>
+<code class="example">        defcompile</code>
+<code class="example"></code>
+编译要一点时间，但会早点报告错误。脚本编写期间，可在脚本结尾处放上
+ <a href="vim9.html#:defcompile">:defcompile</a> ，一切就绪的时候再把这行注释掉。
+
+不返回任何结果的函数只要简单省略返回类型就可以了:
+<code class="example"></code>
+<code class="example">        def SayIt(text: string)</code>
+<code class="example">          echo text</code>
+<code class="example">        enddef</code>
+<code class="example"></code>
+如果要返回任何类型的值，可用 "any" 返回类型:
+<code class="example">        def GetValue(): any</code>
+这会关闭返回值的类型检查，除非必要不要使用。
+
+也可以用  <code class="badlink">function</code>  和  <code class="badlink">endfunction</code>  定义老式函数。它们不带类型，不能编译。所
+以执行也会慢许多。
+
+
+范 围 的 使 用
+
+函数调用时可以带一个行表示的范围。Vim 将把光标移动到范围内的每一行，并分别对该
+行调用此函数。例如:
+<code class="example"></code>
+<code class="example">        def Number()</code>
+<code class="example">          echo "line " .. line(".") .. " contains: " .. getline(".")</code>
+<code class="example">        enddef</code>
+<code class="example"></code>
+如果你用下面的方式调用该函数:
+<code class="example"></code>
+<code class="example">        :10,15call Number()</code>
+<code class="example"></code>
+它将被执行六次，从第 10 行开始，第 15 行结束。
+
+
+函 数 清 单
+
+":function" 命令列出所有用户自定义的函数及其参数:
+<code class="example"></code>
+<code class="example">        :function</code>
+<code class="section">        def <code class="special">&lt;SNR&gt;</code>86_Show(start: string, ...items: list<code class="special">&lt;string&gt;</code>) </code>
+<code class="section">        function GetVimIndent()</code>
+<code class="section">        function SetSyn(name) </code>
+
+"<code class="special">&lt;SNR&gt;</code>" 前缀代表函数是局部于脚本的。 <a href="vim9.html#Vim9">Vim9</a>  函数以 "def" 开始，包括参数和返回值
+类型。老式函数以 "function" 开始。
+
+如果要查看该函数具体做什么，用该函数名作为  <code class="badlink">function</code>  命令的参数即可:
+<code class="example"></code>
+<code class="example">        :function SetSyn</code>
+<code class="section">        1     if &amp;syntax == '' </code>
+<code class="section">        2       let &amp;syntax = a:name </code>
+<code class="section">        3     endif </code>
+<code class="section">           endfunction </code>
+
+要看到 "Show" 函数内容，需要提供脚本前缀，因为不同脚本可以定义多个 "Show" 函
+数。用  <code class="badlink">function</code>  找到完整名字，但结果可能是个很长的列表。要只返回匹配某个模式
+的函数，可用  <a href="change.html#filter">filter</a>  前缀:
+
+<code class="example">        :filter Show function</code>
+<code class="section">        def <code class="special">&lt;SNR&gt;</code>86_Show(start: string, ...items: list<code class="special">&lt;string&gt;</code>) </code>
+
+<code class="example">        :function &lt;SNR&gt;86_Show</code>
+<code class="section">        1    echohl Title </code>
+<code class="section">        2    echo "start is " .. start </code>
+        等等
+
+
+调 试
+
+调试或者遇到错误信息时，行号是很有用的。有关调试模式请参阅  <a href="repeat.html#debug-scripts">debug-scripts</a> 。
+
+你也可以通过将 <a href="options.html#'verbose'">'verbose'</a> 选项设为 12 以上来察看所有函数调用。将该参数设为 15
+或以上可以查看所有被执行的行。
+
+
+删 除 函 数
+
+为了删除 SetSyn() 函数:
+<code class="example"></code>
+<code class="example">        :delfunction SetSyn</code>
+<code class="example"></code>
+删除只对全局函数和老式脚本里定义的函数有效， <a href="vim9.html#Vim9">Vim9</a>  脚本里定义的函数不行。
+
+如果该函数不存在或不能删除，会报错。
+
+
+函 数 引 用
+
+有时使变量指向一个或另一个函数可能有用。要这么做，可用函数引用变量。常简称为
+"funcref"。例如:
+<code class="example"></code>
+<code class="example">        def Right(): string</code>
+<code class="example">          return 'Right!'</code>
+<code class="example">        enddef</code>
+<code class="example">        def Wrong(): string</code>
+<code class="example">          return 'Wrong!'</code>
+<code class="example">        enddef</code>
+<code class="example"></code>
+<code class="example">        var Afunc = g:result == 1 ? Right : Wrong</code>
+<code class="example">        echo Afunc()</code>
+<code class="section">        Wrong! </code>
+
+这里假定 "g:result" 不是一。详细描述见  <a href="eval.html#Funcref">Funcref</a> 。
+
+<code class="note">注意</code> 保存函数引用的变量名必须用大写字母开头，不然和内建函数的名字会引起混淆。
+
+进 一 步 阅 读
+
+ <a href="usr_50.html#50.2">50.2</a>  小节解释可变参数数目的用法。
+
+要自定义函数，更多信息可见:  <a href="eval.html#user-functions">user-functions</a> 。
+
+</section><hr class="doubleline" /><section class=inner>
+<h4><b class="vimtag"> <a name="41.8">41.8</a> </b>  列表和字典</h4>
+到目前为止，我们用了基本类型字符串和数值。Vim 也支持三种复合类型: 列表、元组和
+字典。
+
+列表是项目的有序序列。这里的项目包括各种类型的值。所以你可以建立数值列表、列表
+列表甚至混合项目的列表。要建立包含三个字符串的列表:
+<code class="example"></code>
+<code class="example">        var alist = ['aap', 'noot', 'mies']</code>
+<code class="example"></code>
+列表项目用方括号包围，逗号分割。要建立空列表:
+<code class="example"></code>
+<code class="example">        var alist = []</code>
+<code class="example"></code>
+用 add() 函数可以为列表加入项目:
+<code class="example"></code>
+<code class="example">        var alist = []</code>
+<code class="example">        add(alist, 'foo')</code>
+<code class="example">        add(alist, 'bar')</code>
+<code class="example">        echo alist</code>
+<code class="section">        [<code class="badlink">'foo'</code>, <code class="badlink">'bar'</code>] </code>
+
+列表的连接用 + 完成:
+<code class="example"></code>
+<code class="example">        var alist = ['foo', 'bar']</code>
+<code class="example">        alist = alist + ['and', 'more']</code>
+<code class="example">        echo alist</code>
+<code class="section">        [<code class="badlink">'foo'</code>, <code class="badlink">'bar'</code>, <code class="badlink">'and'</code>, <a href="options.html#'more'">'more'</a>] </code>
+
+或者，要用函数扩展列表，可用  <a href="builtin.html#extend()">extend()</a> :
+<code class="example"></code>
+<code class="example">        var alist = ['one']</code>
+<code class="example">        extend(alist, ['two', 'three'])</code>
+<code class="example">        echo alist</code>
+<code class="section">        [<code class="badlink">'one'</code>, <code class="badlink">'two'</code>, <code class="badlink">'three'</code>] </code>
+
+<code class="note">注意</code> 这里如果用  <a href="builtin.html#add()">add()</a> ，效果和  <a href="builtin.html#extend()">extend()</a>  不一样:
+<code class="example"></code>
+<code class="example">        var alist = ['one']</code>
+<code class="example">        add(alist, ['two', 'three'])</code>
+<code class="example">        echo alist</code>
+<code class="section">        [<code class="badlink">'one'</code>, [<code class="badlink">'two'</code>, <code class="badlink">'three'</code>]] </code>
+
+add() 的第二个参数作为项目被加入，这样就有了嵌套的列表。
+
+
+FOR 循 环
+
+使用列表的一个好处是可以在上面进行叠代:
+<code class="example"></code>
+<code class="example">        var alist = ['one', 'two', 'three']</code>
+<code class="example">        for n in alist</code>
+<code class="example">          echo n</code>
+<code class="example">        endfor</code>
+<code class="section">        one </code>
+<code class="section">        two </code>
+<code class="section">        three </code>
+
+这段代码循环遍历列表 "alist" 的每个项目，分别把它们的值赋给变量 "n"。for 循环
+通用的形式是:
+<code class="example"></code>
+<code class="example">        for {varname} in {list-expression}</code>
+<code class="example">          {commands}</code>
+<code class="example">        endfor</code>
+<code class="example"></code>
+要循环若干次，你需要长度为给定次数的列表。range() 函数建立这样的列表:
+<code class="example"></code>
+<code class="example">        for a in range(3)</code>
+<code class="example">          echo a</code>
+<code class="example">        endfor</code>
+<code class="section">        0 </code>
+<code class="section">        1 </code>
+<code class="section">        2 </code>
+
+<code class="note">注意</code> range() 产生的列表的第一个项目为零，而最后一个项目比列表的长度小一。细节:
+内部 range() 此处并不实际产生列表，这样对循环所需的大范围的处理就更有效。对照
+一下在别处，range 返回实际的列表，长列表因而会需要更多时间。
+
+你也可以指定最大值、步进，反向也可以:
+<code class="example"></code>
+<code class="example">        for a in range(8, 4, -2)</code>
+<code class="example">          echo a</code>
+<code class="example">        endfor</code>
+<code class="section">        8 </code>
+<code class="section">        6 </code>
+<code class="section">        4 </code>
+
+更有用的例子，遍历缓冲区中的所有行:
+<code class="example"></code>
+<code class="example">        :for line in getline(1, 20)</code>
+<code class="example">        :  if line =~ "Date: "</code>
+<code class="example">        :    echo matchstr(line, 'Date: \zs.*')</code>
+<code class="example">        :  endif</code>
+<code class="example">        :endfor</code>
+<code class="example"></code>
+察看行 1 到 20 (包含)，并回显那里找到的任何日期。
+
+进一步的阅读可见  <a href="eval.html#Lists">Lists</a> 。
+
+TUPLE
+
+元组是项目的不可变的有序序列。这里的项目包括各种类型的值。项目可用其索引号访
+问。要建立包含三个字符串的元组:
+<code class="example"></code>
+<code class="example">        var atuple = ('one', 'two', 'three')</code>
+<code class="example"></code>
+元组项目用小括号包围，逗号分割。要建立空元组:
+<code class="example"></code>
+<code class="example">        var atuple = ()</code>
+<code class="example"></code>
+ <a href="eval.html#:for">:for</a>  循环可用于遍历元组里的每个项目，和列表类似。
+
+进一步的阅读可见  <a href="eval.html#Tuples">Tuples</a> 。
+
+字 典
+
+字典保存键-值组对。如果知道键，你可以快速查找值。字典用花括号形式建立:
+<code class="example"></code>
+<code class="example">        var uk2nl = {one: 'een', two: 'twee', three: 'drie'}</code>
+<code class="example"></code>
+现在你可以把键放在方括号里以查找单词:
+<code class="example"></code>
+<code class="example">        echo uk2nl['two']</code>
+<code class="section">        twee </code>
+
+如果键里没有特殊字母，可用句号记法:
+<code class="example"></code>
+<code class="example">        echo uk2nl.two</code>
+<code class="section">        twee </code>
+
+字典定义的通用形式是:
+<code class="example"></code>
+<code class="example">        {&lt;key&gt; : &lt;value&gt;, ...}</code>
+<code class="example"></code>
+空字典是不包含任何键的字典:
+<code class="example"></code>
+<code class="example">        {}</code>
+<code class="example"></code>
+字典的用途很多。它可用的函数也不少。例如，你可以得到它的键列表并在其上循环:
+<code class="example"></code>
+<code class="example">        for key in keys(uk2nl)</code>
+<code class="example">          echo key</code>
+<code class="example">        endfor</code>
+<code class="section">        three </code>
+<code class="section">        one </code>
+<code class="section">        two </code>
+
+<code class="note">注意</code> 这些键没有排序。你自己可以对返回列表按照特定顺序进行排序:
+<code class="example"></code>
+<code class="example">        for key in sort(keys(uk2nl))</code>
+<code class="example">          echo key</code>
+<code class="example">        endfor</code>
+<code class="section">        one </code>
+<code class="section">        three </code>
+<code class="section">        two </code>
+
+但你永远不能得到项目定义时的顺序。为此目的，只能用列表。列表里的项目被作为有序
+序列保存。
+
+进一步的阅读可见  <a href="eval.html#Dictionaries">Dictionaries</a> 。
+
+</section><hr class="doubleline" /><section class=inner>
+<h4><b class="vimtag"> <a name="41.9">41.9</a> </b>  空白</h4>
+脚本里可以使用空白行，但没有作用。
+
+行首的空白字符 (空格和制表符) 总被忽略，不带 "trim" 的  <a href="eval.html#:let-heredoc">:let-heredoc</a>  是例外。
+
+拖尾的空白常被忽略，但不绝对。 <code class="badlink">map</code>  是这样的一个不忽略拖尾空白的命令。要小心，
+一旦出错很难发觉。一般建议是除非绝对必要，千万不要用拖尾空白。
+
+为了在一个选项值内使用空格，必须像下面例子那样使用 "\" (反斜杠):
+<code class="example"></code>
+<code class="example">        :set tags=my\ nice\ file</code>
+<code class="example"></code>
+如果写成这样:
+<code class="example"></code>
+<code class="example">        :set tags=my nice file</code>
+<code class="example"></code>
+Vim 会给出错误信息，因为它被解释成:
+<code class="example"></code>
+<code class="example">        :set tags=my</code>
+<code class="example">        :set nice</code>
+<code class="example">        :set file</code>
+<code class="example"></code>
+ <a href="vim9.html#Vim9">Vim9</a>  脚本对空白很挑剔。这是有意而为的，要确保脚本易读不易犯错。合理使用空白
+应该就可以了。如果有问题，会给出错误信息，告知你哪里缺空白，或者哪里有多余要删
+除的空白。
+
+</section><hr class="doubleline" /><section class=inner>
+<h4><b class="vimtag"> <a name="41.10">41.10</a> </b> 续行</h4>
+老式 Vim 脚本里，一行的继续是在续行的行首加上反斜杠完成的:
+<code class="example">        let mylist = [</code>
+<code class="example">                        \ 'one',</code>
+<code class="example">                        \ 'two',</code>
+<code class="example">                        \ ]</code>
+<code class="example"></code>
+这需要 <a href="options.html#'cpo'">'cpo'</a> 选项里排除了 "C" 标志位。通常做法是在脚本开始处放上:
+<code class="example">        let s:save_cpo = &amp;cpo</code>
+<code class="example">        set cpo&amp;vim</code>
+<code class="example"></code>
+然后在脚本结尾处恢复选项:
+<code class="example">        let &amp;cpo = s:save_cpo</code>
+<code class="example">        unlet s:save_cpo</code>
+<code class="example"></code>
+更多细节可见:  <a href="repeat.html#line-continuation">line-continuation</a> 。
+
+ <a href="vim9.html#Vim9">Vim9</a>  脚本里还可以用反斜杠，但绝大多数情况不需要了:
+<code class="example">        var mylist = [</code>
+<code class="example">                        'one',</code>
+<code class="example">                        'two',</code>
+<code class="example">                        ]</code>
+<code class="example"></code>
+另外，也不需要修改 <a href="options.html#'cpo'">'cpo'</a> 选项了。详见  <a href="vim9.html#vim9-line-continuation">vim9-line-continuation</a> 。
+
+</section><hr class="doubleline" /><section class=inner>
+<h4><b class="vimtag"> <a name="41.11">41.11</a> </b> 注释</h4>
+ <a href="vim9.html#Vim9">Vim9</a>  脚本里 # 标记注释的开始。除了那些不接受注释的命令外 (见下例)，从 # 起直
+到行末的所有字符都将看作注释而被忽略。注释可以从一行的任意位置开始，但作为命令
+的一部分时除外，如字符串内的 #。
+
+在老式脚本里 " (双引号标记) 字符开始注释。需要一些小聪明来确保双引号字符串不被
+识别为注释 (又一个推荐  <a href="vim9.html#Vim9">Vim9</a>  脚本的理由)。
+
+对于某些命令来说，这里有一个小小的 "陷阱"。例如:
+<code class="example"></code>
+<code class="example">        abbrev dev development  # shorthand</code>
+<code class="example">        map &lt;F3&gt; o#include      # insert include</code>
+<code class="example">        execute cmd             # do it</code>
+<code class="example">        !ls *.c                 # list C files</code>
+<code class="example"></code>
+- 缩写 <code class="badlink">'dev'</code> 会被展开成 'development  # shorthand'。
+- <code class="special">&lt;F3&gt;</code> 的键盘映射会是 'o# ....' 之后包括 '# insert include' 在内的那一整行。
+-  <code class="badlink">execute</code>  命令会给出错误。
+-  <a href="change.html#!">!</a>  命令会将其后的所有字符传给外壳，很大可能会出错。
+
+结论是， <code class="badlink">map</code> ， <code class="badlink">abbreviate</code> ， <code class="badlink">execute</code>  和  <a href="change.html#!">!</a>  命令之后不能有注释。(另外
+还有几个命令也是如此)。不过，对于这些命令有一个小窍门:
+<code class="example"></code>
+<code class="example">        abbrev dev development|# shorthand</code>
+<code class="example">        map &lt;F3&gt; o#include|# insert include</code>
+<code class="example">        execute '!ls *.c'       |# do it</code>
+<code class="example"></code>
+'|' 字符被用来将两个命令分隔开。后一个命令仅仅是一个注释。最后一个命令里，
+ <code class="badlink">execute</code>  是对所有不接受注释的命令的通用解决办法，或者用 '|' 分隔下个命令。
+
+<code class="note">注意</code> 在缩写和映射后的 '|' 之前没有空格。这是因为对于这些命令，直到行尾或者 '|'
+字符为止的内容都是有效的。此行为的后果之一，是你没法总看到这些命令后面包括的空
+白字符:
+<code class="example"></code>
+<code class="example">        map &lt;F4&gt; o#include  </code>
+<code class="example"></code>
+这里确实是有意的，但其它很多情况可能只是意外。要发现这个问题，可以高亮拖尾空
+白:
+<code class="example">        match Search /\s\+$/</code>
+<code class="example"></code>
+Unix 上有一个特殊的办法给一行加注释，从而使得 Vim 脚本可执行，这也适用于老式脚
+本:
+<code class="example">        #!/usr/bin/env vim -S</code>
+<code class="example">        echo "this is a Vim script"</code>
+<code class="example">        quit</code>
+<code class="example"></code>
+</section><hr class="doubleline" /><section class=inner>
+<h4><b class="vimtag"> <a name="41.12">41.12</a> </b> 文件格式</h4>
+标识行尾的字符取决于系统。Vim 脚本建议总是使用 Unix 文件格式。此时行以 Newline
+(换行) 字符分隔。这也可用于其它系统。这样你就可以把 Vim 脚本从 MS-Windows 复制
+到 Unix 系统上然后还能工作。见  <a href="repeat.html#:source_crnl">:source_crnl</a> 。要确定设置正确，在写文件前做:
+<code class="example">        :setlocal fileformat=unix</code>
+<code class="example"></code>
+如果用 "dos" 文件格式，分隔行用 CR-NL，两个字符。CR 字符会导致各种问题，最好避
+免使用。
+
+</section><hr class="doubleline" /><section class=inner>
+<h4></h4>编写 Vim 脚本的高级信息在  <a href="usr_50.html#usr_50.txt">usr_50.txt</a> 。
+
+下一章:  <a href="usr_42.html#usr_42.txt">usr_42.txt</a>   添加新的菜单
+
+版权: 参见  <a href="usr_01.html#manual-copyright">manual-copyright</a>   vim:tw=78:ts=8:noet:ft=help:norl:
+</section>
+</article>
+<footer>
+Generated by vim2html
+</footer>
+</body>
+</html>

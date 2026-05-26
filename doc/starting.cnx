@@ -1,4 +1,4 @@
-*starting.txt*	适用于 Vim 9.2 版本。  最近更新: 2026年2月
+*starting.txt*	适用于 Vim 9.2 版本。  最近更新: 2026年5月
 
 
 		  VIM 参考手册	by Bram Moolenaar
@@ -224,7 +224,7 @@ VMS 上，所有的选项参数假定都是小写的，除非前面有一个正�
 		停、":sh"、过滤程序，|system()| 函数，反引号扩展 和
 		libcall()。
 		也禁止 |delete()|、|rename()|、|mkdir()|、 |job_start()|、
-		|setenv()| 等等。
+		|setenv()| 和环境变量的设置等等。
 		也禁止 Python、Ruby 和 Lua 接口，因为它们可用来执行外壳命令。
 		Perl 使用安全模块。
 		如果 $SHELL 的最后部分是 "nologin" 或 "false"，会使用 Unix 受
@@ -397,8 +397,8 @@ VMS 上，所有的选项参数假定都是小写的，除非前面有一个正�
 		程。"-f" 应该用于 gvim 被别的程序启动，并且需等待编辑会话完成
 		的场合 (例如，mail 或者 readnews)。如果你希望 gvim 永远不要分
 		叉，在你的 |gvimrc| 里给 'guioptions' 加上 'f'。
-		小心: 你可以使用 "-gf" 在前台启动 GUI，但是 "-fg" 是用来指定前
-		台颜色的。|gui-fork|
+		小心: "-gf" 可用于在前台启动 GUI，但是 "-fg" 是用来指定前景色
+		的。|gui-fork|
 
 		Amiga: 不要在新窗口上启动 Vim。该选项应该用于 Vim 被别的程序启
 		动，并且需等待编辑会话完成的场合 (例如，mail 或者 readnews)。
@@ -967,6 +967,12 @@ https://specifications.freedesktop.org/basedir-spec/latest/
 
 Vim 只使用 `$XDG_CONFIG_HOME` 目录，(暂时) 不用其他目录来保存各种配置和状态文
 件。
+							*xdg.vim*
+Vim 本身只会使用 `$XDG_CONFIG_HOME` 目录。对其他 XDG 规范目录的支持由脚本
+"$VIMRUNTIME/xdg.vim" 提供。
+注意: 仅当 $XDG_CONFIG_HOME/vim 目录 (或其缺省备用路径) 存在时，xdg.vim 才会生
+效。缺省，该脚本仅设置 'viminfofile' 选项。其他选项配置均已被注释禁用，如需启
+用，请查看脚本内的详细说明。
 
 							*xdg-vimrc*
 Unix 系统上的 Vim 会在 `$XDG_CONFIG_HOME/vim/vimrc` 查找配置 (见 |vimrc|)，但
@@ -1220,7 +1226,7 @@ $VIM 目录 (MS-Windows)。你也可以使用自动命令 |autocommand| 和/或�
 2. 如果 'sessionoptions' 包含 "globals" 的话，恢复大写字母开始并至少包含一个小
    写字母的全局变量。
 3. 关闭当前标签页里除了当前窗口以外的其它窗口；关闭除了当前标签页以外的其它标
-   签页 (这会导致当前载入的缓冲区被卸载，通过置位 'hidden' 或其它等价方式的的
+   签页 (这会导致当前载入的缓冲区被卸载，置位 'hidden' 或其它等价方式的缓冲区
    可能会被隐藏)；如果当前缓冲区为空且未命名，真正删除之。
 4. 如果 'sessionoptions' 包含 "curdir" 的话，恢复当前目录。或者如果
    'sessionoptions' 包含 "sesdir" 的话，设置当前目录为会话文件所在的位置。
@@ -1236,9 +1242,9 @@ $VIM 目录 (MS-Windows)。你也可以使用自动命令 |autocommand| 和/或�
    定合适的大小。
 9. 如同 |:mkview| 那样，恢复各个窗口的所有视图。但使用 'sessionoptions' 而不是
    'viewoptions'。
-10.如果存在和会话文件同名，但以 "x.vim" (x 代表 "附加" eXtra) 结尾的文件，也同
-   时执行之。你可以用 *x.vim 文件来指定和给出会话相关的附加设置和动作，比如在
-   GUI 版本里创立菜单项目。
+10. 如果存在和会话文件同名，但以 "x.vim" (x 代表 "附加" eXtra) 结尾的文件，也
+   同时执行之。你可以用 *x.vim 文件来指定和给出会话相关的附加设置和动作，比如
+   在 GUI 版本里创立菜单项目。
 
 在恢复会话后，当前会话的完整文件名可以通过内部变量 "v:this_session" 得到
 |this_session-variable|。映射示例: >
@@ -1247,10 +1253,11 @@ $VIM 目录 (MS-Windows)。你也可以使用自动命令 |autocommand| 和/或�
 
 会话包含所有标签页，除非从 'sessionoptions' 里删除了 "tabpages"。|tab-page|
 
-|SessionLoadPost| 自动命令事件在会话文件载入/执行后被激活。
+在载入/执行会话文件前，会触发 |SessionLoadPre| 自动命令事件，而在加载/执行完成
+之后，会触发 |SessionLoadPost| 自动命令事件。
 						*SessionLoad-variable*
 会话文件载入期间，SessionLoad 全局变量被设为 1。用此变量，插件可以推迟部分工
-作，直到激活 SessionLoadPost 事件时才执行。
+作，直到触发 SessionLoadPost 事件时才执行。
 
 							*:mkvie* *:mkview*
 :mkvie[w][!] [file]	写入一个 Vim 脚本，该脚本能够恢复当前的窗口内容。
@@ -1328,6 +1335,21 @@ viminfo 文件用来保存:
 常，只有一个 viminfo 文件。而会话文件用来保存某个编辑会话的状态。你可以保存多
 个会话文件，每个针对一个你工作的项目。viminfo 和会话文件一起可以用来有效的进入
 Vim 并直接从你希望的设置开始工作。|session-file|
+
+							*viminfo-security*
+Vim 生成的 viminfo 文件为纯文本格式，其中 |List|、|Dictionary|、|Tuple| 类型的
+值会以 Vim 表达式形式保存。处理 viminfo 文件时，如果 'viminfo' 选项包含 "!"，
+这些表达式就会被解析执行。
+
+'viminfo' 选项缺省值不含 "!"，因此缺省不会执行任何表达式。
+
+在缓冲区中直接打开 viminfo 文件 (如 |:edit|) 是安全的，Vim 只会原样展示文件内
+容。风险来源于让 Vim 以 viminfo 机制加载不可信文件，以下场景会触发此机制:
+- 对该文件执行 |:rviminfo| 命令
+- 设置 'viminfofile' 指向该文件
+- 将该文件放置在 Vim 已用于读取 viminfo 的路径中，见 |viminfo-file-name|
+
+遇到以上任意情况，如果文件不可信，切勿在 'viminfo' 选项中加入 "!"。
 
 							*viminfo-read*
 如果 Vim 启动时 'viminfo' 选项非空，viminfo 文件的内容被读入，而其中的信息在适

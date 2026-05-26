@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8" />
+<!--[if lt IE 9]>
+  <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+<![endif]-->
+<title>VIM 中文帮助: MS-Windows</title>
+<link rel="stylesheet" href="vim-stylesheet.css" type="text/css" />
+<link rel="canonical" href="https://yianwillis.github.io/vimcdoc/doc/os_win32.html" />
+<script type="text/javascript" src="vimcdoc.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+</head>
+<body>
+<nav id=banner>
+<form action=tags.html target="tag_iframe">
+  <input type="text" name="tag" id="tag" placeholder="标签搜索">
+</form>
+<iframe name="tag_iframe" src=""></iframe>
+<a href="help.html">帮助总览</a> &middot;
+<hr/>
+<a href="quickref.html">快速参考</a> &middot;
+<a href="index.html">命令索引</a> &middot;
+<a href="eval.html#functions">函数列表</a> &middot;
+<a href="quickref.html#option-list">选项列表</a> &middot;
+<hr/>
+<a href="usr_toc.html">用户手册</a> &middot;
+<a href="help.html#reference_toc">参考手册</a> &middot;
+</nav>
+
+<header>
+<h2>os_win32</h2>
+</header>
+<article id=outer>
+<section class=inner>
+<b class="vimtag"> <a name="os_win32.txt">os_win32.txt</a> </b>  适用于 Vim 9.2 版本。  最近更新: 2025年10月
+
+
+                  <code class="vim">VIM 参考手册  by George Reilly</code>
+                                <code class="vim">译者</code>: Dasn、tocer
+
+                                                <b class="vimtag"> <a name="win32">win32</a> </b> <b class="vimtag"> <a name="Win32">Win32</a> </b> <b class="vimtag"> <a name="MS-Windows">MS-Windows</a> </b>
+本文描述 Vim Win32 版本的一些特性。
+
+Vim 的 Win32 版本可以在 Windows 7、8、10 和 11 版本上运行，并且有 console (控
+制台，就是命令提示符窗口 <code class="vim">译者</code>) 和 GUI (图形界面) 两个版本。
+
+如果使用 Windows XP 或 Vista，可使用 Vim 9.0 补丁版本 495 或以前的版本。
+
+32 位版本也可运行在 64 位 MS-Windows 系统上。
+
+1. 一些已知的问题                <a href="os_win32.html#win32-problems">win32-problems</a> 
+2. 启动                          <a href="os_win32.html#win32-startup">win32-startup</a> 
+3. 恢复屏幕内容                  <a href="os_win32.html#win32-restore">win32-restore</a> 
+4. 使用鼠标                      <a href="os_win32.html#win32-mouse">win32-mouse</a> 
+5. 在 Windows 95 下运行          <a href="os_win32.html#win32-win95">win32-win95</a> 
+6. 在 Windows 3.1 下运行         <a href="os_win32.html#win32-win3.1">win32-win3.1</a> 
+7. 安装包                        <a href="os_win32.html#win32-installer">win32-installer</a> 
+8. Win32 常见问题解答 (迷你版)   <a href="os_win32.html#win32-faq">win32-faq</a> 
+
+此外，在  <a href="os_dos.html#os_dos.txt">os_dos.txt</a>  里还有一些 Win32 和 DOS 版本通用的条目:
+文件位置                         <a href="os_dos.html#dos-locations">dos-locations</a> 
+使用反斜杠                       <a href="os_dos.html#dos-backslash">dos-backslash</a> 
+标准映射                         <a href="os_dos.html#dos-standard-mappings">dos-standard-mappings</a> 
+屏幕的输出与颜色                 <a href="os_dos.html#dos-colors">dos-colors</a> 
+文件格式                         <a href="os_dos.html#dos-file-formats">dos-file-formats</a> 
+:cd 命令                         <a href="os_dos.html#dos-:cd">dos-:cd</a> 
+中止键                           <a href="os_dos.html#dos-CTRL-Break">dos-CTRL-Break</a> 
+临时文件                         <a href="os_dos.html#dos-temp-files">dos-temp-files</a> 
+默认的外壳选项                   <a href="os_dos.html#dos-shell">dos-shell</a> 
+PowerShell 缺省                  <a href="os_dos.html#dos-powershell">dos-powershell</a> 
+
+Win32 用户图形界面               <a href="gui_w32.html#gui-w32">gui-w32</a> 
+
+作者:
+Win32 版本的作者是 George V. Reilly &lt;george@reilly.org&gt;。
+最初 Windows NT 版本的移植工作是由 Roger Knobbe &lt;RogerK@wonderware.com&gt; 完成
+的。
+GUI 版本的作者是 George V. Reilly 和 Robert Webb。
+
+有关编译的讨论请参考 "src/INSTALLpc.txt"。              <b class="vimtag"> <a name="win32-compiling">win32-compiling</a> </b>
+
+                                                        <b class="vimtag"> <a name="WSL">WSL</a> </b>
+在 WSL (Windows Subsystem for Linux，适用于 Linux 的 Windows 子系统) 上运行
+Vim 时此处说明不适用，此时  <code class="badlink">has('win32')</code>  会返回假值。如果需要知道 Vim 是否在
+WSL 上运行，可用  <code class="badlink">exists('$WSLENV')</code> 。
+
+</section><hr class="doubleline" /><section class=inner>
+<h4>1. 一些已知的问题                                       <b class="vimtag"> <a name="win32-problems">win32-problems</a> </b></h4>
+自动补全文件名的时候，虽然 Vim 会匹配短的文件名，但是却会寻找并使用对应的相应
+的长文件名。例如，如果有一个长文件名 "this_is_a_test"，其短文件名是
+"this_i~1"，命令 ":e *1" 编辑文件 "this_is_a_test"。
+
+</section><hr class="doubleline" /><section class=inner>
+<h4>2. 启动                                                 <b class="vimtag"> <a name="win32-startup">win32-startup</a> </b></h4>
+当前目录                                                <b class="vimtag"> <a name="win32-curdir">win32-curdir</a> </b>
+
+如果启动 Vim 时后面带一个文件名作为参数，并且指定了该文件的完整路径 (例如: 以
+"x:\" 开头的路径)，Vim 会认为该文件是从文件管理器启动，并把当前目录 (:cd 命令
+查看 <code class="vim">译者</code>) 切换到文件所在目录。如果不想这样，只要把路径里的反斜杠 ("\") 换成斜
+杠 ("/") 即可。例如:
+<code class="example"></code>
+<code class="example">        vim c:\text\files\foo.txt</code>
+<code class="example"></code>
+当前目录切换到 "C:\text\files"。
+<code class="example"></code>
+<code class="example">        vim c:/text\files\foo.txt</code>
+<code class="example"></code>
+不改变当前目录。
+
+
+term 选项                                               <b class="vimtag"> <a name="win32-term">win32-term</a> </b>
+
+Vim 的 Win32 版本仅有的终端类型是 "win32"，它是内置的。如果你把 <a href="options.html#'term'">'term'</a> 设置成
+其它的值，Vim 的行为就可能变得很奇怪。所以 Vim 不会从环境变量 "TERM" 里获取
+<a href="options.html#'term'">'term'</a> 的值。
+
+终端色彩                                                <b class="vimtag"> <a name="win32-term-colors">win32-term-colors</a> </b>
+
+Win32 控制台缺省支持 16 色  <a href="os_dos.html#dos-colors">dos-colors</a> 。Windows 10 1703 版本 (Creators
+Update) 开始，控制台支持 256 色和真彩 (24-位)。这需要置位 <a href="options.html#'termguicolors'">'termguicolors'</a> 而且
+Vim 编译时带上 Virtual Terminal Processing (VTP) (虚拟终端处理) 的支持
+ <a href="various.html#+vtp">+vtp</a> 。
+
+如果置位了 <a href="options.html#'termguicolors'">'termguicolors'</a> 或者 <a href="term.html#'t_Co'">'t_Co'</a> 选项设为 256，自动打开虚拟终端处理。这
+会允许色彩的 ANSI 转义序列，改进了多字节字符的渲染，并在窗口控制台里里打开其他
+终端特性。
+
+实际的色彩渲染效果取决于你的终端是否支持 VTP (如 Windows 终端或现代的 Windows
+10/11 控制台)。
+
+$PATH 环境变量                                          <b class="vimtag"> <a name="win32-PATH">win32-PATH</a> </b>
+
+Vim 可执行程序的路径被加入到变量 $PATH 中。这主要使 "!xxd" 能够运行，因为它在
+工具菜单中。这也意味着当 executable() 返回 1 时，该可执行程序确实能够执行。
+
+命令行参数                                              <b class="vimtag"> <a name="win32-cmdargs">win32-cmdargs</a> </b>
+
+对 MS-Windows 把命令行分解为参数的分析没有一个标准。Vim 和 gvim 过去使用不同
+的逻辑来处理命令行 (7.4.432 之前)，而且这些逻辑也取决于如何地编译。现在 Vim
+和 gvim 两者都使用 CommandLineToArgvW() Win32 API，从而行为一致。
+
+基本规则是:                                             <b class="vimtag"> <a name="win32-backslashes">win32-backslashes</a> </b>
+      a) 参数是图形字符的序列。
+      b) 参数似空白分隔。
+      c) 参数可以双引号包围，其中可包含空白。
+      d) 零和多个反斜杠 (\) 和一个双引号 (") 是特别的。有效的反斜杠减半往下取
+        整。偶数反斜杠反转空格和制表的可接受性，奇数反斜杠生成按本义出现的双
+        引号。
+
+因而:
+        "       是特殊双引号
+        \"      是按本义出现的双引号
+        \\"     是一个按本义出现的反引号和一个特殊双引号
+        \\\"    是一个按本义出现的反引号和一个按本义出现的双引号
+        \\\\"   是两个按本义出现的反引号和一个特殊双引号
+        \\\\\"  是两个按本义出现的反引号和一个按本义出现的双引号
+        等等
+
+示例:
+<code class="example">        vim "C:\My Music\freude" +"set ignorecase" +/"\"foo\\" +\"bar\\\"</code>
+<code class="example"></code>
+打开 "C:\My Music\freude" 并执行行模式命令:
+<code class="example">        set ignorecase; /"foo\ and /bar\"</code>
+<code class="example"></code>
+CommandLineToArgvW API 的参考中也有这些规则的描述:
+    <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/bb776391.aspx">https://msdn.microsoft.com/en-us/library/windows/desktop/bb776391.aspx</a>
+
+                                                        <b class="vimtag"> <a name="win32-quotes">win32-quotes</a> </b>
+引号还有额外的规则 (这里文档不甚完整)。如上所述，文件名 (或任何其它命令行参数)
+内的引号可以用反斜杠转义。例如
+<code class="example">        vim -c "echo 'foo\"bar'"</code>
+<code class="example"></code>
+也可要用三个引号来表示一个实际一个引号:
+<code class="example">        vim -c "echo 'foo"""bar'"</code>
+<code class="example"></code>
+引号规则是:
+
+1.  <code class="badlink">"</code>  开始引用。
+2. 另一个  <code class="badlink">"</code>  或  <code class="badlink">""</code>  结束引用。如果引用以  <code class="badlink">""</code>  结束，在引用的字符串之后生成
+    <code class="badlink">"</code> 。
+
+示例，[] 围绕参数:
+        "foo"           -&gt; <code class="special">[foo]</code>
+        "foo""          -&gt; [foo"]
+        "foo"bar        -&gt; <code class="special">[foobar]</code>
+        "foo" bar       -&gt; <code class="special">[foo]</code>, <code class="special">[bar]</code>
+        "foo""bar       -&gt; [foo"bar]
+        "foo"" bar      -&gt; [foo"], <code class="special">[bar]</code>
+        "foo"""bar"     -&gt; [foo"bar]
+
+
+</section><hr class="doubleline" /><section class=inner>
+<h4>3. 恢复屏幕内容                                         <b class="vimtag"> <a name="win32-restore">win32-restore</a> </b></h4>
+如果你设定了 <a href="options.html#'restorescreen'">'restorescreen'</a> 选项 (默认设置)，当你退出 Vim 或者执行外部命令
+时，Vim 能恢复控制台原来的内容。可以用 ":ser nors" 命令关掉这个选项。
+                                                        <a href="options.html#'restorescreen'">'restorescreen'</a>
+
+</section><hr class="doubleline" /><section class=inner>
+<h4>4. 使用鼠标                                             <b class="vimtag"> <a name="win32-mouse">win32-mouse</a> </b></h4>
+Vim 的 Win32 版本支持鼠标。如果你使用两键鼠标，可以用同时按下左右两键的办法来
+模拟第三键 (中键) - 但是，请<code class="note">注意</code>: 在 Win32 GUI 上，如果你的右键用来呼叫弹出菜
+单 (参见 <a href="options.html#'mouse'">'mouse'</a>)，那么你最好先按下鼠标左键 (左右两键同时按的时候，左键略快于
+右键 <code class="vim">译者</code>)。                                             <a href="term.html#mouse-using">mouse-using</a> 
+
+如果鼠标不好用，你可以试着禁用控制台的 "快速编辑模式"。
+
+</section><hr class="doubleline" /><section class=inner>
+<h4>5. 在 Windows 95 下运行                                 <b class="vimtag"> <a name="win32-win95">win32-win95</a> </b></h4>                                        <b class="vimtag"> <a name="windows95">windows95</a> </b> <b class="vimtag"> <a name="windows98">windows98</a> </b> <b class="vimtag"> <a name="windowsme">windowsme</a> </b>
+8.0.0029 补丁删除了 Windows 95/98/ME 的支持。如果你还想用，请用之前的版本。
+
+</section><hr class="doubleline" /><section class=inner>
+<h4>6. 在 Windows 3.1 下运行                                <b class="vimtag"> <a name="win32-win3.1">win32-win3.1</a> </b></h4>
+                                <b class="vimtag"> <a name="win32s">win32s</a> </b> <b class="vimtag"> <a name="windows-3.1">windows-3.1</a> </b> <b class="vimtag"> <a name="gui-w32s">gui-w32s</a> </b> <b class="vimtag"> <a name="win16">win16</a> </b>
+有一个特殊的 Win32 版本的 Gvim 可以在 Windows 3.1 和 3.11 运行。
+7.4.1364 补丁删除了此支持。
+
+</section><hr class="doubleline" /><section class=inner>
+<h4>7. 安装包                                               <b class="vimtag"> <a name="win32-installer">win32-installer</a> </b></h4>
+<a href="http://www.vim.org/download.php">http://www.vim.org/download.php</a> 提供了 windows 的简单安装程序，而
+<a href="https://github.com/vim/vim-win32-installer/releases/">https://github.com/vim/vim-win32-installer/releases/</a> 也提供每日构建版。
+
+每日构建版包含 32 位和 64 位版本，打开多数特性，通常也包含额外的已加密签名的安
+装程序，以免 Windows 抱怨。
+
+要使用安装程序可简单执行 exe 文件。也支持以下开关:
+<code class="example"></code>
+<code class="example">    gvim_&lt;version&gt;.exe /S           -&gt; 安静安装，无对话框</code>
+<code class="example">    gvim_&lt;version&gt;.exe /D=C:\vim    -&gt; 安装到目录 c:\vim</code>
+<code class="example">                                    -&gt; /D 必须是最末的参数</code>
+<code class="example">    gvim_&lt;version&gt;.exe /S /D=c:\vim -&gt; 安静安装到 c:\vim</code>
+
+通过设置 $VIM 环境变量，也可以指定不同于缺省的安装目录。
+
+</section><hr class="doubleline" /><section class=inner>
+<h4>8. Win32 常见问题解答 (迷你版)                          <b class="vimtag"> <a name="win32-faq">win32-faq</a> </b></h4>
+问: 怎样改变字体？
+答: 在 GUI 版本里，可以用 <a href="options.html#'guifont'">'guifont'</a> 选项。例如:
+<code class="example">        :set guifont=Lucida_Console:h15:cDEFAULT</code>
+     在控制台版本里，你需要修改控制台窗口的字体，不能在 Vim 里修改字体。
+
+问: 在 Windows NT 上怎样输入死键？
+答: NT 3.51 上可以正常输入死键，和在别的程序里的输入方法一样。
+    NT 4.0 上，你必须保证你的区域设置 (控制面板键盘) 和你当前使用的区域设置相
+    同。否则 NT 会崩溃。这是 NT 的问题，不是 Vim 的问题。
+
+问: 我用 Vim 编辑一个符号链接，这个链接指向 UNIX NFS 文件服务器上的一个文件。
+    当我保存这个文件时，Vim 不能通过链接保存到服务器上，而是删除了这个链接，
+    创建了一个新的文件。为什么？
+答: 在 UNIX 系统上，Vim 可以处理链接 (符号链接或硬链接)。Vim 先把文件写入一个
+    备份文件中，然后用备份文件覆盖原文件。这样做是为了保证所有属性都和原文件相
+    同。在非 UNIX 系统上，首先原文件被改名，然后写入新文件。只有保护位和原文件
+    相同。但是，这个方法不能处理 NFS 文件系统，那里除了链接还有一些其它问题。
+    唯一的解决办法是禁用备份文件，可以通过命令 ":set nobackup nowritebackup"
+    实现                                                <a href="options.html#'writebackup'">'writebackup'</a>
+
+问: 我正通过 Samba 使用 Vim 编辑 Unix 系统上的一个文件。当我保存文件时，文件所
+    有者被改变了。为什么？
+答: 当保存文件时，Vim 会给原来文件换名，使之成为一个备份 (以防写入文件过程中失
+    败)。然后该文件作为一个新文件被保存。Samba 这时把它赋予文件系统上默认的所
+    有者，可能会和原所有者不一样。
+    为避免此问题，可以设置 <a href="options.html#'backupcopy'">'backupcopy'</a> 选项为 "yes"。Vim 会用复制的方式建立备
+    份，然后再覆盖原文件。这样文件所有者就不会改变了。
+
+问: 执行 ":make" 的时候怎样看到输出？
+答: 通常，你需要一个 tee 程序，它可以把输入 (make 的输出) 复制到标准输出和错误
+    信息文件里。你可以在以下地址找到 tee (还有其它 GNU 工具)。
+    <a href="http://gnuwin32.sourceforge.net">http://gnuwin32.sourceforge.net</a> 或 <a href="http://unxutils.sourceforge.net">http://unxutils.sourceforge.net</a>
+    或者你也可以在 <a href="http://www.cygwin.com/">http://www.cygwin.com/</a> 下载 Cygnus 版本的 GNU 工具。
+    得到了 tee 程序之后，你需要把下面的命令添加到你的 _vimrc 文件中:
+<code class="example">        :set shellpipe=\|\ tee</code>
+<code class="example"></code>
+问: 我把文件保存到一台运行 VisionFS 的远程计算机上，但是文件找不到了！
+答: VisionFS 不能处理特定的句号 (.) 加三个字母的扩展名，SCO 声称这是为了兼容
+    16 位的 DOS/Windows 环境。下面的两个命令可以说明问题:
+
+<code class="example">        echo Hello &gt; file.bat~</code>
+<code class="example">        dir &gt; file.bat</code>
+
+    "dir" 命令的输出被定向到 "file.bat~" 文件，而并没有新建一个 "file.bat" 文
+    件。这种行为在 Vim 里的体现就是，当你编辑一个名为 "foo.bat" 的文件时，Vim
+    会自动创建名为文件名加上 '~' 字符的临时文件，也就是 "foo.bat~"。写入
+    "foo.bat" 文件时，最后它倒被删除了 (<code class="vim">译者注</code>: Vim 想删除的本来是临时文件)。
+
+    解决办法: 在你的 _vimrc 文件里加入:
+<code class="example">        :set backupext=.temporary</code>
+<code class="example"></code>
+问: 怎样改变光标闪烁的频率？
+答: 不能改。这是 NT 控制台的一个限制，据报告，NT 5.0 可以一次改变所有控制台的
+    闪烁频率。
+
+                                                        <b class="vimtag"> <a name=":!start">:!start</a> </b>
+问: 如何异步地执行一个外部命令或程序，或用缺省程序打开文档或 URL？
+答: 执行外部命令的时候，你可以用 ":!start" 代替 ":!"。例如，要运行 notepad:
+<code class="example">        :!start notepad</code>
+     要用缺省图像查看器打开 "image.jpg":
+<code class="example">        :!start image.jpg</code>
+     要用 Windows Explorer 打开当前文件所在的目录:
+<code class="example">        :!start %:h</code>
+     要用缺省的浏览器打开 Vim 主页:
+<code class="example">        :!start http://www.vim.org/</code>
+
+    用 "start" 命令不像 ":!" 那样 (切换到另一个屏幕、调用一个新的控制台，然后
+    等待程序执行结束)；该命令的使用，意味着你所运行的程序不会影响到当前编辑的
+    文件。用 ":!start" 命令运行程序不会得到 Vim 的打开文件句柄，这意味着他们不
+    需要在 Vim 之前退出。
+    要避免这种特殊照顾，可以用 ":! start"。
+    有两个可选的参数 (见下个问答):
+       /min  最小化方式打开窗口
+       /b    不打开控制台窗口
+    一次只能使用一个参数。第二个参数会被当作命令的一部分。
+                                                <b class="vimtag"> <a name="windows-asynchronously">windows-asynchronously</a> </b>
+问: 如何避免异步远行的程序打开窗口？
+答: 取决于你实际需要，有三个方案:
+    1) 用 /min 标志位，以最小化方式运行，其他不作改变。对控制台和 GUI
+       应用一样有效。
+    2) 用 /b 标志位以运行控制台程序，而不建立控制台窗口 (GUI 应用不受影响)。
+       只能用于不需要输入的应用。否则会得到 EOF 错误，因为输入流 (stdin)
+       会重定向到 \\.\NUL (stdout 和 stderr 也是如此)。
+    3) 在 <a href="options.html#'guioptions'">'guioptions'</a> 选项里设置 '!' 标志位  <a href="options.html#'go-!'">'go-!'</a> 。这样 Vim 会在 Vim 里的
+       终端窗口里运行 "start" 命令，而不会打开控制台窗口。
+
+   运行 Exuberant ctags 的控制台示例:
+<code class="example">        :!start /min ctags -R .</code>
+    程序结束时你会看到名为 "tags" 文件在当前目录出现。你会<code class="note">注意</code>到底下任务栏上
+   窗口标题在闪烁。尤其对需时较长的命令更容易看到。
+   现在删除 "tags" 文件，然后执行:
+<code class="example">        :!start /b ctags -R .</code>
+    还是会产生 "tags" 文件，但这次任务栏不会闪烁了。
+   GUI 应用的示例:
+<code class="example">        :!start /min notepad</code>
+<code class="example">        :!start /b notepad</code>
+    前一个命令以最小化方式运行 notepad，后一个命令以正常方式运行。
+
+                                                <b class="vimtag"> <a name="windows-icon">windows-icon</a> </b>
+问: 我不喜欢 Vim 图标，如何改变？
+答: 是的，把你喜欢的图标放在 <a href="options.html#'runtimepath'">'runtimepath'</a> 某个目录下的 bitmaps/vim.ico。例如
+    ~/vimfiles/bitmaps/vim.ico。
+
+
+ vim:tw=78:ts=8:noet:ft=help:norl:
+</section>
+</article>
+<footer>
+Generated by vim2html
+</footer>
+</body>
+</html>
