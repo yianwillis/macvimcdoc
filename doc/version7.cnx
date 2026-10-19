@@ -168,8 +168,8 @@ Win32: <F10> 键的效果过去取决于 'winaltkeys'。现在它取决于 <F10>
 定位错误十分困难。现在包含函数开始处起算的源代码行号。这也意味着 ":breakadd
 func" 里的行号含义有了变化。
 
-用 |:command| 定义用户命令时，过去特殊项目可以是缩写。这导致不可预测的行为，如
-<li> 会被识别为 <line1>。现在这些项目不再允许缩写。
+用 |:command| 定义用户命令时，过去特殊项目可以是简写。这导致不可预测的行为，如
+<li> 会被识别为 <line1>。现在这些项目不再允许简写。
 
 执行 FileChangedRO 自动命令时，不再允许切换到另一个缓冲区或者编辑另一个文件。
 这是为了防止崩溃 (激活事件所在的代码埋藏得很深，那里我们不期待改变缓冲区)。但
@@ -226,7 +226,7 @@ Vim 已经集成了拼写检查。本来有一些脚本的实现，但都较慢�
 用 |z=|		命令改正单词。
 用 |:mkspell|	命令从单词列表生成 Vim 的拼写文件。
 
-加入 "undercurl" 高亮属性，GUI 里可以清楚地指出拼写错误 (基于 Marcin Dalecki
+加入 "undercurl" 高亮属性，GUI 上可以清楚地指出拼写错误 (基于 Marcin Dalecki
 的补丁)。
 用 "guisp" 颜色指定和前景背景不同的第三种颜色。
 可用高亮属性的数目从大约 220 个增加到超过 30000 个。这使拼写的属性和语法高亮的
@@ -296,7 +296,7 @@ MzScheme 接口						*new-MzScheme*
 
 标签页标签所在的行可以使用高亮的普通文本，也可以使用 GUI 的机制。GUI 标签看起
 来更舒服，但只有少数系统支持。用 'tabline'、'guitablabel' 和 'guitabtooltip'
-可以定制标签页行，而它显示与否则由 'showtabline' 控制。至于是否使用 GUI 标签由
+可以定制标签栏，而它显示与否则由 'showtabline' 控制。至于是否使用 GUI 标签由
 'guioptions' 的 "e" 标志位决定。
 
 用 |:tab| 命令修饰符，多数打开新窗口的命令会用新标签页代替。
@@ -585,14 +585,14 @@ CTRL-\ CTRL-O		执行普通模式命令。类似于 CTRL-O，但不移动光标�
 'quoteescape'		字符串内转义引号的字符。用于 a"、a' 和 a` 文本对象。
 			|a'|
 'shelltemp'		外壳命令使用临时文件还是管道
-'showtabline'		是否显示标签页行
+'showtabline'		是否显示标签栏
 'spell'			打开/关闭拼写检查
 'spellcapcheck'		定位句子尾部的模式
 'spellfile'		加入好词和坏词所用的文件
 'spelllang'		拼写检查所用的语言
 'spellsuggest'		拼写建议的方法
 'synmaxcol'		检查语法项目的最大列数；避免长行的重画过慢
-'tabline'		标签页行用于显示文本的表达式
+'tabline'		标签栏用于显示文本的表达式
 'tabpagemax'		|-p| 打开的最大标签页数
 'verbosefile'		记录消息到文件。
 'wildoptions'		"tagfile" 值使 CTRL-D 命令行补全可以列出匹配标签所在的
@@ -733,7 +733,7 @@ Ex 命令修饰符: ~
 
 |:keepalt|		不改变轮换文件。
 
-|:noautocmd|		不激活自动命令。
+|:noautocmd|		不触发自动命令。
 
 |:sandbox|		在沙盘里执行命令。
 
@@ -921,9 +921,9 @@ PmenuSel		弹出菜单: 选中项目 |hl-PmenuSel|
 PmenuThumb		弹出菜单: 滚动条 |hl-PmenuThumb|
 PmenuSbar		弹出菜单: 滚动条的拇指 |hl-PmenuSbar|
 
-TabLine			标签页行，非活动标签页标签 |hl-TabLine|
-TabLineSel		标签页行，活动标签页标签 |hl-TabLineSel|
-TabLineFill		标签页行，没有标签的地方 |hl-TabLineFill|
+TabLine			标签栏，非活动标签页标签 |hl-TabLine|
+TabLineSel		标签栏，活动标签页标签 |hl-TabLineSel|
+TabLineFill		标签栏，无标签的空白位置 |hl-TabLineFill|
 
 SpellBad		拼写错误的单词 |hl-SpellBad|
 SpellCap		大小写错误的单词 |hl-SpellCap|
@@ -1105,8 +1105,8 @@ Mac: 启动时 Vim 会载入 $VIMRUNTIME/macmap.vim 脚本来定义缺省的 com
 射。(多由 by Benji Fisher 提供)
 这只适用于旧版的 Carbon 的 Vim 版本，MacVim.app 不执行此文件。
 
-Mac: 加入剪贴板选择区的类型，这样两个 Vim 之间可以共享面向列块、行和字符的选择
-区。(Eckehard Berns)
+Mac: 加入剪贴板选区的类型，这样两个 Vim 之间可以共享面向列块、行和字符的选区。
+(Eckehard Berns)
 也修正设置 'clipboard' 为 "unnamed" 时 "yyp" 出现的问题。
 
 Mac: GUI 字体选择器。(Peter Cucka)
@@ -1238,7 +1238,7 @@ gzip 插件解压失败时，给出错误消息但不删除原始文本。这有
 
 ":registers" 命令现在正确显示多字节字符。
 
-VMS: 使用说明提到了可以用斜杠使标志位大写。加入内建的 vt320 终端代码色彩支持。
+VMS: 使用说明提到了可以用斜杠使标志位大写。加入内置的 vt320 终端代码色彩支持。
 (Zoltan Arpadffy)
 
 'viminfo' 的 '%' 项目允许设置缓冲区数目的上限。
@@ -2837,7 +2837,7 @@ vimrc_example.vim 里，增加了 'mouse' 的设置。
 
 带 MZscheme 编译时同时寻找 "plt" 子目录下的头文件。FreeBSD 用到那里的文件。
 
-Ruby 界面的模块名现在叫做 "Vim" 而非 "VIM"。但为了反向兼容起见，保留 "VIM" 为
+Ruby 接口的模块名现在叫做 "Vim" 而非 "VIM"。但为了反向兼容起见，保留 "VIM" 为
 其别名。(Tim Pope)
 
 
@@ -7107,7 +7107,7 @@ VimLeave、BufWinLeave 和 BufUnload 自动命令。
 
 改进 Javascript 缩进。'cinoptions' 新增 "J" 标志位。(Hari Kumar G)
 
-Mac: 支持关闭反锯齿。(LC Mi)
+Mac: 支持关闭抗锯齿。(LC Mi)
 
 Mac: 新增 Mac 控制台的剪贴板支持。(Bjorn Winckler)
 
@@ -9991,8 +9991,8 @@ Make the references to features in the help more consistent. (Sylvain Hitier)
 
 新增 |python-bindeval| 函数。和 |python-eval| 不同，这个函数分别为字典、列表和
 函数返回 |python-Dictionary|、|python-List| 和 |python-Function| 对象，而不是
-它们的 Python 内建对应对象 (说起函数的话就是 None)。
-   对简单类型，此函数返回 Python 内建类型，而不是像 |python-eval| 那样返回
+它们的 Python 内置对应对象 (说起函数的话就是 None)。
+   对简单类型，此函数返回 Python 内置类型，而不是像 |python-eval| 那样返回
 Python `str()`。Python 3 则返回 `bytes()` 对象而不是 `str()`，以避免出错
 UnicodeDecodeError 的可能性。
    新对象的接口一定程度上模仿标准 Python 的 `dict()` 和 `list()` 接口。将来
@@ -10033,7 +10033,7 @@ UnicodeDecodeError 的可能性。
 不再支持旧的 Python 版本 (≤2.2)。反正也不能正确地进行编译了。
 
 选项:
-	非 GUI 版本的 Vim 现在可以自动保存选择区到系统剪贴板 ('clipboard' 中的
+	非 GUI 版本的 Vim 现在可以自动保存选区到系统剪贴板 ('clipboard' 中的
 	autoselectplus)。也可以使用系统剪贴板为缺省寄存器 (以前只能用主选择
 	区)。(Ivan Krasilnikov, Christian Brabandt, Bram Moolenaar)
 
@@ -10041,7 +10041,7 @@ UnicodeDecodeError 的可能性。
 	'indentexpr' 的缩进会因此变得麻烦，又加入 |shiftwidth()| 函数。还增加
 	了等价的 'softtabstop' 的特殊值。(Christian Brabandt, so8res)
 
-	'relativenumber' 选项打开时在行号列显示绝对行号。现在 'number' 和
+	'relativenumber' 选项打开时在行号栏显示绝对行号。现在 'number' 和
 	'relativenumber' 有四种不同的组合。(Christian Brabandt)
 
 命令:

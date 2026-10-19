@@ -1,4 +1,4 @@
-*channel.txt*	适用于 Vim 9.2 版本。  最近更新: 2026年5月
+*channel.txt*	适用于 Vim 9.2 版本。  最近更新: 2026年10月
 
 
 		  VIM 参考手册	by Bram Moolenaar
@@ -131,6 +131,21 @@ Vim 不会等待响应。服务器稍后发送响应时，MyHandler 会自动被
 
 使用完毕后，关闭服务器通道: >
 	call ch_close(server)
+<
+							*channel-stdio*
+Vim 也可以作为通道的另一端，使用自身标准输入与标准输出，类似编辑器启动的语言服
+务器。使用 |--stdio-channel| 参数启动 Vim 并加载打开通道的脚本: >
+	vim --stdio-channel -S server.vim
+在 server.vim 中: >
+	func OnMessage(ch, msg)
+	  ...
+	endfunc
+	let ch = ch_open('stdio', #{mode: 'lsp', callback: 'OnMessage'})
+<
+							*E1582* *E1583*
+地址 "stdio" 仅在 Vim 通过 |--stdio-channel| 启动时可用，且只能使用一次。此时
+Vim 的标准输入与标准输出会重定向至空设备，确保 Vim 及其启动命令产生的信息不会
+混入通道内容。标准错误保持原样，可用于输出错误信息。
 
 ==============================================================================
 3. 打开通道						*channel-open*
@@ -143,12 +158,13 @@ Vim 不会等待响应。服务器稍后发送响应时，MyHandler 会自动被
 要检查通道是否已成功打开，可用 |ch_status()|。
 
 					*channel-address*
-{address} 可以是域名或 IP 地址后跟端口号，也可以是带 "unix:" 前缀的 Unix-域套
-接字路径。例如 >
+{address} 可以是域名或 IP 地址后跟端口号，或是带 "unix:" 前缀的 Unix-域套接字
+路径，也可以是 "stdio"。例如 >
     www.example.com:80   " 域名 + 端口
     127.0.0.1:1234       " IPv4 + 端口
     [2001:db8::1]:8765   " IPv6 + 端口
     unix:/tmp/my-socket  " Unix-域套接字路径
+    stdio                " Vim 的标准输入与标准输出，见 |channel-stdio|
 
 当域名能解析到多个地址时 (如同时包含 IPv6 和 IPv4)，Vim 会按顺序依次尝试每个地
 址。如果某个连接缓慢或不可用，会迅速切换到下一个地址。这在网络中某种 IP 协议
@@ -236,7 +252,7 @@ Vim 不会等待响应。服务器稍后发送响应时，MyHandler 会自动被
 也可更改 "timeout": >
     call ch_setoptions(channel, {'timeout': msec})
 <
-							  *channel-close* *E906*
+						  *channel-close* *E906*
 通道使用完毕后，可通过以下方式关闭: >
     call ch_close(channel)
 使用套接字时，这会关闭双向连接。使用管道 (stdin/stdout/stderr) 时，会关闭所有
@@ -486,7 +502,7 @@ ch_close({handle})						*ch_close()*
 <
 		返回类型: 无
 
-ch_close_in({handle})						*ch_close_in()*
+ch_close_in({handle})					*ch_close_in()*
 		只关闭 {handle} 的 "in" (输入) 部分。见 |channel-close-in|。
 		{handle} 可以是通道，或关联了通道的作业。
 		不会触发关闭回调函数。
@@ -497,7 +513,7 @@ ch_close_in({handle})						*ch_close_in()*
 		返回类型: 无
 
 
-ch_evalexpr({handle}, {expr} [, {options}])			*ch_evalexpr()*
+ch_evalexpr({handle}, {expr} [, {options}])		*ch_evalexpr()*
 		发送表达式并同步等待响应。
 		发送 {expr} 到 {handle}。{expr} 会根据通道类型自动编码。但不可
 		用于 RAW 模式。见 |channel-use|。
@@ -710,7 +726,7 @@ ch_readraw({handle} [, {options}])			*ch_readraw()*
 <
 		返回类型: |String|
 
-ch_sendexpr({handle}, {expr} [, {options}])			*ch_sendexpr()*
+ch_sendexpr({handle}, {expr} [, {options}])		*ch_sendexpr()*
 		异步发送 {expr} 到 {handle}。{expr} 会根据通道类型自动编码。但
 		不可用于 RAW 模式。
 		见 |channel-use|。			*E912*
@@ -724,6 +740,11 @@ ch_sendexpr({handle}, {expr} [, {options}])			*ch_sendexpr()*
 
 		如果 {expr} 无需响应消息，{options} 里不要指定 "callback" 项
 		目。
+
+		在 "lsp" 模式下，如果不需要响应，{expr} 中的 "id" 项会按原样发
+		送，这就是回复来自服务端请求的方式；它可以是服务端使用的任意类
+		型。当需要响应时 (使用 |ch_evalexpr()| 或配置 "callback" 项)，
+		Vim 会自行分配 ID，该项必须是 |Number|。
 
 		也可用作 |method|: >
 			GetChannel()->ch_sendexpr(expr)
@@ -884,7 +905,7 @@ Vim 检测到标准输入、标准输和或标准错误都未被连接时，不�
 注意 |ch_open()| 使用的等待时间参数会给作业一秒时间来启动并开放端口。
 
 ==============================================================================
-11. 作业函数						*job-functions-details*
+11. 作业函数					*job-functions-details*
 
 job_getchannel({job})					 *job_getchannel()*
 		获取 {job} 使用的通道句柄。
@@ -1065,7 +1086,7 @@ job_stop({job} [, {how}])					*job_stop()*
 道选项，可通过 ch_setoptions(channel, {options}) 设置。见 |job_setoptions()|
 和 |ch_setoptions()|。
 
-						*in_mode* *out_mode* *err_mode*
+					*in_mode* *out_mode* *err_mode*
 "in_mode"		标准输入 (stdin) 专用模式，仅适用于管道方式。
 "out_mode"		标准输出 (stdout) 专用模式，仅适用于管道方式。
 "err_mode"		标准错误 (stderr) 专用模式，仅适用于管道方式。
@@ -1137,7 +1158,7 @@ job_stop({job} [, {how}])					*job_stop()*
 			用，见 |terminal|。
 			{仅在类 Unix 系统上有效}
 
-				*job-in_io* *in_top* *in_bot* *in_name* *in_buf*
+			*job-in_io* *in_top* *in_bot* *in_name* *in_buf*
 标准输入 (stdin) 相关:
 "in_io": "null"		断开标准输入 (从 /dev/null 读取)
 "in_io": "pipe"		标准输入连接到通道 (缺省)
@@ -1378,7 +1399,7 @@ JSON-RPC 格式的响应/通告消息，并解码为 Vim |Dict|。
 JSON-RPC 负载解码为 Vim |Dict| 类型。然后触发 |channel-callback| 回调或指定
 的 |channel-onetime-callback| 一次性回调。使用 |ch_evalexpr()| 或
 |ch_sendexpr()| 函数向通道发送消息时，Vim 会自动附加 HTTP 头部，并把 Vim 表达
-式编码为 JSON。关于 Vim 内建类型与 JSON 间的编码与解码，详见 |json_encode()|
+式编码为 JSON。关于 Vim 内置类型与 JSON 间的编码与解码，详见 |json_encode()|
 和 |json_decode()|。
 
 要用 "lsp" 模式打开通道，在调用 |ch_open()| 时，将 {options} 参数的 "mode" 项

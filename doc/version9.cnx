@@ -1,4 +1,4 @@
-*version9.txt*	适用于 Vim 9.2 版本。  最近更新: 2026年5月
+*version9.txt*	适用于 Vim 9.2 版本。  最近更新: 2026年10月
 
 
 		  VIM 参考手册	by Bram Moolenaar
@@ -54,7 +54,7 @@ Vim version 9.0 要特别向 Sven Guckes 致敬，在准备发布期间，他于
 世。Sven 是 Vim 的长期支持者。他注册了 vim.org 域名，并创建了首个 Vim 网站。我
 们永远怀念他！
 
-						 *Bram* *Moolenaar* *Bram-Moolenaar*
+					 *Bram* *Moolenaar* *Bram-Moolenaar*
 Vim version 9.1 要特别向 Bram Moolenaar 致敬，他还在全职为 Vim 工作时，不幸于
 2023 年八月三日过世。没有他 30 多年持续不断的引领及开发 Vim 的激情，Vim 项目不
 可能有今日。Bram 对帮助乌干达儿童的 ICCF 基金会一样倾注热情。如果你享受使用
@@ -390,9 +390,9 @@ Vim 8.2 以来，有若干小但有用的改进，以下是一个小结。
 
 更新 xdiff 到版本 2.33。更新 libvterm 到修订版 789。
 
-支持 'trim' 用于 Python/Lua/Perl/Tcl/Ruby/MzScheme 界面的 here 文档。
+支持 'trim' 用于 Python/Lua/Perl/Tcl/Ruby/MzScheme 接口的 here 文档。
 
-新增 |t_AU| 和 |t_8u| termcap 码以支持下划线和下曲。新增 t_fd 和 t_fe termcap
+新增 |t_AU| 和 |t_8u| 终端能力项以支持下划线和下曲。新增 t_fd 和 t_fe termcap
 码以检测焦点事件。
 
 支持像正常代码那样缩进 C 编译指示 (pragma)。(|cino-P|)
@@ -31669,7 +31669,7 @@ Vim9 类 ~
     - 变量和方法的公共和保护域访问
     - 常量和 final 对象/类变量
     - 扩展类 (单继承)
-    - 界面
+    - 接口
     - 抽象类
     - 类导出
 
@@ -31808,10 +31808,10 @@ OpenVMS x86_64 平台支持: http://www.polarhome.com/vim/
 |:class|		类声明的开始
 |:defer|		当前函数结束时调用指定函数
 |:echowindow|		同 :echomsg，但使用弹出窗口
-|:endinterface|		界面声明的结束
+|:endinterface|		接口声明的结束
 |:endclass|		类声明的结束
 |:horizontal|		后续窗口命令以水平方式工作
-|:interface|		界面声明的开始
+|:interface|		接口声明的开始
 |:public|		类或对象成员的前缀
 |:static|		类成员或函数的前缀
 |:this|			对象成员的前缀
@@ -38413,7 +38413,7 @@ Patch 9.0.1494
 解决方案:   Bail out when the line index looks wrong. (closes #12276)
 
 Patch 9.0.1495
-问题:       GTK3: hiding the mouse pointer does not work. (Rory O’Kane)
+问题:       GTK3: hiding the mouse pointer does not work. (Rory O'Kane)
 解决方案:   Set alpha level to zero. (Kenny Stauffer, closes #12293,
             closes #3256)
 
@@ -41498,7 +41498,7 @@ Patch 9.0.2190
 
 Vim9 脚本 ~
 -----------
-新增用于 vim9 对象的内建函数支持，见 |builtin-object-methods|
+新增用于 vim9 对象的内置函数支持，见 |builtin-object-methods|
 
 Vim9 脚本的枚举支持 |:enum|
 
@@ -41654,7 +41654,7 @@ Vim9 脚本的泛型函数支持 |generic-functions|
 
 Ex 命令: ~
 - 定义新标号时允许指定优先级 |:sign-define|
-- |:bwipe| 也真正删除跳转列表和标签栈数据
+- |:bwipe| 也真正删除跳跃表和标签栈数据
 - 用 |:bnext| 和类似命令在缓冲区列表中移动的行为符合文档并跳过帮助缓冲区 (如果
   不是运行在帮助缓冲区的话，否则移动到下一个/前一个帮助缓冲区)。
 - |:keeppatterns| 和 |:s| 一起使用时保留最近替代模式
@@ -41772,12 +41772,15 @@ Ex 命令: ~
 
 |hl-ComplMatchIns|	当前插入的补全的匹配文本
 |hl-DiffTextAdd|	改动行内的新增文本
-|hl-MsgArea|		命令行和消息区域的高亮
-|hl-PmenuBorder|	弹出菜单: 弹出边框字符的高亮
-|hl-PmenuMatch|		弹出菜单: 匹配文本的高亮
-|hl-PmenuMatchSel|	弹出菜单: 选中行上的匹配文本的高亮
-|hl-PmenuShadow|	弹出菜单: 弹出阴影的高亮
-|hl-PreInsert|		补全预插入文本的高亮
+|hl-MsgArea|		命令行和消息区域
+|hl-PmenuBorder|	弹出菜单: 边框字符
+|hl-PmenuMatch|		弹出菜单: 匹配文本
+|hl-PmenuMatchSel|	弹出菜单: 选中行上的匹配文本
+|hl-PmenuShadow|	弹出菜单: 阴影
+|hl-Popup|		弹出窗口: 主体部分，缺省链接到 |hl-Pmenu|
+|hl-PopupBorder|	弹出窗口: 边框字符，缺省链接到 |hl-Pmenu|
+|hl-PopupTitle|		弹出窗口: 标题，缺省链接到 |hl-Pmenu|
+|hl-PreInsert|		补全预插入文本
 |hl-TabPanel|		|tabpanel|: 非活动标签页标签
 |hl-TabPanelFill|	|tabpanel|: 填充空间
 |hl-TabPanelSel|	|tabpanel|: 活动标签页标签
@@ -51527,8 +51530,8 @@ Patch 9.1.1970
 
 Patch 9.1.1971
 问题:     Crash when buffer gets deleted inside charconvert during save
-解决方案: Check for `b_saving` inside `can_unload_buffer()`, so we don’t try to
-          unload a buffer while it’s still being saved (glepnir).
+解决方案: Check for `b_saving` inside `can_unload_buffer()`, so we don't try to
+          unload a buffer while it's still being saved (glepnir).
 
 Patch 9.1.1971
 问题:     crash with invalid positional argument 0 in printf()
@@ -51801,7 +51804,7 @@ Patch 9.1.2019
           inconsistent values after a mode change.
 解决方案: Skip this coordinate adjustment when virtual editing is fully
           enabled. By treating the line terminator as a valid, stable
-          position, the cursor’s internal representation remains
+          position, the cursor's internal representation remains
           unchanged when entering or exiting Visual mode, ensuring
           consistent coordinate reporting. Add a regression test to
           check this functionality (McAuley Penney).
@@ -52469,26 +52472,45 @@ Patch 9.1.2148
 
 本小节讨论 9.2 和 9.3 版本之间的改进，工作还在进行中。
 
+GUI ~
+---
+- 新增 GTK4 GUI 实验性支持 (补丁 9.2.0501 及后续大量补丁)，编译阶段通过
+  `--enable-gui=gtk4` 启用。
+- GTK 界面新增全屏模式支持，参见 |'go-s'|。
+- GTK4 图形界面使用 Pango 库，支持原生打印对话框，参见 |pango-printing|。
+
 弹出窗口 ~
-------
+--------
 - 支持透明度，见 |popup-opacity|。
 - 'previewpopup' 支持与 'completepopup' 相同的取值 ("align" 除外)。
 - 支持 'completepopup' 选项的 "opacity" 设置。
+- 支持文本属性弹窗的裁剪 |popup-clipwindow|。
+- 补全弹出菜单可用鼠标或键盘滚动 |popupmenu-keys|。
+- 弹窜支持通过 cairo、GDI、kitty 或 sixel 等后端加载图像 |popup-image|。
 
 比较模式 ~
----------
+--------
 进行行内单词级比较时，如果相邻变更之间的间隔很小 (5 字节以内) 且仅包含非单词字
 符，现在会自动合并。这可以避免仅由空白或标点分隔变更时出现的高亮碎片化问题。
 
 受限模式 ~
----------------
+--------
 Vim 在 |restricted-mode| 受限模式下运行时，不再允许使用外部 diff 模式或设置环
 境变量。
 
 也不再允许使用 |:cscope|。
 
+命令 ~
+----
+- |:command-completion-customlist| 可返回字典列表，提供菜单项类型/菜单项额外文
+本/弹窗详细描述/菜单项简写等额外内容。
+- 用户命令参数处理新方式，|:command-nargs| 用 "-nargs=_" 属性能够正确处理可内
+  含空白的单参数命令。
+- 新 |:command| 参数 |:command-completeopt| 可在自定义补全匹配里通过转义空白，
+  正确处理内含空白的参数。
+
 其他 ~
------
+----
 - 新增 |xdg.vim| 脚本，实现完整 XDG 规范兼容。
 - 从 Windows 11 开始，|ConPTY| 支持已视为稳定。
 - 支持用于 |debug-adapter-protocol| 调试适配器协议的 "dap" 通道模式。
@@ -52496,6 +52518,7 @@ Vim 在 |restricted-mode| 受限模式下运行时，不再允许使用外部 di
 - 'listchars' 设置新增 "leadtab" 取值。
 - 优化 |:set+=|、|:set^=|、|:set-=| 对逗号分隔 "键:值" 对的单独处理 (如
    'listchars'、'fillchars'、'diffopt')。
+- |:TOhtml| 命令用 Vim9 语法完全重写，改进性能，也更易维护。
 - |system()| 和 |systemlist()| 函数支持以列表作为首个参数，完全绕过外壳。
 - 允许在 'statusline'、'tabline' 和 'tabpanel' 中通过 |stl-%[FuncName]| 原子实
   现鼠标可点击区域。
@@ -52505,13 +52528,31 @@ Vim 在 |restricted-mode| 受限模式下运行时，不再允许使用外部 di
 - 为 'wildmode' 选项新增 "noinsert" 值，与 'completeopt' 选项保持功能对称。
 - 通道现已支持处理 |Blob| 消息 |channel-open-options|。
 - 'shortmess' 新增 "u" 标志位，可屏蔽撤销、重做的提示信息，参见 |shm-u|。
-- |:command-completion-customlist| 可返回包含 kind/menu/info/abbr 字段的字典列
-  表，供弹出菜单展示。
+- |C-indenting| 优化了注释检测。
+- 'comments' 已定义 C-风格的 "//" 或 "/*" 注释格式时，|%| 命令会跳过注释内的括
+  号配对。
+- |package-hlyank| 新增最后放置区域的可选高亮。
+- 'statusline' 新增 %0{} 项目，可按本义插入表达式结果，不会删除前导空白
+  |stl-%0{|。
+- 会话和视图生成脚本现在使用 Vim9 脚本编写，见 |:mksession|、|:mkview| 和
+  |:mkvimrc|。
+- |term_start()| 的 "term_finish" 选项支持新 "noclose" 值。
+- 可通过标准输入输出通道控制 Vim，参见 |channel-stdio|。
+- 为 |:source| 新增 "++dryrun" 参数，读取脚本但不执行，仅用于检查错误，参见
+  |:source-dryrun|。
+- |:tag| 命令现也借助 'tagfunc' 进行补全。
 
 平台特定 ~
 -----------------
 - Win32 平台使用 DirectWrite 时，在 'guifont' 中支持指定 OpenType 字体特性
 - 为 MS-Windows 系统补充 strptime() 兼容实现
+- 重写 NSIS 安装程序 (Win32):
+  - 支持单用户和单主机安装方式。
+  - 改变了安装目录结构。
+  - 将批处理文件替换为 Vim 启动程序。
+  - 提供将 Vim 目录加入 PATH 的支持。
+  - 提供通过命令行选项自选安装部件的支持。
+  - 将源代码移动到 vim/vim-win32-installer 仓库。
 
 xxd ~
 ---
@@ -52529,6 +52570,26 @@ xxd ~
   通过 |clipboard-providers| 特性重新实现，例见 |wayland-primary-selection|。
 - 在 Unix 上，单文件 Ex 命令的文件名补全，现已将文件名内嵌空格视作文件名的一部
   分，与其他平台行为保持一致。
+- 重写客户-服务器通信套接字服务器后端，改用通道 + JSON 机制。
+- 在 |complete()| 触发的补全里，CTRL-N 和 CTRL-P 现支持插入模式映射。
+- 轮换文件寄存器 |quote#| 可被清空。
+- |serverlist()| 可列出所有可用服务器名。
+- 改善终端不支持色彩时的显示效果。
+- 优化 256 色及更低色深终端的比较高亮。
+- |listener_add()| 支持传入选项字典，可包含变更后的文本，见 |listener-text|。
+- |extend()| 与 |extendnew()| 现在支持 Blob 类型。
+- 被 'eventignore' 忽略期间产生的事件 (如 |CursorMoved|) 不再触发。
+- "lsp" 模式下，当无需等待响应时，|ch_sendexpr()| 的 "id" 字段允许传入非数值类
+  型，用于应答服务端发来的请求。
+- |complete_info()| 可通过 "auto" 字段区分补全是手动触发还是自动触发。
+- 折叠函数新增可选参数 {winid}。
+- 在 |DiffUpdated| 自动命令内禁止修改窗口布局。
+- 开启 'cursorline' 时，会始终使用高亮组 |hl-CursorLineFold| 与
+  |hl-CursorLineSign|。
+- 行上方的虚拟文本现在会被 |screenpos()| 和 |virtcol()| 计入位置计算。
+- 老式脚本中的 |:def| 函数不再接受通过赋值新建脚本局部变量，该操作会报错
+  |E1089|。
+
 
 							*added-9.3*
 新增 ~
@@ -52538,28 +52599,53 @@ xxd ~
 函数: ~
 
 |ch_listen()|		在 {address} 上监听
+|getbgcolor()|		以 RGB 值形式返回背景色
+|getinfo()|		获取参数对应的定义信息
+|image_add()|		添加图像并返回图像句柄
+|image_discard()|	丢弃图像句柄
+|image_info()|		获取图像信息
 |tabpanel_getinfo()|	获取 |tabpanel| 的当前状态
 |tabpanel_scroll()|	滚动 |tabpanel|
 
 自动命令: ~
 
 |SessionLoadPre|	加载 |Session| 会话文件前
+|TextPutPost|		放置文本后
+|TextPutPre|		放置文本前
 
 选项: ~
 
+'imageprotocol'		不同终端使用的图像后端
 'modelinestrict'	仅允许从模式行设置安全选项。
 'pumopt'		弹出菜单的附加选项。
 'scrolloffpad'		允许光标在文件末尾时保持垂直居中。
 'statuslineopt'		'statusline' 的窗口局部附加选项，用于配置高度。
 't_BS'			开始同步更新模式。
 't_ES'			结束同步更新模式。
+'tagsecure'		禁止标签命令打开远程文件。
 'termresize'		处理终端窗口大小调整事件的方法。
 'termsync'		启用终端 DEC 2026 同步模式支持。
 'winhighlight'		局部于窗口的高亮组映射。
 
 高亮组: ~
 
-|hl-VertSplitNC|	非当前窗口的垂直分隔栏。
+|hl-VertSplitNC|	非当前窗口的垂直分隔列。
+|hl-Popup|		弹窗主体。
+|hl-PopupBorder|	弹窗边框。
+|hl-PopupTitle|		弹窗标题。
+
+Vim 变量: ~
+
+|v:imagebackend|	当前 'imageprotocol' 值
+
+Vim 参数: ~
+
+|--stdio-channel|	通过标准输入输出通道控制 Vim |channel-stdio|
+
+配置开关: ~
+
+--enable-hardcopy-pango	启用 Pango 的 |:hardcopy| 后端 |pango-printing|
+--enable-pixman		启用 Pixman 库以支持图像功能
 
 ==============================================================================
 补 丁						*patches-9.3* *bug-fixes-9.3*

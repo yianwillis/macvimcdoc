@@ -1,4 +1,4 @@
-*os_win32.txt*	适用于 Vim 9.2 版本。  最近更新: 2025年10月
+*os_win32.txt*	适用于 Vim 9.2 版本。  最近更新: 2026年10月
 
 
 		  VIM 参考手册	by George Reilly
@@ -48,7 +48,7 @@ GUI 版本的作者是 George V. Reilly 和 Robert Webb。
 							*WSL*
 本文不适用于在 WSL (Windows Subsystem for Linux，适用于 Linux 的 Windows 子系
 统) 上运行的 Vim，此时 `has('win32')` 会返回假值。如果需要知道 Vim 是否在 WSL
-上运行，可用 `exists('$WSLENV')`。
+上运行，可用 `exists('$WSL_DISTRO_NAME')`。
 
 ==============================================================================
 1. 一些已知的问题					*win32-problems*
@@ -97,7 +97,7 @@ Update) 开始，可以通过置位 'termguicolors' 使控制台支持 256 色�
 
 $PATH 环境变量						*win32-PATH*
 
-Vim 可执行程序所在路径会被加入环境变量 $PATH 中。这主要是为了让 "!xxd" 能够运
+Vim 可执行程序所在路径会被加入环境变量 $PATH 中。这主要是为了让 `!xxd` 能够运
 行，因为它在工具菜单中。同时，这也意味着在一个可执行程序上调用 |executable()|
 返回 1 时，该程序确实能够执行。
 

@@ -28,7 +28,7 @@ Cscope 是一个类似 ctags 的工具。可以把它当作是功能更强大的
 
 				    -----
 
-  Cscope 是一个交互式的屏幕下使用的工具，用来帮助你:
+  Cscope 是一个交互式的屏幕下使用的工具，用来帮助用户:
 
        无须在厚厚的程序清单中翻来翻去，就可以认识一个 C 程序的工作原理。
 
@@ -241,7 +241,7 @@ Vim 的 cscope 接口的工作原理是: 先调用 cscope 的命令行接口，�
 	:set cst
 	:set nocst
 <
-							*cscoperelative* *csre*
+						*cscoperelative* *csre*
 'cscoperelative' 打开时，如果 cscope 未提供前缀 (即 cscope 的 -P 选项参数)，
 cscope.out 所在位置的目录名 (通常是项目的根目录) 会被用作前缀以构造绝对路径。
 缺省关闭此功能。注意: 本选项仅当 cscope (cscopeprg) 启动时未指定前缀路径 (-P)
@@ -249,7 +249,7 @@ cscope.out 所在位置的目录名 (通常是项目的根目录) 会被用作�
 	:set csre
 	:set nocsre
 <
-							*cscopetagorder* *csto*
+						*cscopetagorder* *csto*
 'csto' 值决定 |:cstag| 执行查找时采用的次序。设为 0 时，先查询 cscope 数据库，
 如果无法找到匹配，再搜索标签文件。设为 1 时，先搜索标签文件，再查询 cscope 数
 据库。缺省值为 0。示例: >

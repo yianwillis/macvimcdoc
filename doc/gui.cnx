@@ -1,4 +1,4 @@
-*gui.txt*	适用于 Vim 9.2 版本。  最近更新: 2026年4月
+*gui.txt*	适用于 Vim 9.2 版本。  最近更新: 2026年10月
 
 
 		  VIM 参考手册	by Bram Moolenaar
@@ -25,9 +25,9 @@ Vim 的图形用户界面					*gui* *GUI*
 ==============================================================================
 1. 启动 GUI					*gui-start* *E229* *E233*
 
-首先，需要确定运行的 Vim 版本包含 GUI 支持。可用 ":version" 命令检查，它应该输
-出 "带 xxx 图形界面"，其中 "xxx" 是 MacVim、X11-Motif、Photon、GTK2、GTK3 等，
-或者 "MS-Windows 32 位图形界面版本" 等等。
+首先，需要确定运行的 Vim 版本包含 GUI 支持。可用 |:version| 命令检查，应输出
+"带 xxx 图形界面"，其中 "xxx" 为 MacVim、X11-Motif、Photon、GTK2、GTK3、GTK4
+等，或 "MS-Windows 32 位图形界面版本"。
 
 启动 GUI 的方法取决于不同系统。多数情况下，可以这样启动 Vim 的 GUI 版本:
     gvim [options] [files...]
@@ -49,7 +49,7 @@ GUI 启动时，会按照以下顺序执行初始化操作:
 	:let no_buffers_menu = 1
 < 备注: 打开语法高亮时，也会载入菜单文件，因此要关闭缓冲区菜单，必须在
   `:syntax on` 之前进行。
-  此菜单中的路径名被截短到 35 个字符。要截短到其他长度 (例如 50)，可用:
+  此菜单中的路径名被截断到 35 个字符。要截断到其他长度 (例如 50)，可用:
 	:let bmenu_max_pathlen = 50
 - 启动 Vim 时，如果用了 "-U {gvimrc}" 命令行选项，会执行该 {gvimrc} 文件进行初
   始化，并跳过以下步骤。{gvimrc} 为 "NONE" 时，初始化过程不读入任何文件。
@@ -128,7 +128,7 @@ GUI 启动时，会按照以下顺序执行初始化操作:
 		置可能会被调整，以尽量让窗口适应屏幕上大小 (如果可能)。
 
 					    *:wi* *:win* *:winsize* *E465*
-:win[size] {width} {height}
+:wi[nsize] {width} {height}
 		设置窗口高度为 {width} 宽 {height} 高，以字符为单位。
 		建议使用 `:set lines=11 columns=22` 代替，因为这样更容易理解这
 		些数值的意义。
@@ -284,12 +284,12 @@ CTRL-V、CTRL-X 和 CTRL-C 键。如果不介意这些键被覆盖，可用以�
 如果选择尚未开始，则会选中从先前光标位置开始到鼠标点击位置的文本范围。否则，选
 择区域会在离鼠标更近的一端扩展到鼠标点击位置。
 
-'selectmode' 包含 "mouse" 时，选择区会处于选择模式。这意味着此时输入正常文本会
-替换选择区的内容。见 |Select-mode|。不然，选择区处于可视模式。
+'selectmode' 包含 "mouse" 时，选区会处于选择模式。这意味着此时输入正常文本会
+替换选区的内容。见 |Select-mode|。不然，选区处于可视模式。
 
-双击该键会使选择区面向单词，三击会使之面向行，四击会使之面向列块。
+双击该键会使选区面向单词，三击会使之面向行，四击会使之面向列块。
 
-关于如何使用选择区，见 |gui-selections|。
+关于如何使用选区，见 |gui-selections|。
 
 
 3.3 鼠标另一种文本选择方式				*gui-mouse-modeless*
@@ -301,14 +301,14 @@ CTRL-V、CTRL-X 和 CTRL-C 键。如果不介意这些键被覆盖，可用以�
 - 当前模式未包含在 'mouse' 选项中
 - 在 GUI 模式中，按住 CTRL 和 SHIFT 键
 
-此时 Vim 会像没有选择区存在一样继续工作，并且该选择不对应任何模式，因此这种选
-择方式被称为无模式选择。此方式可以选择 Vim 窗口里的任何文本。具体方式是，鼠标
-左键点击开始文本选择，拖动鼠标到选择区结尾，然后释放鼠标。要扩展选择区，当
+此时 Vim 会像没有选区存在一样继续工作，并且该选择不对应任何模式，因此这种选择
+方式被称为无模式选择。此方式可以选择 Vim 窗口里的任何文本。具体方式是，鼠标左
+键点击开始文本选择，拖动鼠标到选区结尾，然后释放鼠标。要扩展选区，当
 'mousemodel' 为 "extend" 时，使用鼠标右键；而当 'mousemodel' 为 "popup" 时，使
 用鼠标左键并同时按住 Shift 键。
-选中文本发生滚动或被修改时，选择区会被撤销。
+选中文本发生滚动或被修改时，选区会被撤销。
 
-在命令行上，CTRL-Y 可以用来将选择区复制到剪贴板。在插入模式下，可用
+在命令行上，CTRL-Y 可以用来将选区复制到剪贴板。在插入模式下，可用
 CTRL-O : CTRL-Y <CR>。'guioptions' 包含 a 或 A (X11 上的缺省值) 时，选择内容会
 被自动复制到 "* 寄存器。
 
@@ -324,7 +324,7 @@ CTRL-O : CTRL-Y <CR>。'guioptions' 包含 a 或 A (X11 上的缺省值) 时，�
 可以使用鼠标左键上下拖动状态行，从而调整其上下窗口的高度。此操作不会改变窗口焦
 点。
 
-以上规则同样适用于垂直分割线: 点击会把焦点给其左侧窗口，左右拖动会调整其左右两
+以上规则同样适用于垂直分隔线: 点击会把焦点给其左侧窗口，左右拖动会调整其左右两
 侧窗口的宽度。
 
 
@@ -332,7 +332,7 @@ CTRL-O : CTRL-Y <CR>。'guioptions' 包含 a 或 A (X11 上的缺省值) 时，�
 
     <S-LeftMouse>	正向搜索鼠标点击所在的单词。
 			当 'mousemodel' 为 "popup" 时，该操作用来开始或者扩展
-			选择区。
+			选区。
     <S-RightMouse>	反向搜索鼠标点击所在的单词。
     <C-LeftMouse>	跳转到鼠标点击所在的标签。
     <C-RightMouse>	跳回上次标签跳转之前的光标位置 (同 "CTRL-T")
@@ -384,9 +384,9 @@ CTRL-O : CTRL-Y <CR>。'guioptions' 包含 a 或 A (X11 上的缺省值) 时，�
 							*quotestar*
 要进行选择，可以使用鼠标 (见 |gui-mouse-select|)，也可使用 Vim 的可视模式 (见
 |v|)。如果 'guioptions' 里包含 'a'，那么无论何时开始选择 (可视或选择模式)，或
-者选择内容发生变化时，Vim 都会成为窗口系统主选择区的拥有者 (MS-Windows 上使
-用 |gui-clipboard|；X11 上使用 |x11-selection| - 无论具体指哪一个，这里都统称
-主选择区)。
+者选择内容发生变化时，Vim 都会成为窗口系统主选区的拥有者 (MS-Windows 上使用
+|gui-clipboard|；X11 上使用 |x11-selection| - 无论具体指哪一个，这里都统称主选
+区)。
 
 							*clipboard*
 有一个特殊寄存器，用于保存选择内容，这就是 "* 寄存器。仅当选择文本的相关信息发
@@ -581,11 +581,11 @@ GTK+ 3.4 或更新版本，就不再支持可撕菜单功能。
 		*:tlm* *:tlmenu* *:tln*     *:tlnoremenu* *:tlu*   *:tlunmenu*
 "tl" 开始的菜单命令用于终端模式。|mapmode-t|
 
-(译者注: 和 |:map| 和 |:map!|  一样，`:menu ` 和 `:menu!` 分别代表其定义的菜
-单命令用于普通、可视、选择和操作符等待模式 (即 nvo) 以及插入和命令行模式 (即
+(译者注: 和 |:map| 和 |:map!| 一样，`:menu ` 和 `:menu!` 分别代表其定义的菜单
+命令用于普通、可视、选择和操作符等待模式 (即 nvo) 以及插入和命令行模式 (即
 ic)，具体可见 |map-table|)
 
-						*:menu-<silent>* *:menu-silent*
+					*:menu-<silent>* *:menu-silent*
 要定义执行时不在命令行上回显的菜单项，可以添加 "<silent>" 作为命令的首个参数。
 例如: >
 	:menu <silent> Settings.Ignore\ case  :set ic<CR>
@@ -602,7 +602,7 @@ ic)，具体可见 |map-table|)
 "<special>" 必须是首个参数，或出现 (但只能出现) 在 "<silent>" 或 "<script>" 之
 后。
 
-						*:menu-<script>* *:menu-script*
+					*:menu-<script>* *:menu-script*
 菜单的命令部分里会检查映射。如果不想如此。可用 ":noremenu" 命令 (或用于特定模
 式的相应命令变体)。
 如果需要使用局部于脚本的映射，可以添加 "<script>" 作为 ":menu" 的首个或紧跟在
@@ -650,7 +650,7 @@ ic)，具体可见 |map-table|)
 用相同顺序。
 注意: 子菜单优先级目前并非在所有版本的 GUI 版本中都可用。
 
-							*menu-separator* *E332*
+						*menu-separator* *E332*
 可以用特殊项目来分隔菜单项，它会在项目间插入额外空间。不同系统上，这种分隔线可
 能显示为实线或虚线。这些项目必须以 '-' 开始和结尾。中间使用一个唯一名字。和普
 通菜单项一样，也可以指定优先级。例如: >
@@ -684,8 +684,8 @@ ic)，具体可见 |map-table|)
 <
     MacVim 里，"icon=" 参数也可用于指定 SF 符号或系统命名的图片。详见
     |macvim-toolbar-icon|。
-2)  菜单名为 'BuiltIn##' 的项目 (其中 ## 为数值) 会用于指定 Vim 第 ## 个内建的
-    位图作为按钮图像。目前提供 31 个内建位图，编号从 0 到 30。覆盖了大多数常见
+2)  菜单名为 'BuiltIn##' 的项目 (其中 ## 为数值) 会用于指定 Vim 第 ## 个内置的
+    位图作为按钮图像。目前提供 31 个内置位图，编号从 0 到 30。覆盖了大多数常见
     的编辑操作 |builtin-tools|。 >
 	:amenu ToolBar.BuiltIn22 :call SearchNext("back")<CR>
 3)  对于其他菜单名，会在 'runtimepath' 中的 "bitmaps" 里搜索首个对应该菜单名的
@@ -698,12 +698,12 @@ ic)，具体可见 |map-table|)
     上，建议使用 18x18 像素的位图。
     在 MS-Windows 上，位图必须使用 16 色的标准调色板。浅灰色像素会被替换为窗口
     框架颜色，而深灰色像素会被替换为窗口阴影颜色。其他系统可能会支持更多颜色。
-4)  如果仍然找不到可用位图，Vim 会在内建名列表里查找菜单名。所有内建按钮图像都
+4)  如果仍然找不到可用位图，Vim 会在内置名列表里查找菜单名。所有内置按钮图像都
     提供了名字。
     因此，如果没有 open.bmp 的话，命令 >
 	:amenu ToolBar.Open :e
-<   会显示内建的 "打开文件" 按钮图标。
-    要查看所有的内建名，可见 menu.vim。
+<   会显示内置的 "打开文件" 按钮图标。
+    要查看所有的内置名，可见 menu.vim。
 5)  如果以上都不行，就显示一个可用的空白按钮。
 
 							*builtin-tools*
@@ -717,7 +717,7 @@ ic)，具体可见 |map-table|)
 06  Copy		复制选中文本到剪贴板
 07  Paste		从剪贴板粘贴文本
 08  Print		打印当前缓冲区
-09  Help		打开缓冲区，用于显示 Vim 的内建帮助
+09  Help		打开缓冲区，用于显示 Vim 的内置帮助
 10  Find		开始搜索命令
 11  SaveAll		把所有已修改的缓冲区文本写回文件
 12  SaveSesn		把当前状态写入一个会话文件
@@ -741,7 +741,7 @@ ic)，具体可见 |map-table|)
 30  WinMinWidth		使当前窗口尽可能显示更少列
 
 					*hidden-menus* *win32-hidden-menus*
-在 Win32、MacVim 和 GTK+ GUI 中，以 ']' 开头的菜单名表示该菜单不会显示在主菜单
+在 Win32、MacVim 和 GTK+ GUI 上，以 ']' 开头的菜单名表示该菜单不会显示在主菜单
 栏中。必须使用 |:popup| 或者 |:tearoff| 命令来显示隐藏菜单。
 
 					*window-toolbar* *WinBar*
@@ -768,7 +768,7 @@ Vim 会继续留在可视模式。最好采用 `:nnoremenu` 形式来避免副�
 分割窗口时，原窗口的工具条不会被复制到新窗口。
 
 							*popup-menu*
-在 Win32、MacVim、GTK+、Motif 和 Photon GUI 中，可以定义特殊菜单 "PopUp"。
+在 Win32、MacVim、GTK+、Motif 和 Photon GUI 上，可以定义特殊菜单 "PopUp"。
 'mousemodel' 设为 popup 或者 popup_setpos 时，点击鼠标右键会显示该菜单。
 示例: >
     nnoremenu 1.40 PopUp.&Paste	"+gP
@@ -905,7 +905,7 @@ Windows 菜单在状态栏显示提示一样 (除非 Vim 当前处于命令行�
 如果要删除提示，可用: >
 	:tunmenu MyMenu.Hello
 
-目前工具提示仅在 X11、MacVim 和 Win32 GUI 中受到支持。不过，在不久的将来，其他
+目前工具提示仅在 X11、MacVim 和 Win32 GUI 上受到支持。不过，在不久的将来，其他
 GUI 平台也可能会支持此功能。
 
 ":tmenu" 菜单和其它 menu 命令的用法一致，使用相同的参数。":tunmenu" 则会删除已
@@ -918,7 +918,7 @@ GUI 平台也可能会支持此功能。
 
 5.9 弹出任意菜单
 
-在 Win32、MacVim 和 GTK+ GUI 里，可在光标位置上弹出任意菜单。这和 PopUp 菜单类
+在 Win32、MacVim 和 GTK+ GUI 上，可在光标位置上弹出任意菜单。这和 PopUp 菜单类
 似，但可弹出任何菜单树。
 
 该命令仅为后向兼容而保留，不鼓励使用。因为它的行为很不直观。
@@ -942,7 +942,7 @@ GUI 平台也可能会支持此功能。
 	:popup ]Toolbar
 会创建一个不在主菜单栏上显示的弹出菜单。
 
-注意 在 GUI 里，`:popup` 命令会立即返回，不会等待用户作出选择。而在终端上，该
+注意 在 GUI 上，`:popup` 命令会立即返回，不会等待用户作出选择。而在终端上，该
 命令会等待用户完成选择再返回。
 
 注意 ']' 开头的菜单不会被显示，见 |hidden-menus|。
@@ -974,7 +974,7 @@ Vim 会先查找字体 "Screen15"，如果不可用，再查找 "7x13"，最后�
 
 如果未能成功载入任何字体，Vim 会保持原有设置不变。如果给出空字体列表，Vim 会试
 图使用其他资源设置 (对 X 而言，会寻找 Vim.font 资源)，最后，Vim 会使用总是可用
-的内建缺省值 (如 X 使用的缺省值为 "7x13")。选项指定的字体必须对应 "正常" 字
+的内置缺省值 (如 X 使用的缺省值为 "7x13")。选项指定的字体必须对应 "正常" 字
 体。Vim 会试图找到与之相应的粗体和斜体字体。
 
 对于 Win32、GTK、Motif、Mac OS 和 Photon: >
@@ -997,7 +997,7 @@ MacVim 中 ":set guifont=*" 调用: >
       set guifontwide=Microsoft\ Yahei\ 12,WenQuanYi\ Zen\ Hei\ 12
     endif
 <
-(GTK+ 3 GUI 里，请把 gui_gtk2 换成 gui_gtk3)
+(GTK+ 3 GUI 上，请把 gui_gtk2 换成 gui_gtk3)
 
 MacVim							*macvim-guifont*
 
@@ -1056,7 +1056,7 @@ Book 应用中找到)，后跟可选的字体尺寸 (缺省是 `h11`)。命令�
     :set guifont=Andale_Mono:h7.5:w4.5
     :set guifont=Cascadia_Code:h14:fss19=1:fcalt=1:fliga=1
 
-另见 |font-sizes|。
+另见 |font-sizes|，'guiligatures' 和 'renderoptions' (仅限 MS-Windows)。
 
 关于权重的 备注: 不同字体通常提供不同权重。Windows 上，"正常" 权重值为 400，查
 找字体时如果权重省略，会默认使用该值。和字体名比较，Windows 在匹配字体时更看重
@@ -1067,18 +1067,18 @@ Book 或 Medium 变体版本，如果遇到字体被替换为更粗的版本，�
 
 GUIFONTWIDE						*gui-fontwide*
 
-非空时，'guifontwide' 指定用于双宽字符的字体列表，由逗号分隔。Vim 会使用其中首
-个可用的字体。
+非空时，'guifontwide' 指定用于全宽字符 (译者注: 相对于半宽 ASCII 字符而言) 的
+字体列表，由逗号分隔。Vim 会使用其中首个可用的字体。
 
 注意: 这些字体的宽度必须为 'guifont' 指定字体的两倍，且高度应保持一致。否则，
 文本绘制会出现异常。
 
-在 MavVim 和 GTK+ 以外的所有 GUI 版本里:
+在 MacVim 和 GTK+ 以外的所有 GUI 版本上:
 
 仅当 'encoding' 设置为 "utf-8"，且 'guifontset' 为空或无效时，才会启用
 'guifontwide'。
 已设置 'guifont' 并且其中包含可用字体，而 'guifontwide' 为空时，Vim 会试图自动
-查找对应的双宽字体，并据此设置 'guifontwide'。
+查找对应的全宽字体，并据此设置 'guifontwide'。
 
 仅限于 MacVim:				*guifontwide_macvim*
 
@@ -1087,7 +1087,7 @@ MacVim 自动进行字体替换。如果设置了 'guifontwide'，该字体用�
 
 仅限于 GTK+ GUI:			*guifontwide_gtk*
 
-即使 'encoding' 未设置为 "utf-8"，只要 'guifontwide' 已设置并有效，也会总为双
+即使 'encoding' 未设置为 "utf-8"，只要 'guifontwide' 已设置并有效，也会总为全
 宽字符应用该选项。
 Vim 不会自动为 'guifontwide' 查找合适的值。不过，当 'guifontwide' 为空时，
 Pango/Xft 会为 'guifont' 中缺失的字符自动选择字体。所以，除非对 Pango/Xft 的选
@@ -1102,16 +1102,16 @@ Pango/Xft 会为 'guifont' 中缺失的字符自动选择字体。所以，除�
 
 这一节描述和 GUI 相关的其他特性。
 
-- 在 GUI 里，按 Esc 键之后无需等待一秒，因为键码不会以 <Esc> 开头。
+- 在 GUI 上，按 Esc 键之后无需等待一秒，因为键码不会以 <Esc> 开头。
 
-- 在 GUI 里，输入 ^V 后跟一个特殊键会插入 "<Key>" 形式的字符串，因为内部终端代
+- 在 GUI 上，输入 ^V 后跟一个特殊键会插入 "<Key>" 形式的字符串，因为内部终端代
   码对 GUI 没有意义。按下修饰符时，则会插入 "<Modifiers-Key>"。
 
-- 在 GUI 里，映射中可以将修饰符 SHIFT、CTRL 和 ALT (或 META) 和特殊键或鼠标事
+- 在 GUI 上，映射中可以将修饰符 SHIFT、CTRL 和 ALT (或 META) 和特殊键或鼠标事
   件组合使用。
   例如 :map <M-LeftDrag> <LeftDrag>
 
-- 在 GUI 里，映射等命令允许部分普通键与修饰符组合使用，这些键包括 <Space>、
+- 在 GUI 上，映射等命令允许部分普通键与修饰符组合使用，这些键包括 <Space>、
   <Tab>、<NL>、<CR> 和 <Esc>。
 
 - 在 Vim 脚本里，要检查是否正在使用 GUI，可用: >
@@ -1141,12 +1141,35 @@ Pango/Xft 会为 'guifont' 中缺失的字符自动选择字体。所以，除�
 https://learn.microsoft.com/en-us/typography/font-list/ms-mincho
 该字体通常随 Windows 系统一并发布。
 
+
+全屏模式						*gui-fullscreen*
+
+目前全屏模式仅支持 Windows 和 GTK GUI 版本的 Vim。
+
+要在 Vim 的 GUI 版本中启用全屏模式，可在 'guioptions' 选项中加入 "s" 标志
+(|go-s|)。
+
+为方便使用，可定义命令或映射来切换全屏模式:
+>vim
+	command ToggleFullscreen {
+	  if &guioptions =~# 's'
+	    set guioptions-=s
+	  else
+	    set guioptions+=s
+	  endif
+	}
+
+	map <expr> <F11> &go =~# 's' ? ":se go-=s<CR>" : ":se go+=s<CR>"
+
+全屏模式会占据整个屏幕区域，同时隐藏标题栏、边框等窗口装饰元素。
+
+
 ==============================================================================
 8. 外壳命令						*gui-shell*
 
 对于 X11 GUI，外部命令会在 gvim 窗口里执行。见 |gui-pty|。
 
-警告: 在 X11 GUI 中执行外部命令并不总是可行。大多数 "普通" 命令，如 "ls"、
+警告: 在 X11 GUI 上执行外部命令并不总是可行。大多数 "普通" 命令，如 "ls"、
 "grep"、"make" 等都可以正常运行。但需要智能终端的命令，如 "less" 和 "ispell"
 等，则可能无法使用。有些命令甚至可能挂起，此时只能通过另一个终端手动终止相应进
 程。所以，请谨慎使用。

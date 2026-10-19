@@ -1,4 +1,4 @@
-*filetype.txt*	适用于 Vim 9.2 版本。  最近更新: 2026年4月
+*filetype.txt*	适用于 Vim 9.2 版本。  最近更新: 2026年10月
 
 
 		  VIM 参考手册	by Bram Moolenaar
@@ -125,7 +125,9 @@ Vim 能够自动识别正在编辑的文件类型。识别主要通过检查文�
 下全局变量，为有歧义的扩展名强制指定文件类型:
 
 	文件名		变量 ~
+	*.al		g:filetype_al
 	*.app		g:filetype_app
+	*.as		g:filetype_as
 	*.asa		g:filetype_asa		|ft-aspperl-syntax|
 						|ft-aspvbs-syntax|
 	*.asm		g:asmsyntax		|ft-asm-syntax|
@@ -151,6 +153,7 @@ Vim 能够自动识别正在编辑的文件类型。识别主要通过检查文�
 	*.int		g:filetype_int
 	*.lsl		g:filetype_lsl
 	*.m		g:filetype_m		|ft-mathematica-syntax|
+	*.mm		g:filetype_mm
 	*.mac		g:filetype_mac
 	*[mM]makefile,*.mk,*.mak,[mM]akefile*
 			g:make_flavor		|ft-make-syntax|
@@ -168,6 +171,7 @@ Vim 能够自动识别正在编辑的文件类型。识别主要通过检查文�
 	*.sys		g:filetype_sys
 	*.sh		g:bash_is_sh		|ft-sh-syntax|
 	*.tex		g:tex_flavor		|ft-tex-plugin|
+	*.tf		g:filetype_tf
 	*.typ		g:filetype_typ
 	*.v		g:filetype_v
 	*.w		g:filetype_w		|ft-cweb-syntax|
@@ -422,6 +426,49 @@ AWK							*ft-awk-plugin*
 要打开 GNU Awk 特定功能，如 @include 支持: >
 	:let g:awk_is_gawk = 1
 
+BEANCOUNT						*ft-beancount-plugin*
+
+通过 `g:beancount_completion_enable` 启用后，beancountcomplete.vim 可提供
+Beancount 全能补全 |compl-omni|。
+
+启用账户名补全: >
+	let g:beancount_completion_enable = 1
+<
+注意: 启用后，Beancount 可能会加载额外的插件文件。仅对可信代码启用。
+
+变量:
+g:beancount_account_completion
+			指定账户名补全模式。可为 "default" 或 "chunks"。
+			缺省值: "default"
+
+g:beancount_completion_enable
+			启用账户的全能补全 |compl-omni|。
+			缺省值: 0
+
+g:beancount_detailed_first
+			非零时，层级较深的账户在补全结果中优先显示。
+			缺省值: 0
+
+g:beancount_separator_col
+			小数分隔符对齐到的列号。
+			缺省值: 50
+
+b:beancount_root
+			设置 Beancount 根文件，用于收集补全所需的数据。
+			缺省使用当前文件。
+
+命令:
+:AlignCommodity		在账户名与商品之间插入空格，使所有商品金额的小数点对齐
+			到 `g:beancount_separator_col` 指定的列。金额没有小数
+			点时，则以最低有效数位右侧的虚拟小数点进行对齐。
+
+			命令作用于指定范围，缺省范围为当前行。光标位于该范围内
+			且在账户名右侧时，则会相应向右移动，以便仍然停留在相同
+			字符上。
+
+			脚本假定使用空格进行对齐，不支持制表符。
+
+:GetContext		调用 `bean-doctor context`，显示当前行的上下文。
 
 CHANGELOG						*ft-changelog-plugin*
 
@@ -636,6 +683,14 @@ HTML							*ft-html-plugin*
 [0] https://html.spec.whatwg.org/multipage/syntax.html#optional-tags
 [1] https://en.wikipedia.org/wiki/Dangling_else
 
+ICALENDAR			    *ft-icalendar-plugin* *g:icalendar_folding*
+
+可通过 |fold-expr| 启用 iCalendar 组件 (BEGIN: 与 END: 配对) 的折叠功能: >
+
+	let g:icalendar_folding = 1
+<
+嵌套组件 (如 VEVENT 内部的 VALARM) 会生成嵌套折叠。
+
 IDRIS2							*ft-idris2-plugin*
 
 缺省使用以下选项: >
@@ -714,6 +769,12 @@ Lua 文件类型插件定义的 'includeexpr' 和 |ft-lua-syntax| 高亮使用�
 
 	let g:lua_version = 5
 	let g:lua_subversion = 1
+<
+LUAU					*ft-luau-plugin* *g:luau_folding*
+
+要打开使用表达式折叠方法 |fold-expr| 的 Luau 块结构折叠: >
+
+	let g:luau_folding = 1
 <
 MAIL							*ft-mail-plugin*
 
@@ -802,6 +863,19 @@ CTRL-] 跳转到关联手册页。
 
 	set -x MANPAGER "vim +MANPAGER --not-a-term -"
 <
+注意: 部分 man 实现会将临时文件路径作为参数传给分页器。OpenBSD、Alpine Linux、
+Void Linux 等系统的默认 man 工具 mandoc 前端就是一例。
+
+这种情况下需要修改上述配置，将 MANPAGER 环境变量设为
+"vim +MANPAGER --not-a-term"，去掉末尾的连字符参数。
+
+可用以下包装脚本来同时兼容两种行为:
+>sh
+	#!/bin/sh
+	vim +MANPAGER --not-a-term "${1:--}"
+<
+将 MANPAGER 环境变量设为该脚本名即可启用 (不在 PATH 中时，可用绝对路径)。需确
+保脚本已添加可执行权限位。
 
 MARKDOWN						*ft-markdown-plugin*
 
@@ -847,7 +921,17 @@ PYTHON						*ft-python-plugin* *PEP8*
 要关闭推荐风格，可在 vimrc 里设置变量: >
 
 	let g:python_recommended_style = 0
+<
+Python 全能补全 |compl-omni| 由 python3complete.vim (或 pythoncomplete.vim) 提
+供，适用于编译时启用了 |+python|/|+python3| 解释器的 Vim。
+缺省情况下，它不会检查缓冲区中的 import / from 语句。这意味着可以补全缓冲区自
+身定义的各种名称 (类、函数、变量)，但不会提供已导入模块成员的补全。
 
+要启用已导入模块成员补全: >
+	let g:pythoncomplete_allow_import = 1
+
+警告: 启用此选项会导致全能补全通过 Python 的 import 机制执行缓冲区中的 import
+语句，从而运行被导入模块的顶层代码。仅对可信代码启用。
 
 QF QUICKFIX					    *qf.vim* *ft-qf-plugin*
 
@@ -923,6 +1007,13 @@ TEX						*ft-tex-plugin* *g:tex_flavor*
 
 TYPST							*ft-typst-plugin*
 
+						   *g:typst_recommended_style*
+Typst 文件插件缺省设置以下选项: >
+	setlocal expandtab shiftwidth=2 softtabstop=2
+
+要关闭推荐风格，可在 vimrc 里设置变量: >
+	let g:typst_recommended_style = 0
+<
 							*g:typst_conceal*
 本变量为 |TRUE| 时，'conceallevel' 选项会设为 2。
 

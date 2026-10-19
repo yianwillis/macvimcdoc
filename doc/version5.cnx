@@ -1,4 +1,4 @@
-*version5.txt*	适用于 Vim 9.2 版本。  最近更新: 2022年7月
+*version5.txt*	适用于 Vim 9.2 版本。  最近更新: 2026年10月
 
 
 		  VIM 参考手册	by Bram Moolenaar
@@ -29,7 +29,7 @@ MS-DOS 和 Win32 的 $HOME 的使用		|$HOME-use|
 新 特 性:				|new-5|
 
 语法高亮				|new-highlighting|
-内建的脚本语言				|new-script|
+内置的脚本语言				|new-script|
 Perl 和 Python 支持			|new-perl-python|
 Win32 GUI 版本				|added-win32-GUI|
 VMS 版本				|added-VMS|
@@ -344,14 +344,14 @@ Vim 现在有了非常灵活的为所有文件类型设定高亮的方式。
 置色彩和属性。所有的高亮项目被分配了一个高亮组，它指定这些项目的高亮方式。见
 |:highlight|。缺省颜色也有改进。
 
-你可以用 "Normal" 组来设定色彩终端的缺省前/背景色。对于 GUI，你同样可以使用该
+你可以用 "Normal" 组来设定彩色终端的缺省前/背景色。对于 GUI，你同样可以使用该
 铸来指定字体。
 
 "2html.vim" 脚本可以用来把任何有语法高亮的文件转化为 HTML。其中的色彩和你在
 Vim 看到的一模一样。使用 HTML 浏览器，你可以打印彩色的文件。
 
 
-内建的脚本语言						*new-script*
+内置的脚本语言						*new-script*
 ------------------------
 
 一些附加的命令和表达式计算器是你可以编写简单但强大的脚本。命令包括 ":if" 和
@@ -473,7 +473,7 @@ CTRL-R 用于重复撤销或重做 (像 Nvi 里的 ".")。
 
 |:hide|		和 ":close" 类似。
 
-|:if|		条件执行，用于内建脚本语言。
+|:if|		条件执行，用于内置脚本语言。
 
 |:intro|	显示介绍文字。Vim 启动式，如果没有文件参数，总是执行它。
 
@@ -485,7 +485,7 @@ CTRL-R 用于重复撤销或重做 (像 Nvi 里的 ".")。
 
 |:update|	缓冲区改变时写回。
 
-|:while|	While 循环，用于内建脚本语言。
+|:while|	While 循环，用于内置脚本语言。
 
 可视模式:
 |v_O|		可视列块模式里的 "O" 水平移动光标到另一个角。
@@ -704,7 +704,7 @@ GUI:
 
 调整窗口大小时，尽可能使光标的相对位置保持不变。(Webb)
 
-":all" 和 ":ball" 不再为同一缓冲区关闭然后然后打开窗口。避免选项、跳转表和其它
+":all" 和 ":ball" 不再为同一缓冲区关闭然后然后打开窗口。避免选项、跳跃表和其它
 信息的丢失。
 
 现在如果 Vim 编译时不带 GUI，忽略 "-f" 命令行参数。|-f|
@@ -1610,7 +1610,7 @@ Perl 接口: Buffers() 和 Windows() 现在使用更合乎逻辑的参数，就�
 
 Win32: 如果外部命令用 "start " 开始，不为它打开控制台 (Aaron)。
 
-Win32 控制台: 使用 termcap 代码，根据当前控制台属性处理粗体/反转属性。
+Win32 控制台: 使用终端能力项代码，根据当前控制台属性处理粗体/反转属性。
 
 configure 检查 "strip"。(Napier)
 
@@ -1920,7 +1920,7 @@ GUI。
 加入选择模式						*new-Select-mode*
 -----------------
 
-加入了新模式: "选择模式"。类似于可视模式，但输入可显示的字符将替换选择区。
+加入了新模式: "选择模式"。类似于可视模式，但输入可显示的字符将替换选区。
 - CTRL-G 可以用来切换可视模式和选择模式。
 - CTRL-O 可以用来为单个命令从选择模式切换到选择模式。
 - 加入 'selectmode' 选项: 说明何时启动选择模式，而不是可视模式。
@@ -1932,7 +1932,7 @@ GUI。
 - 选择模式使用可视模式的映射和菜单。它们自动先切换到可视模式。之后，重新选择区
   域，除非该区域已被删除。"gV" 命令用来在映射里跳过重新选择这一步。
 - 增加 "gh"、"gH" 和 "g^H" 命令: 开始选择 (高亮) 模式。
-- 选择模式的退格键删除选择区。
+- 选择模式的退格键删除选区。
 
 "mswin.vim" 脚本。设置非常类似于 MS-Windows 的行为。
 
@@ -2949,7 +2949,7 @@ Filetype 和 Syntax 事件的组合，包括 Syntax 菜单的选择，提供更�
 "$VIMRUNTIME/filetype.vim" 文件不是自动载入的。为此目的，增加了 ":filetype on"
 命令。":syntax on" 也载入此脚本。
 
-加入了 'filetype' 选项。它被用来激活 FileType 自动命令事件，就像 'syntax' 选项
+加入了 'filetype' 选项。它被用来触发 FileType 自动命令事件，就像 'syntax' 选项
 之于 Syntax 事件。
 
 ":set syntax=OFF" 和 ":set syntax=ON" 可以 (在模式行里) 开/关当前文件语法高
@@ -3228,7 +3228,7 @@ Vim 4.x 类似。
 避免 hit-enter 提示					*avoid-hit-enter*
 -----------------------
 
-加入 'shortmess' 的 'T' 标志位: 截短所有会产生 hit-enter 提示的消息 (除了总会
+加入 'shortmess' 的 'T' 标志位: 截断所有会产生 hit-enter 提示的消息 (除了总会
 发生的那些)。
 'shortmess' 的 'O' 标志位现在也适用于快速修复消息，比如，从 ":cn" 命令那里。
 
@@ -3345,7 +3345,7 @@ OS/2 发布被分为两个文件。不然太大以致于在一张软盘上放不
 新增							*added-5.4*
 -----
 
-iris-ansi 内建 termcap 项目的色彩支持。(Tubman)
+iris-ansi 内置终端能力项的色彩支持。(Tubman)
 
 加入 VisVim 1.3a 版本。(Erhardt)
 
@@ -3402,7 +3402,7 @@ uganda.txt 的文本关于复制 Vi 的部分更加明确。
 - Win32 IME: 预编辑风格相当于 over-the-spot。(Nagano)
 - Win32 IME: IME 模式的改变现在使用 ImmSetOpenStatus。(Nagano)
 - GUI Athena: 文件选择对话框现在可以显示多字节字符。(Nagano)
-- XA_TEXT 的选择区应答是 XA_STRING。(Nagano)
+- XA_TEXT 的选区应答是 XA_STRING。(Nagano)
 
 "runtime/macros/diffwin.vim"。建立比较窗口的映射。(Campbell)
 
@@ -3418,7 +3418,7 @@ xterm:
   要精确，但需要相当新的 xterm 版本。'ttymouse' 设为 "xterm2" 打开这一功能。
   (Madsen)
 - 检查 xterm 的补丁号以设置 'ttymouse'。只用于最新的 xterm (补丁号 > 95)。使用
-  新的 't_RV' termcap 选项。如果能够识别应答为正确，设置 'ttymouse' 为
+  新的 't_RV' 终端能力项。如果能够识别应答为正确，设置 'ttymouse' 为
   "xterm2"。这样 xterm 鼠标的拖动工作得更好。
 - 支持 xterm 上 shift + 功能键。修改 shift + 光标键为 xterm 实际产生的值。加入
   shift + <End> 和 <Home> 的编码。
@@ -3426,7 +3426,7 @@ xterm:
   动 (用于 ":winpos") 和调整大小 (用于 ":set lines=" 和 ":set columns=")。
 
 X11:
-- 可视模式下如果没有拥有选择区，使用 VisualNOS 组显示可视区域。(Madsen)
+- 可视模式下如果没有拥有选区，使用 VisualNOS 组显示可视区域。(Madsen)
 - 支持剪贴板支持类型的请求。用于 AIX 和 dtterm。(Wittig)
 - 支持 compound_text 选择 (即使编译时没有多字节支持)。
 
@@ -3438,7 +3438,7 @@ X11:
 
 'mousemodel' 选项的 "popup_setpos"。允许使用鼠标右键时移动光标。
 
-如果删除缓冲区，要显示的缓冲区现在变成了跳转表的最近的项目。(Madsen)
+如果删除缓冲区，要显示的缓冲区现在变成了跳跃表的最近的项目。(Madsen)
 
 用 CTRL-O/CTRL-I 跳过删除的缓冲区。
 
@@ -3446,7 +3446,7 @@ X11:
 
 用 autoconf 1.13 生成 configure。
 
-包含 Dirk van Deun 的 get_lisp_indent()。如果 'cpoptions' 不包含 'p' 标志位，
+包含 Dirk van Deun 的 get_lisp_indent()。如果 'cpoptions' 里不含 'p' 标志位，
 提供更好的 Lisp 缩进。
 
 2html.vim 脚本加快不少。(基于 Geddes 的建议)
@@ -3515,7 +3515,7 @@ OS/2: 用 argv[0] 来寻找运行时文件。
 
 'whichwrap' 加入 '~' 标志位。(Acevedo)
 
-结束可视模式时 (例如用 ESC)，不夺取选择区的所有权。
+结束可视模式时 (例如用 ESC)，不夺取选区的所有权。
 
 彩色终端里，可用 "fg" 和 "bg" 作颜色名。它们分别代表 "Normal" 的两种颜色。
 
@@ -4087,7 +4087,7 @@ Now map <xF4> to <F4>, so that the user can override this.
 When compiling os_win32.c with MIN_FEAT the apply_autocmds() should not be
 used. (Aaron)
 
-This autocommand looped forever: ":au FileChangedShell * ++nested e <afile>"
+This autocommand looped forever: ":au FileChangedShell * nested e <afile>"
 Now FileChangeShell never nests. (Roemer)
 
 When evaluating an ":elseif" that was not going to matter anyway, ignore

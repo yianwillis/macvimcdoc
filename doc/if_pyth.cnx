@@ -317,7 +317,7 @@ Python 的输出						*python-output*
 	raw_input()) 进行输入。这些调用可能会导致系统崩溃。这个问题可能以后会
 	修正。
 
-		    *python2-directory* *python3-directory* *pythonx-directory*
+	    *python2-directory* *python3-directory* *pythonx-directory*
 Python 'runtimepath' 处理				*python-special-path*
 
 在 python 中，vim.VIM_SPECIAL_PATH 特殊目录用于代替 'runtimepath' 里的路径列
@@ -435,13 +435,13 @@ vim._get_paths						*python-_get_paths*
 	b.append(str, nr)  同上，但在第 "nr" 行之后
 	b.append(list)	在缓冲区末尾位置之后追加一系列行文本
 			备注: append 方法可以带一个字符串列表作为参数，这和
-			Python 中内建的列表对象的对应方法不同 (内建列表使用
+			Python 中内置的列表对象的对应方法不同 (内置列表使用
 			append 来追加单个项目，extend 来追加项目列表)。
 	b.append(list, nr)  同上，但在第 "nr" 行之后
 	b.mark(name)	返回命名标记的所在位置，以元组 (行，列) 形式表示 (也可
 			用于 []"<> 等标记)
 	b.range(s,e)	返回范围对象 (参见 |python-range|)，用来代表指定缓冲区
-			中行 s 与 行 e (包含 s 和 e |inclusive|) 之间的部分。
+			中行 s 与 行 e (含 s 和 e |inclusive|) 之间的部分。
 
 注意: 追加一行文本时，文本不应包含换行符 '\n'。拖尾的 '\n' 可以接受但会被忽
 略。因此，以下操作合法:
@@ -483,7 +483,7 @@ vim 模块的 "Buffer" 属性会返回缓冲区对象的类型。
 	r.append(str, nr)  同上，但在第 "nr" 行之后
 	r.append(list)	在范围末尾位置追加一系列行文本
 			备注: append 方法可以带一个字符串列表作为参数，这和
-			Python 中内建的列表对象的对应方法不同 (内建列表使用
+			Python 中内置的列表对象的对应方法不同 (内置列表使用
 			append 来追加单个项目，extend 来追加项目列表)。
 	r.append(list, nr)  同上，但在第 "nr" 行之后
 
@@ -730,7 +730,7 @@ Vim 编译使用的 Python 2.x 或 Python 3 版本 (|v:python3_version|) 保持�
 另见 |python3-stable-abi|。
 
 稳定 ABI 以及混合 Python 版本 ~
-			*python-stable* *python-stable-abi* *python3-stable-abi*
+		*python-stable* *python-stable-abi* *python3-stable-abi*
 如果 Vim 编译时不使用稳定 ABI (仅限于 Python 3)，Python 共享库的版本必须与 Vim
 编译时的版本一致。不然，使用不同版本的混合会导致无法预测的崩溃和错误。如果用了
 稳定 ABI，此限制可放宽，可以使用任何不低于 |v:python3_version| 的 Python 3 库
